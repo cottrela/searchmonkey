@@ -9,6 +9,8 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -49,6 +51,16 @@ public class ContentMatch {
             // Logger.getLogger(SearchEngine.class.getName()).log(Level.SEVERE, null, ex);
         }
         return count;
+    }
+    
+    public MatchResult getMatch(String line)
+    {
+        Matcher match = regexMatch.matcher(line);
+        if (match.find())
+        {
+            return match.toMatchResult();
+        }
+        return null;
     }
 }
 
