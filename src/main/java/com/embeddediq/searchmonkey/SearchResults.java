@@ -14,19 +14,13 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.Timer;
-import static com.embeddediq.searchmonkey.SearchResult.COLUMN_NAMES;
-import java.awt.Color;
 import java.awt.Component;
 import java.nio.file.attribute.FileTime;
-import java.text.DateFormat;
-import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import javax.swing.JLabel;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
 /**
@@ -131,6 +125,12 @@ public class SearchResults extends javax.swing.JPanel {
         }
         
         @Override
+        public Class<?> getColumnClass(int col)
+        {
+            return SearchResult.COLUMN_CLASSES[col];
+        }
+        
+        @Override
         public int getRowCount() { 
             return rowData.size();
         }
@@ -165,8 +165,19 @@ public class SearchResults extends javax.swing.JPanel {
         
         private final String[] MAG_NAMES = new String[] {"Bytes", "KBytes", "MBytes", "GBytes", "TBytes"};
 
+        /**
+         *
+         * @param table
+         * @param value
+         * @param isSelected
+         * @param hasFocus
+         * @param row
+         * @param column
+         * @return
+         */
+        @Override
         public Component getTableCellRendererComponent(
-                                JTable table, Object color,
+                                JTable table, Object value,
                                 boolean isSelected, boolean hasFocus,
                                 int row, int column) {
 
@@ -175,7 +186,7 @@ public class SearchResults extends javax.swing.JPanel {
             switch (idx) {
                 case SearchResult.SIZE: // Handle Size
                     int mag = 0; // Bytes
-                    double val = (double)((long)color);
+                    double val = (double)((long)value);
                     while (val > 1024)
                     {
                         mag ++; // KB, MB, GB, TB, etc
@@ -186,14 +197,14 @@ public class SearchResults extends javax.swing.JPanel {
                 case SearchResult.CREATED: // Handle Date
                 case SearchResult.ACCESSED:
                 case SearchResult.MODIFIED:
-                    FileTime ft = (FileTime)color;
+                    FileTime ft = (FileTime)value;
                     LocalDateTime ldt = LocalDateTime.ofInstant(ft.toInstant(), ZoneId.systemDefault());
                     
                     setText(ldt.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)));
                     
                     break;
                 case SearchResult.FLAGS: // Handle Flags
-                    int flags = (int)color;
+                    int flags = (int)value;
                     List<String> flagText = new ArrayList<>();
                     if (flags == SearchResult.HIDDEN_FILE)
                     {
@@ -203,17 +214,17 @@ public class SearchResults extends javax.swing.JPanel {
                     if (flags == SearchResult.SYMBOLIC_LINK){
                         flagText.add("SYMBOLIC");
                     }
-                    this.setText(String.join(", ", flagText));
+                    setText(String.join(", ", flagText));
                     break;
                 case SearchResult.COUNT: // Handle Count
-                    int count = (int)color;
+                    int count = (int)value;
                     if (count < 0)
                     {
                         setText("N/A"); // Not applicable
                        break;
                     } // Otherwise use default renderer
                 default:
-                    this.setText(color.toString());
+                    this.setText(value.toString());
                     break;
             }
             

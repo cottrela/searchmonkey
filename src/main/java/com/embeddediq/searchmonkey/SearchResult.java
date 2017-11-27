@@ -72,7 +72,7 @@ public class SearchResult {
         }
         throw new IllegalArgumentException("Column ID out of bounds");
     }
-
+    
     public String fileName;
     public String fileExtension;
     public String pathName;
@@ -104,6 +104,20 @@ public class SearchResult {
         "Flags", // 8
         "Content Type", // 9
     };
+
+    public final static Class[] COLUMN_CLASSES = new Class[]  {
+        String.class,
+        Integer.class,
+        String.class,
+        String.class,
+        Integer.class,
+        FileTime.class,
+        FileTime.class,
+        FileTime.class,
+        Integer.class,
+        String.class,
+    };
+
 
     // Forced enumeration of the column names
     public final static int FILENAME = 0;
