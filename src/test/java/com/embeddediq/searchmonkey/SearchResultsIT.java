@@ -39,7 +39,7 @@ public class SearchResultsIT {
     }
 
     /**
-     * Test of start method, of class SearchResults.
+     * Test of start method, of class SearchResultsTable.
      */
     @Test
     public void testStart() {
@@ -48,7 +48,7 @@ public class SearchResultsIT {
         int rateMillis = 50;
         JDialog dlg = new JDialog();
         // dlg.start
-        SearchResults jPanel = new SearchResults(queue, rateMillis);
+        SearchResultsTable jPanel = new SearchResultsTable(queue, rateMillis);
         jPanel.start();
         
         Thread.sleep(1000);
@@ -57,39 +57,39 @@ public class SearchResultsIT {
     }
 
     /**
-     * Test of stop method, of class SearchResults.
+     * Test of stop method, of class SearchResultsTable.
      */
     @Test
     public void testStop() {
         System.out.println("stop");
-        SearchResults instance = null;
+        SearchResultsTable instance = null;
         instance.stop();
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
 
     /**
-     * Test of insertColumn method, of class SearchResults.
+     * Test of insertColumn method, of class SearchResultsTable.
      */
     @Test
     public void testInsertColumn() {
         System.out.println("insertColumn");
         int columnIdent = 0;
         int position = 0;
-        SearchResults instance = null;
+        SearchResultsTable instance = null;
         instance.insertColumn(columnIdent, position);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
 
     /**
-     * Test of removeColumn method, of class SearchResults.
+     * Test of removeColumn method, of class SearchResultsTable.
      */
     @Test
     public void testRemoveColumn() {
         System.out.println("removeColumn");
         int position = 0;
-        SearchResults instance = null;
+        SearchResultsTable instance = null;
         instance.removeColumn(position);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");

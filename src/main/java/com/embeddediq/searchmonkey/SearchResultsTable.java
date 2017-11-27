@@ -22,12 +22,13 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import javax.swing.JLabel;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 
 /**
  *
  * @author cottr
  */
-public class SearchResults extends javax.swing.JPanel {
+public class SearchResultsTable extends javax.swing.JPanel {
 
     private Timer timer;
     private List<SearchResult> rowData = new ArrayList<>();
@@ -39,22 +40,22 @@ public class SearchResults extends javax.swing.JPanel {
      * @param queue
      * @param rateMillis
      */
-    public SearchResults(SearchResultQueue queue, int rateMillis) {
+    public SearchResultsTable(SearchResultQueue queue, int rateMillis) {
         initComponents();
 
-/*        
-        ColumnOrder = new ArrayList<>();
-        for (int i=0; i< COLUMN_NAMES.length; i++)
-        {
-            ColumnOrder.add(i);
-        }
-        //table.getColumn(1).s
-*/
-        
         myModel = new MyTableModel();
         table = new JTable(myModel);
         table.setDefaultRenderer(Object.class, new SearchMonkeyTableRenderer());
         table.setAutoCreateRowSorter(true);
+        
+        
+        // Show/hide columns using this code
+        /*
+        TableColumn hidden = table.getColumn(SearchResult.COLUMN_NAMES[SearchResult.ACCESSED]);
+        table.removeColumn(hidden);
+        table.addColumn(hidden);
+        table.moveColumn(last_pos, new_pos);
+        */
                 
         JScrollPane scrollPane = new JScrollPane(table);
         table.setFillsViewportHeight(true);
@@ -182,6 +183,8 @@ public class SearchResults extends javax.swing.JPanel {
                                 int row, int column) {
 
             // int idx = table.convertColumnIndexToModel(colunn)
+            String txtVal = "";
+            String txtToolTip = new String();
             int idx = table.convertColumnIndexToModel(column);
             switch (idx) {
                 case SearchResult.SIZE: // Handle Size
@@ -192,16 +195,16 @@ public class SearchResults extends javax.swing.JPanel {
                         mag ++; // KB, MB, GB, TB, etc
                         val /= 1024;
                     }
-                    setText(String.format("%.1f %s", val, MAG_NAMES[mag]));
+                    txtVal = String.format("%.1f %s", val, MAG_NAMES[mag]);
                     break;
                 case SearchResult.CREATED: // Handle Date
                 case SearchResult.ACCESSED:
                 case SearchResult.MODIFIED:
                     FileTime ft = (FileTime)value;
                     LocalDateTime ldt = LocalDateTime.ofInstant(ft.toInstant(), ZoneId.systemDefault());
-                    
-                    setText(ldt.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)));
-                    
+                    txtVal = ldt.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT));
+                    // ldt = LocalDateTime.ofInstant(ft.toInstant(), ZoneId.systemDefault());
+                    txtToolTip = ldt.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.FULL, FormatStyle.MEDIUM));
                     break;
                 case SearchResult.FLAGS: // Handle Flags
                     int flags = (int)value;
@@ -214,22 +217,35 @@ public class SearchResults extends javax.swing.JPanel {
                     if (flags == SearchResult.SYMBOLIC_LINK){
                         flagText.add("SYMBOLIC");
                     }
-                    setText(String.join(", ", flagText));
+                    txtVal = String.join(", ", flagText); 
+                    if (txtVal.isEmpty())
+                    {
+                        txtToolTip = "Normal file";
+                    }
                     break;
                 case SearchResult.COUNT: // Handle Count
                     int count = (int)value;
                     if (count < 0)
                     {
-                        setText("N/A"); // Not applicable
+                        txtVal = "N/A"; // Not applicable
+                        txtToolTip = "Not applicable";
                        break;
-                    } // Otherwise use default renderer
+                    } else {
+                        txtToolTip = String.format("%d Match%s", count, (count > 1 ? "es" : ""));
+                    }
                 default:
-                    this.setText(value.toString());
+                    txtVal = value.toString();
                     break;
             }
+
+            // Create text, and tooltips to match
+            setText(txtVal);
+            if (txtToolTip.isEmpty()) txtToolTip = txtVal;
+            if (!txtToolTip.isEmpty()) setToolTipText(txtToolTip);
             
             // Allow selection
-            if (isSelected) {
+            if (isSelected)
+            {
                 // selectedBorder is a solid border in the color
                 setBackground(table.getSelectionBackground());
                 setForeground(table.getSelectionForeground());
@@ -239,7 +255,6 @@ public class SearchResults extends javax.swing.JPanel {
                 setForeground(table.getForeground());
             }
 
-            setToolTipText("hello world!!"); //Discussed in the following section
             return this;
         }
     }

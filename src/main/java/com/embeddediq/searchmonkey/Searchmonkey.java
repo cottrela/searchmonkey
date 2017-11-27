@@ -49,7 +49,7 @@ public class Searchmonkey extends javax.swing.JFrame {
         
         
         SearchEngine engine = new SearchEngine(startingDir, finder);
-        SearchResults panel = new SearchResults(queue, 200);
+        SearchResultsTable panel = new SearchResultsTable(queue, 200);
         desktopPane.add(panel);
         engine.start();
         panel.start();
