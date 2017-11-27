@@ -8,6 +8,12 @@ package com.embeddediq.searchmonkey;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.net.URL;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import java.nio.file.PathMatcher;
+import java.nio.file.Paths;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Pattern;
 import javax.swing.ImageIcon;
 
 /**
@@ -26,6 +32,27 @@ public class Searchmonkey extends javax.swing.JFrame {
         URL url = getClass().getResource("/images/searchmonkey-300x300.png");
         Toolkit kit = Toolkit.getDefaultToolkit();
         setIconImage(kit.createImage(url));
+        
+        
+        // Choose starting folder
+        Path startingDir = Paths.get("C:\\");
+        //String globPath = "*.{doc,docx}";
+        //PathMatcher path = FileSystems.getDefault().getPathMatcher("glob:" + globPath);
+        String regexPath = ".*\\.doc[x]?";
+        PathMatcher path = FileSystems.getDefault().getPathMatcher("regex:" + regexPath);
+
+        // PathMatcher path = new PathMatcher();
+        SearchResultQueue queue = new SearchResultQueue(200);
+        AtomicBoolean cancel = new AtomicBoolean(false);
+        ContentMatch match = new ContentMatch("a");
+        PathFinder finder = new PathFinder(path, queue, cancel, match);
+        
+        
+        SearchEngine engine = new SearchEngine(startingDir, finder);
+        SearchResults panel = new SearchResults(queue, 200);
+        desktopPane.add(panel);
+        engine.start();
+        panel.start();
     }
 
     /**
@@ -55,6 +82,8 @@ public class Searchmonkey extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Searchmonkey 3.0");
+
+        desktopPane.setLayout(new java.awt.BorderLayout());
 
         fileMenu.setMnemonic('f');
         fileMenu.setText("File");

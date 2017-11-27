@@ -6,7 +6,6 @@ package com.embeddediq.searchmonkey;
  * and open the template in the editor.
  */
 
-import com.embeddediq.searchmonkey.SearchEngine;
 import com.embeddediq.searchmonkey.SearchEngine.*;
 import java.io.IOException;
 import org.junit.After;
@@ -20,6 +19,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -46,53 +47,48 @@ public class TestFinder {
     public void tearDown() {
     }
 
-    // TODO add test methods here.
-    // The methods must be annotated with annotation @Test. For example:
-    //
-    // @Test
-    // public void hello() {}
-    @Test
-    public void searchAllFiles() throws IOException
-    {
-        System.out.println("searchAllFiles");
-        Path startingDir = Paths.get("C:\\");
-        String path_pattern = ".svn";
-        String content_pattern = "hello";
-
-        SearchEngine s = new SearchEngine();
-        GlobPathFinder finder;
-        finder = s.new GlobPathFinder(path_pattern);
-        Files.walkFileTree(startingDir, finder);
-        finder.done();
-
-        // Regex search
-        String path_regex = "[0-9]+(.*)?.doc";
-        String content_regex = "hello";
-        RegexPathFinder finder2;
-        finder2 = s.new RegexPathFinder(path_regex);
-        Files.walkFileTree(startingDir, finder2);
-        finder2.done();
-
-    }
-
-        // TODO add test methods here.
-    // The methods must be annotated with annotation @Test. For example:
-    //
-    // @Test
-    // public void hello() {}
     @Test
     public void searchForContent() throws IOException
     {
         System.out.println("searchForContent");
         Path startingDir = Paths.get("C:\\Users\\cottr\\Documents\\NetBeansProjects\\trunk\\target\\surefire-reports\\com.embeddediq.searchmonkey.SearchEngineTest.txt");
 
-        SearchEngine s = new SearchEngine();
-        ContentMatch m = s.new ContentMatch("Error");
-        boolean result = m.CheckContent(startingDir);
-        if (!result)
+        // SearchEngine s = new SearchEngine();
+        ContentMatch m = new ContentMatch("Error");
+        int result = m.CheckContent(startingDir);
+        if (result == 0)
         {
             fail("Error! Could not find text!");
         }
         System.out.println("done");
+    }
+
+    @Test
+    public void searchAllFiles() throws IOException
+    {
+        System.out.println("searchAllFiles");
+        
+        Path startingDir = Paths.get("C:\\");
+        String path_pattern = "*.{doc,docx}";
+        String content_pattern = "a";
+        
+        SearchResultQueue queue = new SearchResultQueue(200);
+        AtomicBoolean cancel = new AtomicBoolean(false);
+
+        //SearchEngine s = new SearchEngine();
+        PathFinder finder;
+        finder = new PathFinder(path_pattern, queue, cancel, new ContentMatch(content_pattern));
+        Files.walkFileTree(startingDir, finder);
+
+        // Regex search
+        String path_regex = "[0-9]+(.*)?.doc";
+        String content_regex = "a";
+        PathFinder finder2;
+        finder2 = new PathFinder(Pattern.compile(path_regex), queue, cancel, new ContentMatch(Pattern.compile(content_regex)));
+        Files.walkFileTree(startingDir, finder2);
+
+        // Display all results
+        queue.forEach((r) -> System.out.println(r.fileName));
+        queue.clear();
     }
 }
