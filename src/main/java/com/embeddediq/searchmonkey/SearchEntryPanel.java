@@ -9,6 +9,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -27,22 +28,58 @@ public class SearchEntryPanel extends javax.swing.JPanel {
     }
 
     public class SearchRequest {
-        List<Path> lookIn; // Add one or more folders to look in
-        boolean lookInSubFolders; // List of folders vs look in all
-        PathMatcher fileName; // Filename match object
-        ContentMatch containingText; // Text contents
-        Date modifiedBefore; // null is off, otherwise set to max date
-        Date modifiedAfter; // null is off, otherwise set to min date
-        Date createdBefore; // null is off, otherwise set to max date
-        Date createdAfter; // null is off, otherwise set to min date
-        Date accessedBefore; // null is off, otherwise set to max date
-        Date accessedAfter; // null is off, otherwise set to min date
-        long smallerThan; // <=0 is off, otherwise smaller than file size in bytes
-        long largerThan; // <=0 is off, otherwise smaller than file size in bytes
-        int setFlags; // Flags that must be set to match
-        int unsetFlags; // Flags that must be not set to match
+        public List<Path> lookIn; // Add one or more folders to look in
+        public boolean lookInSubFolders; // List of folders vs look in all
+        public PathMatcher fileName; // Filename match object
+        public ContentMatch containingText; // Text contents
+        public Date modifiedBefore; // null is off, otherwise set to max date
+        public Date modifiedAfter; // null is off, otherwise set to min date
+        public Date createdBefore; // null is off, otherwise set to max date
+        public Date createdAfter; // null is off, otherwise set to min date
+        public Date accessedBefore; // null is off, otherwise set to max date
+        public Date accessedAfter; // null is off, otherwise set to min date
+        public long smallerThan; // <=0 is off, otherwise smaller than file size in bytes
+        public long largerThan; // <=0 is off, otherwise smaller than file size in bytes
+        public int setFlags; // Flags that must be set to match
+        public int unsetFlags; // Flags that must be not set to match
     }
     
+    private SearchRequest getSearchRequest() {
+        SearchRequest req = new SearchRequest();
+        String strItem;
+        
+        // Get look in folder
+        req.lookIn = new ArrayList<>();
+        Object folder = jLookIn.getSelectedItem();
+        if (folder.getClass().equals(String.class))
+        {
+            strItem = (String)folder;
+            req.lookIn.add(Paths.get(strItem));
+        }
+        else if (folder.getClass().equals(List.class))
+        { // Check for list
+            for (String item: (List<String>)folder)
+            {
+                req.lookIn.add(Paths.get(item));
+            }
+        } else { // Unsupported
+            System.out.println("Error! Unsupported class type..");
+        }
+        req.lookInSubFolders = jSubFolders.isSelected();
+        
+        // Get filename folder
+        strItem = (String)jFileName.getSelectedItem();
+        req.fileName = FileSystems.getDefault().getPathMatcher(prefix + strItem);
+        
+        // Get containing text
+        strItem = (String)jContainingText.getSelectedItem();
+        Pattern regex = Pattern.compile(strItem);
+        req.containingText = new ContentMatch(regex);
+
+        return req;
+        
+    }
+
     public Path getPath() {
        
         // Choose starting folder
@@ -122,6 +159,8 @@ public class SearchEntryPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        FilenameSearchType = new javax.swing.ButtonGroup();
+        ContentSearchType = new javax.swing.ButtonGroup();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -131,22 +170,22 @@ public class SearchEntryPanel extends javax.swing.JPanel {
         jModifiedPanel = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jToggleButton5 = new javax.swing.JToggleButton();
-        jSpinner5 = new javax.swing.JSpinner();
+        jBeforeSpinner = new javax.swing.JSpinner();
         jButton6 = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jToggleButton4 = new javax.swing.JToggleButton();
-        jSpinner4 = new javax.swing.JSpinner();
+        jAfterSpinner = new javax.swing.JSpinner();
         jButton3 = new javax.swing.JButton();
         jLookInPanel = new javax.swing.JPanel();
-        jCheckBox2 = new javax.swing.JCheckBox();
+        jSubFolders = new javax.swing.JCheckBox();
         jLookIn = new javax.swing.JComboBox<>();
         jButton9 = new javax.swing.JButton();
         jButton10 = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         jToggleButton1 = new javax.swing.JToggleButton();
-        jSpinner1 = new javax.swing.JSpinner();
+        jGreaterThanSpinner = new javax.swing.JSpinner();
         jToggleButton2 = new javax.swing.JToggleButton();
-        jSpinner2 = new javax.swing.JSpinner();
+        jLessThanSpinner = new javax.swing.JSpinner();
         jComboBox4 = new javax.swing.JComboBox<>();
         jPanel6 = new javax.swing.JPanel();
         jContainingText = new javax.swing.JComboBox<>();
@@ -157,6 +196,16 @@ public class SearchEntryPanel extends javax.swing.JPanel {
         jFileName = new javax.swing.JComboBox<>();
         jButton4 = new javax.swing.JButton();
         jPanel8 = new javax.swing.JPanel();
+        jRadioButton1 = new javax.swing.JRadioButton();
+        jRadioButton2 = new javax.swing.JRadioButton();
+        jRadioButton3 = new javax.swing.JRadioButton();
+        jRadioButton4 = new javax.swing.JRadioButton();
+        jCheckBox2 = new javax.swing.JCheckBox();
+        jCheckBox3 = new javax.swing.JCheckBox();
+        jCheckBox4 = new javax.swing.JCheckBox();
+        jCheckBox5 = new javax.swing.JCheckBox();
+        jCheckBox6 = new javax.swing.JCheckBox();
+        jCheckBox7 = new javax.swing.JCheckBox();
         jPanel9 = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
@@ -179,9 +228,12 @@ public class SearchEntryPanel extends javax.swing.JPanel {
         jToggleButton5.setText("Before:");
         jToggleButton5.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
-        jSpinner5.setModel(new javax.swing.SpinnerDateModel());
+        jBeforeSpinner.setModel(new javax.swing.SpinnerDateModel());
 
         jButton6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/calendar.png"))); // NOI18N
+        jButton6.setBorder(null);
+        jButton6.setBorderPainted(false);
+        jButton6.setContentAreaFilled(false);
         jButton6.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButton6.setMaximumSize(new java.awt.Dimension(23, 23));
         jButton6.setMinimumSize(new java.awt.Dimension(23, 23));
@@ -193,7 +245,7 @@ public class SearchEntryPanel extends javax.swing.JPanel {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addComponent(jToggleButton5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jSpinner5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jBeforeSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -205,18 +257,22 @@ public class SearchEntryPanel extends javax.swing.JPanel {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jToggleButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jSpinner5))
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jBeforeSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
         jToggleButton4.setText("After:");
         jToggleButton4.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
-        jSpinner4.setModel(new javax.swing.SpinnerDateModel());
+        jAfterSpinner.setModel(new javax.swing.SpinnerDateModel());
 
         jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/calendar.png"))); // NOI18N
+        jButton3.setBorder(null);
+        jButton3.setBorderPainted(false);
+        jButton3.setContentAreaFilled(false);
         jButton3.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButton3.setMaximumSize(new java.awt.Dimension(23, 23));
         jButton3.setMinimumSize(new java.awt.Dimension(23, 23));
@@ -228,7 +284,7 @@ public class SearchEntryPanel extends javax.swing.JPanel {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addComponent(jToggleButton4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jSpinner4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jAfterSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -239,8 +295,8 @@ public class SearchEntryPanel extends javax.swing.JPanel {
                 .addGap(1, 1, 1)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jSpinner4)
-                    .addComponent(jToggleButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jToggleButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jAfterSpinner))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -258,14 +314,14 @@ public class SearchEntryPanel extends javax.swing.JPanel {
             jModifiedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
             .addGroup(jModifiedPanelLayout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
-                .addGroup(jModifiedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jModifiedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 0, 0))
         );
 
-        jCheckBox2.setSelected(true);
-        jCheckBox2.setText("Sub-folders");
+        jSubFolders.setSelected(true);
+        jSubFolders.setText("Sub-folders");
 
         jLookIn.setEditable(true);
         jLookIn.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
@@ -276,9 +332,15 @@ public class SearchEntryPanel extends javax.swing.JPanel {
         });
 
         jButton9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/folder-150113_640.png"))); // NOI18N
+        jButton9.setBorder(null);
+        jButton9.setBorderPainted(false);
+        jButton9.setContentAreaFilled(false);
         jButton9.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
         jButton10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/folder-tree.png"))); // NOI18N
+        jButton10.setBorder(null);
+        jButton10.setBorderPainted(false);
+        jButton10.setContentAreaFilled(false);
         jButton10.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
         javax.swing.GroupLayout jLookInPanelLayout = new javax.swing.GroupLayout(jLookInPanel);
@@ -289,7 +351,7 @@ public class SearchEntryPanel extends javax.swing.JPanel {
                 .addGap(0, 0, 0)
                 .addComponent(jLookIn, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jCheckBox2)
+                .addComponent(jSubFolders)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jButton9)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -302,22 +364,21 @@ public class SearchEntryPanel extends javax.swing.JPanel {
                 .addGap(0, 0, 0)
                 .addGroup(jLookInPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLookIn, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jCheckBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jSubFolders, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton9, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton10))
+                    .addComponent(jButton10, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 0, 0))
         );
 
         jToggleButton1.setText("≤");
         jToggleButton1.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
-        jSpinner1.setModel(new javax.swing.SpinnerNumberModel(0.0d, 0.0d, null, 1.0d));
+        jGreaterThanSpinner.setModel(new javax.swing.SpinnerNumberModel(0.0d, 0.0d, null, 1.0d));
 
-        jToggleButton2.setSelected(true);
         jToggleButton2.setText("≥");
         jToggleButton2.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
-        jSpinner2.setModel(new javax.swing.SpinnerNumberModel(0.0d, 0.0d, null, 1.0d));
+        jLessThanSpinner.setModel(new javax.swing.SpinnerNumberModel(0.0d, 0.0d, null, 1.0d));
 
         jComboBox4.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Size (Bytes):", "Size (KBytes):", "Size (MBytes):", "Size (GBytes):", "Size (TBytes):" }));
         jComboBox4.setSelectedIndex(1);
@@ -332,11 +393,11 @@ public class SearchEntryPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jToggleButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jGreaterThanSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jToggleButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSpinner2, javax.swing.GroupLayout.DEFAULT_SIZE, 69, Short.MAX_VALUE)
+                .addComponent(jLessThanSpinner, javax.swing.GroupLayout.DEFAULT_SIZE, 69, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
@@ -348,8 +409,8 @@ public class SearchEntryPanel extends javax.swing.JPanel {
                         .addGap(1, 1, 1)
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jComboBox4)
-                            .addComponent(jSpinner1)
-                            .addComponent(jSpinner2)))
+                            .addComponent(jGreaterThanSpinner)
+                            .addComponent(jLessThanSpinner)))
                     .addComponent(jToggleButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jToggleButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
@@ -358,9 +419,15 @@ public class SearchEntryPanel extends javax.swing.JPanel {
         jContainingText.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         jButton8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/help.png"))); // NOI18N
+        jButton8.setBorder(null);
+        jButton8.setBorderPainted(false);
+        jButton8.setContentAreaFilled(false);
         jButton8.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
         jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/074082-rounded-glossy-black-icon-alphanumeric-font-size.png"))); // NOI18N
+        jButton5.setBorder(null);
+        jButton5.setBorderPainted(false);
+        jButton5.setContentAreaFilled(false);
         jButton5.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
@@ -380,16 +447,22 @@ public class SearchEntryPanel extends javax.swing.JPanel {
             .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                 .addComponent(jContainingText, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addComponent(jButton8))
+                .addComponent(jButton8, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         jButton7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/help.png"))); // NOI18N
+        jButton7.setBorder(null);
+        jButton7.setBorderPainted(false);
+        jButton7.setContentAreaFilled(false);
         jButton7.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
         jFileName.setEditable(true);
         jFileName.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/074082-rounded-glossy-black-icon-alphanumeric-font-size.png"))); // NOI18N
+        jButton4.setBorder(null);
+        jButton4.setBorderPainted(false);
+        jButton4.setContentAreaFilled(false);
         jButton4.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
@@ -409,7 +482,7 @@ public class SearchEntryPanel extends javax.swing.JPanel {
             .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                 .addComponent(jFileName, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addComponent(jButton7))
+                .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -456,21 +529,88 @@ public class SearchEntryPanel extends javax.swing.JPanel {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jModifiedPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
 
         jTabbedPane1.addTab("Main", jPanel1);
+
+        FilenameSearchType.add(jRadioButton1);
+        jRadioButton1.setText("Search filenames using 'glob' expressions e.g. *.txt");
+
+        FilenameSearchType.add(jRadioButton2);
+        jRadioButton2.setText("Search filenames using regular expressions");
+
+        ContentSearchType.add(jRadioButton3);
+        jRadioButton3.setSelected(true);
+        jRadioButton3.setText("Search file content using key words");
+
+        ContentSearchType.add(jRadioButton4);
+        jRadioButton4.setText("Search file content using regular expressions");
+
+        jCheckBox2.setText("Ignore hidden files");
+
+        jCheckBox3.setText("Ignore system folders and files");
+
+        jCheckBox4.setText("Ignore dot folders e.g. .svn");
+
+        jCheckBox5.setText("Ignore dot files e.g. .backup");
+
+        jCheckBox6.setText("Ignore hidden folders");
+
+        jCheckBox7.setText("Ignore symbolic links and shortcuts");
 
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
         jPanel8Layout.setHorizontalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 775, Short.MAX_VALUE)
+            .addGroup(jPanel8Layout.createSequentialGroup()
+                .addGap(39, 39, 39)
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel8Layout.createSequentialGroup()
+                        .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jRadioButton2)
+                            .addComponent(jRadioButton1)
+                            .addComponent(jCheckBox2))
+                        .addGap(39, 39, 39)
+                        .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jCheckBox6)
+                            .addComponent(jRadioButton4)
+                            .addComponent(jRadioButton3)))
+                    .addGroup(jPanel8Layout.createSequentialGroup()
+                        .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jCheckBox5)
+                            .addComponent(jCheckBox3))
+                        .addGap(137, 137, 137)
+                        .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jCheckBox7)
+                            .addComponent(jCheckBox4))))
+                .addContainerGap(185, Short.MAX_VALUE))
         );
         jPanel8Layout.setVerticalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 161, Short.MAX_VALUE)
+            .addGroup(jPanel8Layout.createSequentialGroup()
+                .addGap(22, 22, 22)
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jRadioButton2)
+                    .addComponent(jRadioButton4))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jRadioButton3)
+                    .addComponent(jRadioButton1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jCheckBox2)
+                    .addComponent(jCheckBox6))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jCheckBox4)
+                    .addComponent(jCheckBox5))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jCheckBox3)
+                    .addComponent(jCheckBox7))
+                .addContainerGap(21, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Options", jPanel8);
@@ -533,8 +673,8 @@ public class SearchEntryPanel extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTabbedPane1)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jTabbedPane1))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -565,6 +705,10 @@ public class SearchEntryPanel extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup ContentSearchType;
+    private javax.swing.ButtonGroup FilenameSearchType;
+    private javax.swing.JSpinner jAfterSpinner;
+    private javax.swing.JSpinner jBeforeSpinner;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton10;
     private javax.swing.JButton jButton2;
@@ -577,13 +721,20 @@ public class SearchEntryPanel extends javax.swing.JPanel {
     private javax.swing.JButton jButton9;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JCheckBox jCheckBox2;
+    private javax.swing.JCheckBox jCheckBox3;
+    private javax.swing.JCheckBox jCheckBox4;
+    private javax.swing.JCheckBox jCheckBox5;
+    private javax.swing.JCheckBox jCheckBox6;
+    private javax.swing.JCheckBox jCheckBox7;
     private javax.swing.JComboBox<String> jComboBox4;
     private javax.swing.JComboBox<String> jContainingText;
     private javax.swing.JComboBox<String> jFileName;
+    private javax.swing.JSpinner jGreaterThanSpinner;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JSpinner jLessThanSpinner;
     private javax.swing.JComboBox<String> jLookIn;
     private javax.swing.JPanel jLookInPanel;
     private javax.swing.JPanel jModifiedPanel;
@@ -596,10 +747,11 @@ public class SearchEntryPanel extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
-    private javax.swing.JSpinner jSpinner1;
-    private javax.swing.JSpinner jSpinner2;
-    private javax.swing.JSpinner jSpinner4;
-    private javax.swing.JSpinner jSpinner5;
+    private javax.swing.JRadioButton jRadioButton1;
+    private javax.swing.JRadioButton jRadioButton2;
+    private javax.swing.JRadioButton jRadioButton3;
+    private javax.swing.JRadioButton jRadioButton4;
+    private javax.swing.JCheckBox jSubFolders;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JToggleButton jToggleButton1;
     private javax.swing.JToggleButton jToggleButton2;
