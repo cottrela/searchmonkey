@@ -15,6 +15,7 @@ import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.Timer;
 import java.awt.Component;
+import java.awt.FontMetrics;
 import java.nio.file.attribute.FileTime;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -23,6 +24,7 @@ import java.time.format.FormatStyle;
 import javax.swing.JLabel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 
 /**
  *
@@ -47,7 +49,7 @@ public class SearchResultsTable extends javax.swing.JPanel {
         table = new JTable(myModel);
         table.setDefaultRenderer(Object.class, new SearchMonkeyTableRenderer());
         table.setAutoCreateRowSorter(true);
-        
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         
         // Show/hide columns using this code
         /*
@@ -66,7 +68,21 @@ public class SearchResultsTable extends javax.swing.JPanel {
         // Start thread timer
         timer = new Timer(rateMillis, new ResultsListener(queue, rowData));
     }
-    
+ 
+    public void resizeAllColumnWidth() {
+    final TableColumnModel columnModel = table.getColumnModel();
+    for (int column = 0; column < table.getColumnCount(); column++) {
+        int width = 15; // Min width
+        for (int row = 0; row < table.getRowCount(); row++) {
+            TableCellRenderer renderer = table.getCellRenderer(row, column);
+            Component comp = table.prepareRenderer(renderer, row, column);
+            width = Math.max(comp.getPreferredSize().width +1 , width);
+        }
+        if(width > 300)
+            width=300;
+        columnModel.getColumn(column).setPreferredWidth(width);
+    }
+}
 
     // Call this at the start of the search
     public void start()
@@ -104,19 +120,6 @@ public class SearchResultsTable extends javax.swing.JPanel {
             }
         }        
     }
-
-    /*
-    private List<Integer> ColumnOrder; //  = new ArrayList<>();
-    public void insertColumn(int columnIdent, int position)
-    {
-        ColumnOrder.add(columnIdent, position);
-    }
-    public void removeColumn(int position)
-    {
-        ColumnOrder.remove(position);
-    }
-    */
-    
     
     class MyTableModel extends AbstractTableModel 
     {
@@ -183,7 +186,7 @@ public class SearchResultsTable extends javax.swing.JPanel {
                                 int row, int column) {
 
             // int idx = table.convertColumnIndexToModel(colunn)
-            String txtVal = "";
+            String txtVal;
             String txtToolTip = new String();
             int idx = table.convertColumnIndexToModel(column);
             switch (idx) {
@@ -203,7 +206,6 @@ public class SearchResultsTable extends javax.swing.JPanel {
                     FileTime ft = (FileTime)value;
                     LocalDateTime ldt = LocalDateTime.ofInstant(ft.toInstant(), ZoneId.systemDefault());
                     txtVal = ldt.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT));
-                    // ldt = LocalDateTime.ofInstant(ft.toInstant(), ZoneId.systemDefault());
                     txtToolTip = ldt.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.FULL, FormatStyle.MEDIUM));
                     break;
                 case SearchResult.FLAGS: // Handle Flags
