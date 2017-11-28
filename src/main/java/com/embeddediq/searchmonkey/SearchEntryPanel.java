@@ -5,14 +5,16 @@
  */
 package com.embeddediq.searchmonkey;
 
+import java.awt.Component;
+import java.awt.event.ActionEvent;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
+import javax.swing.SpinnerDateModel;
 
 /**
  *
@@ -27,25 +29,13 @@ public class SearchEntryPanel extends javax.swing.JPanel {
         initComponents();
     }
 
-    public class SearchRequest {
-        public List<Path> lookIn; // Add one or more folders to look in
-        public boolean lookInSubFolders; // List of folders vs look in all
-        public PathMatcher fileName; // Filename match object
-        public ContentMatch containingText; // Text contents
-        public Date modifiedBefore; // null is off, otherwise set to max date
-        public Date modifiedAfter; // null is off, otherwise set to min date
-        public Date createdBefore; // null is off, otherwise set to max date
-        public Date createdAfter; // null is off, otherwise set to min date
-        public Date accessedBefore; // null is off, otherwise set to max date
-        public Date accessedAfter; // null is off, otherwise set to min date
-        public long smallerThan; // <=0 is off, otherwise smaller than file size in bytes
-        public long largerThan; // <=0 is off, otherwise smaller than file size in bytes
-        public int setFlags; // Flags that must be set to match
-        public int unsetFlags; // Flags that must be not set to match
-    }
+    private final static int FILENAME_GLOB = 0;
+    private final static int FILENAME_REGEX = 1;
+    private final static String[] FILENAME_PREFIX_LIST = new String[] { "glob:", "regex:" };
+    String prefix = FILENAME_PREFIX_LIST[FILENAME_GLOB]; // "glob:"; // Either "glob:" or "regex:"
     
-    private SearchRequest getSearchRequest() {
-        SearchRequest req = new SearchRequest();
+    private SearchEntry getSearchRequest() {
+        SearchEntry req = new SearchEntry();
         String strItem;
         
         // Get look in folder
@@ -72,12 +62,31 @@ public class SearchEntryPanel extends javax.swing.JPanel {
         req.fileName = FileSystems.getDefault().getPathMatcher(prefix + strItem);
         
         // Get containing text
-        strItem = (String)jContainingText.getSelectedItem();
-        Pattern regex = Pattern.compile(strItem);
-        req.containingText = new ContentMatch(regex);
+        if (jContainingText.getSelectedItem() != null)
+        {
+            strItem = (String)jContainingText.getSelectedItem();
+            Pattern regex = Pattern.compile(strItem);
+            req.containingText = new ContentMatch(regex);
+        }
+        
+        // Get min/max size
+        int scaler = 1024^jFileSizeScaler.getSelectedIndex(); // 1024^0 = 1; 1024^1=1K, 1024^2=1M, etc
+        if (jLessThanToggle.isSelected()) {
+            req.lessThan = (long)((double)scaler * (double)jLessThanSpinner.getValue());
+        }
+        if (jGreaterThanToggle.isSelected()) {
+            req.greaterThan = (long)((double)scaler * (double)jGreaterThanSpinner.getValue());
+        }
+
+        // Get before/after date
+        if (jBeforeToggle.isSelected()) {
+            req.modifiedAfter = ((SpinnerDateModel)jAfterSpinner.getModel()).getDate();
+        }
+        if (jBeforeToggle.isSelected()) {
+            req.modifiedBefore = ((SpinnerDateModel)jBeforeSpinner.getModel()).getDate();
+        }
 
         return req;
-        
     }
 
     public Path getPath() {
@@ -86,11 +95,6 @@ public class SearchEntryPanel extends javax.swing.JPanel {
         String item = (String)jLookIn.getSelectedItem();
         return Paths.get(item);
     }
-
-    private final static int FILENAME_GLOB = 0;
-    private final static int FILENAME_REGEX = 1;
-    private final static String[] FILENAME_PREFIX_LIST = new String[] { "glob:", "regex:" };
-    String prefix = FILENAME_PREFIX_LIST[FILENAME_GLOB]; // "glob:"; // Either "glob:" or "regex:"
     
     public void setLookInRegex(boolean enable)
     {
@@ -169,11 +173,11 @@ public class SearchEntryPanel extends javax.swing.JPanel {
         jLabel5 = new javax.swing.JLabel();
         jModifiedPanel = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
-        jToggleButton5 = new javax.swing.JToggleButton();
+        jBeforeToggle = new javax.swing.JToggleButton();
         jBeforeSpinner = new javax.swing.JSpinner();
         jButton6 = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
-        jToggleButton4 = new javax.swing.JToggleButton();
+        jAfterToggle = new javax.swing.JToggleButton();
         jAfterSpinner = new javax.swing.JSpinner();
         jButton3 = new javax.swing.JButton();
         jLookInPanel = new javax.swing.JPanel();
@@ -182,11 +186,11 @@ public class SearchEntryPanel extends javax.swing.JPanel {
         jButton9 = new javax.swing.JButton();
         jButton10 = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
-        jToggleButton1 = new javax.swing.JToggleButton();
+        jGreaterThanToggle = new javax.swing.JToggleButton();
         jGreaterThanSpinner = new javax.swing.JSpinner();
-        jToggleButton2 = new javax.swing.JToggleButton();
+        jLessThanToggle = new javax.swing.JToggleButton();
         jLessThanSpinner = new javax.swing.JSpinner();
-        jComboBox4 = new javax.swing.JComboBox<>();
+        jFileSizeScaler = new javax.swing.JComboBox<>();
         jPanel6 = new javax.swing.JPanel();
         jContainingText = new javax.swing.JComboBox<>();
         jButton8 = new javax.swing.JButton();
@@ -207,6 +211,26 @@ public class SearchEntryPanel extends javax.swing.JPanel {
         jCheckBox6 = new javax.swing.JCheckBox();
         jCheckBox7 = new javax.swing.JCheckBox();
         jPanel9 = new javax.swing.JPanel();
+        jLabel6 = new javax.swing.JLabel();
+        jModifiedPanel1 = new javax.swing.JPanel();
+        jPanel10 = new javax.swing.JPanel();
+        jBeforeToggle1 = new javax.swing.JToggleButton();
+        jBeforeSpinner1 = new javax.swing.JSpinner();
+        jButton11 = new javax.swing.JButton();
+        jPanel11 = new javax.swing.JPanel();
+        jAfterToggle1 = new javax.swing.JToggleButton();
+        jAfterSpinner1 = new javax.swing.JSpinner();
+        jButton12 = new javax.swing.JButton();
+        jLabel7 = new javax.swing.JLabel();
+        jModifiedPanel2 = new javax.swing.JPanel();
+        jPanel12 = new javax.swing.JPanel();
+        jBeforeToggle2 = new javax.swing.JToggleButton();
+        jBeforeSpinner2 = new javax.swing.JSpinner();
+        jButton13 = new javax.swing.JButton();
+        jPanel13 = new javax.swing.JPanel();
+        jAfterToggle2 = new javax.swing.JToggleButton();
+        jAfterSpinner2 = new javax.swing.JSpinner();
+        jButton14 = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
@@ -225,8 +249,8 @@ public class SearchEntryPanel extends javax.swing.JPanel {
         jLabel5.setLabelFor(jModifiedPanel);
         jLabel5.setText("Modified:");
 
-        jToggleButton5.setText("Before:");
-        jToggleButton5.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jBeforeToggle.setText("Before:");
+        jBeforeToggle.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
         jBeforeSpinner.setModel(new javax.swing.SpinnerDateModel());
 
@@ -243,7 +267,7 @@ public class SearchEntryPanel extends javax.swing.JPanel {
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addComponent(jToggleButton5)
+                .addComponent(jBeforeToggle)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jBeforeSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -255,7 +279,7 @@ public class SearchEntryPanel extends javax.swing.JPanel {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(1, 1, 1)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jToggleButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jBeforeToggle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -264,8 +288,8 @@ public class SearchEntryPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        jToggleButton4.setText("After:");
-        jToggleButton4.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jAfterToggle.setText("After:");
+        jAfterToggle.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
         jAfterSpinner.setModel(new javax.swing.SpinnerDateModel());
 
@@ -282,7 +306,7 @@ public class SearchEntryPanel extends javax.swing.JPanel {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addComponent(jToggleButton4)
+                .addComponent(jAfterToggle)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jAfterSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -295,7 +319,7 @@ public class SearchEntryPanel extends javax.swing.JPanel {
                 .addGap(1, 1, 1)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jToggleButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jAfterToggle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jAfterSpinner))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -370,18 +394,18 @@ public class SearchEntryPanel extends javax.swing.JPanel {
                 .addGap(0, 0, 0))
         );
 
-        jToggleButton1.setText("≤");
-        jToggleButton1.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jGreaterThanToggle.setText("≤");
+        jGreaterThanToggle.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
         jGreaterThanSpinner.setModel(new javax.swing.SpinnerNumberModel(0.0d, 0.0d, null, 1.0d));
 
-        jToggleButton2.setText("≥");
-        jToggleButton2.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jLessThanToggle.setText("≥");
+        jLessThanToggle.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
         jLessThanSpinner.setModel(new javax.swing.SpinnerNumberModel(0.0d, 0.0d, null, 1.0d));
 
-        jComboBox4.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Size (Bytes):", "Size (KBytes):", "Size (MBytes):", "Size (GBytes):", "Size (TBytes):" }));
-        jComboBox4.setSelectedIndex(1);
+        jFileSizeScaler.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Size (Bytes):", "Size (KBytes):", "Size (MBytes):", "Size (GBytes):", "Size (TBytes):" }));
+        jFileSizeScaler.setSelectedIndex(1);
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -389,13 +413,13 @@ public class SearchEntryPanel extends javax.swing.JPanel {
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(0, 0, 0)
-                .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jFileSizeScaler, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jToggleButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jLessThanToggle, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jGreaterThanSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jToggleButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jGreaterThanToggle, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLessThanSpinner, javax.swing.GroupLayout.DEFAULT_SIZE, 69, Short.MAX_VALUE)
                 .addContainerGap())
@@ -408,11 +432,11 @@ public class SearchEntryPanel extends javax.swing.JPanel {
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addGap(1, 1, 1)
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jComboBox4)
+                            .addComponent(jFileSizeScaler)
                             .addComponent(jGreaterThanSpinner)
                             .addComponent(jLessThanSpinner)))
-                    .addComponent(jToggleButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jToggleButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(jGreaterThanToggle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLessThanToggle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
 
         jContainingText.setEditable(true);
@@ -615,20 +639,231 @@ public class SearchEntryPanel extends javax.swing.JPanel {
 
         jTabbedPane1.addTab("Options", jPanel8);
 
+        jLabel6.setLabelFor(jModifiedPanel);
+        jLabel6.setText("Created:");
+
+        jBeforeToggle1.setText("Before:");
+        jBeforeToggle1.setMargin(new java.awt.Insets(0, 0, 0, 0));
+
+        jBeforeSpinner1.setModel(new javax.swing.SpinnerDateModel());
+
+        jButton11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/calendar.png"))); // NOI18N
+        jButton11.setBorder(null);
+        jButton11.setBorderPainted(false);
+        jButton11.setContentAreaFilled(false);
+        jButton11.setMargin(new java.awt.Insets(0, 0, 0, 0));
+
+        javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
+        jPanel10.setLayout(jPanel10Layout);
+        jPanel10Layout.setHorizontalGroup(
+            jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel10Layout.createSequentialGroup()
+                .addComponent(jBeforeToggle1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jBeforeSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton11, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        jPanel10Layout.setVerticalGroup(
+            jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel10Layout.createSequentialGroup()
+                .addGap(1, 1, 1)
+                .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jBeforeToggle1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel10Layout.createSequentialGroup()
+                        .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jButton11)
+                            .addComponent(jBeforeSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+
+        jAfterToggle1.setText("After:");
+        jAfterToggle1.setMargin(new java.awt.Insets(0, 0, 0, 0));
+
+        jAfterSpinner1.setModel(new javax.swing.SpinnerDateModel());
+
+        jButton12.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/calendar.png"))); // NOI18N
+        jButton12.setBorder(null);
+        jButton12.setBorderPainted(false);
+        jButton12.setContentAreaFilled(false);
+        jButton12.setMargin(new java.awt.Insets(0, 0, 0, 0));
+
+        javax.swing.GroupLayout jPanel11Layout = new javax.swing.GroupLayout(jPanel11);
+        jPanel11.setLayout(jPanel11Layout);
+        jPanel11Layout.setHorizontalGroup(
+            jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel11Layout.createSequentialGroup()
+                .addComponent(jAfterToggle1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jAfterSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton12, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        jPanel11Layout.setVerticalGroup(
+            jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel11Layout.createSequentialGroup()
+                .addGap(1, 1, 1)
+                .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jButton12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jAfterToggle1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jAfterSpinner1))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout jModifiedPanel1Layout = new javax.swing.GroupLayout(jModifiedPanel1);
+        jModifiedPanel1.setLayout(jModifiedPanel1Layout);
+        jModifiedPanel1Layout.setHorizontalGroup(
+            jModifiedPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jModifiedPanel1Layout.createSequentialGroup()
+                .addComponent(jPanel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0))
+        );
+        jModifiedPanel1Layout.setVerticalGroup(
+            jModifiedPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jModifiedPanel1Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addGroup(jModifiedPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jPanel11, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 0, 0))
+        );
+
+        jLabel7.setLabelFor(jModifiedPanel);
+        jLabel7.setText("Accessed:");
+
+        jBeforeToggle2.setText("Before:");
+        jBeforeToggle2.setMargin(new java.awt.Insets(0, 0, 0, 0));
+
+        jBeforeSpinner2.setModel(new javax.swing.SpinnerDateModel());
+
+        jButton13.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/calendar.png"))); // NOI18N
+        jButton13.setBorder(null);
+        jButton13.setBorderPainted(false);
+        jButton13.setContentAreaFilled(false);
+        jButton13.setMargin(new java.awt.Insets(0, 0, 0, 0));
+
+        javax.swing.GroupLayout jPanel12Layout = new javax.swing.GroupLayout(jPanel12);
+        jPanel12.setLayout(jPanel12Layout);
+        jPanel12Layout.setHorizontalGroup(
+            jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel12Layout.createSequentialGroup()
+                .addComponent(jBeforeToggle2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jBeforeSpinner2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton13, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        jPanel12Layout.setVerticalGroup(
+            jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel12Layout.createSequentialGroup()
+                .addGap(1, 1, 1)
+                .addGroup(jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jBeforeToggle2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel12Layout.createSequentialGroup()
+                        .addGroup(jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jButton13)
+                            .addComponent(jBeforeSpinner2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+
+        jAfterToggle2.setText("After:");
+        jAfterToggle2.setMargin(new java.awt.Insets(0, 0, 0, 0));
+
+        jAfterSpinner2.setModel(new javax.swing.SpinnerDateModel());
+
+        jButton14.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/calendar.png"))); // NOI18N
+        jButton14.setBorder(null);
+        jButton14.setBorderPainted(false);
+        jButton14.setContentAreaFilled(false);
+        jButton14.setMargin(new java.awt.Insets(0, 0, 0, 0));
+
+        javax.swing.GroupLayout jPanel13Layout = new javax.swing.GroupLayout(jPanel13);
+        jPanel13.setLayout(jPanel13Layout);
+        jPanel13Layout.setHorizontalGroup(
+            jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel13Layout.createSequentialGroup()
+                .addComponent(jAfterToggle2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jAfterSpinner2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton14, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        jPanel13Layout.setVerticalGroup(
+            jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel13Layout.createSequentialGroup()
+                .addGap(1, 1, 1)
+                .addGroup(jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jButton14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jAfterToggle2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jAfterSpinner2))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout jModifiedPanel2Layout = new javax.swing.GroupLayout(jModifiedPanel2);
+        jModifiedPanel2.setLayout(jModifiedPanel2Layout);
+        jModifiedPanel2Layout.setHorizontalGroup(
+            jModifiedPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jModifiedPanel2Layout.createSequentialGroup()
+                .addComponent(jPanel13, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanel12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0))
+        );
+        jModifiedPanel2Layout.setVerticalGroup(
+            jModifiedPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jModifiedPanel2Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addGroup(jModifiedPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jPanel13, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel12, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 0, 0))
+        );
+
         javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
         jPanel9.setLayout(jPanel9Layout);
         jPanel9Layout.setHorizontalGroup(
             jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 775, Short.MAX_VALUE)
+            .addGroup(jPanel9Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jModifiedPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jModifiedPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(342, Short.MAX_VALUE))
         );
         jPanel9Layout.setVerticalGroup(
             jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 161, Short.MAX_VALUE)
+            .addGroup(jPanel9Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jModifiedPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jModifiedPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(82, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab("Date", jPanel9);
+        jTabbedPane1.addTab("Advanced", jPanel9);
 
         jButton1.setText("Start");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setText("Stop");
 
@@ -702,15 +937,50 @@ public class SearchEntryPanel extends javax.swing.JPanel {
 //        }
         // TODO add your handling code here:
     }//GEN-LAST:event_jLookInActionPerformed
+    
+    private Searchmonkey parent;
+    public void setParent(Searchmonkey parent)
+    {
+        this.parent = parent;
+    }
+    
+    public void Start()
+    {
+        // Call the parent
+        SearchEntry entry = this.getSearchRequest();
+        parent.Start(entry);
+    }
+    
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        Start();
+        // Allow this event to be called from the container
+        // Call pass this on to the parent listener
+        //Component source = (Component)evt.getSource();
+        //source.getParent().dispatchEvent(evt);
+    }//GEN-LAST:event_jButton1ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup ContentSearchType;
     private javax.swing.ButtonGroup FilenameSearchType;
     private javax.swing.JSpinner jAfterSpinner;
+    private javax.swing.JSpinner jAfterSpinner1;
+    private javax.swing.JSpinner jAfterSpinner2;
+    private javax.swing.JToggleButton jAfterToggle;
+    private javax.swing.JToggleButton jAfterToggle1;
+    private javax.swing.JToggleButton jAfterToggle2;
     private javax.swing.JSpinner jBeforeSpinner;
+    private javax.swing.JSpinner jBeforeSpinner1;
+    private javax.swing.JSpinner jBeforeSpinner2;
+    private javax.swing.JToggleButton jBeforeToggle;
+    private javax.swing.JToggleButton jBeforeToggle1;
+    private javax.swing.JToggleButton jBeforeToggle2;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton10;
+    private javax.swing.JButton jButton11;
+    private javax.swing.JButton jButton12;
+    private javax.swing.JButton jButton13;
+    private javax.swing.JButton jButton14;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
@@ -726,19 +996,29 @@ public class SearchEntryPanel extends javax.swing.JPanel {
     private javax.swing.JCheckBox jCheckBox5;
     private javax.swing.JCheckBox jCheckBox6;
     private javax.swing.JCheckBox jCheckBox7;
-    private javax.swing.JComboBox<String> jComboBox4;
     private javax.swing.JComboBox<String> jContainingText;
     private javax.swing.JComboBox<String> jFileName;
+    private javax.swing.JComboBox<String> jFileSizeScaler;
     private javax.swing.JSpinner jGreaterThanSpinner;
+    private javax.swing.JToggleButton jGreaterThanToggle;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JSpinner jLessThanSpinner;
+    private javax.swing.JToggleButton jLessThanToggle;
     private javax.swing.JComboBox<String> jLookIn;
     private javax.swing.JPanel jLookInPanel;
     private javax.swing.JPanel jModifiedPanel;
+    private javax.swing.JPanel jModifiedPanel1;
+    private javax.swing.JPanel jModifiedPanel2;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel10;
+    private javax.swing.JPanel jPanel11;
+    private javax.swing.JPanel jPanel12;
+    private javax.swing.JPanel jPanel13;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
@@ -753,9 +1033,5 @@ public class SearchEntryPanel extends javax.swing.JPanel {
     private javax.swing.JRadioButton jRadioButton4;
     private javax.swing.JCheckBox jSubFolders;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JToggleButton jToggleButton1;
-    private javax.swing.JToggleButton jToggleButton2;
-    private javax.swing.JToggleButton jToggleButton4;
-    private javax.swing.JToggleButton jToggleButton5;
     // End of variables declaration//GEN-END:variables
 }

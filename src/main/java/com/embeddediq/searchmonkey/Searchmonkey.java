@@ -12,6 +12,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 import javax.swing.ImageIcon;
@@ -33,26 +34,39 @@ public class Searchmonkey extends javax.swing.JFrame {
         Toolkit kit = Toolkit.getDefaultToolkit();
         setIconImage(kit.createImage(url));
         
+        //this.searchEntryPanel1.add
+        // searchEntryPanel1.setSearchResultsTable(panel);
+        searchEntryPanel1.setParent(this);
         
-        // Choose starting folder
-        Path startingDir = Paths.get("C:\\");
-        //String globPath = "*.{doc,docx}";
-        //PathMatcher path = FileSystems.getDefault().getPathMatcher("glob:" + globPath);
-        String regexPath = ".*\\.doc[x]?";
-        PathMatcher path = FileSystems.getDefault().getPathMatcher("regex:" + regexPath);
-
+//        // Example panel
+//        SearchEntry entry = new SearchEntry();
+//        entry.lookIn = new ArrayList<>();
+//        entry.lookIn.add(Paths.get("C:\\"));
+//        entry.lookInSubFolders = true;
+//        entry.fileName = FileSystems.getDefault().getPathMatcher("regex:" + ".*\\.doc[x]?");
+//        entry.containingText = new ContentMatch("a");
+//        Start(entry);
+    }
+    
+    public void Start(SearchEntry entry)
+    {
         // PathMatcher path = new PathMatcher();
         SearchResultQueue queue = new SearchResultQueue(200);
         AtomicBoolean cancel = new AtomicBoolean(false);
-        ContentMatch match = new ContentMatch("a");
-        PathFinder finder = new PathFinder(path, queue, cancel, match);
-        
-        
-        SearchEngine engine = new SearchEngine(startingDir, finder);
-        SearchResultsTable panel = new SearchResultsTable(queue, 200);
-        desktopPane.add(panel);
+        PathFinder finder = new PathFinder(entry.fileName, queue, cancel, entry.containingText);
+
+        SearchEngine engine = new SearchEngine(entry.lookIn.get(0), finder);
+        // SearchResultsTable panel = new SearchResultsTable(); // queue, 200
+        //desktopPane.add(panel);
         engine.start();
-        panel.start();
+        this.searchResultsTable1.start(queue, 200);
+        // panel.start(queue, 200);
+    }
+    
+    private void Stop()
+    {
+        //engine.stop();
+        //panel.stop();
     }
 
     /**
@@ -65,6 +79,10 @@ public class Searchmonkey extends javax.swing.JFrame {
     private void initComponents() {
 
         desktopPane = new javax.swing.JDesktopPane();
+        searchEntryPanel1 = new com.embeddediq.searchmonkey.SearchEntryPanel();
+        jDesktopPane1 = new javax.swing.JDesktopPane();
+        searchResultsTable1 = new com.embeddediq.searchmonkey.SearchResultsTable();
+        searchMatchView1 = new com.embeddediq.searchmonkey.SearchMatchView();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         openMenuItem = new javax.swing.JMenuItem();
@@ -83,7 +101,53 @@ public class Searchmonkey extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Searchmonkey 3.0");
 
-        desktopPane.setLayout(new java.awt.BorderLayout());
+        jDesktopPane1.setLayer(searchResultsTable1, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jDesktopPane1.setLayer(searchMatchView1, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        javax.swing.GroupLayout jDesktopPane1Layout = new javax.swing.GroupLayout(jDesktopPane1);
+        jDesktopPane1.setLayout(jDesktopPane1Layout);
+        jDesktopPane1Layout.setHorizontalGroup(
+            jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jDesktopPane1Layout.createSequentialGroup()
+                .addGap(33, 33, 33)
+                .addGroup(jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(searchMatchView1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(searchResultsTable1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        jDesktopPane1Layout.setVerticalGroup(
+            jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jDesktopPane1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(searchResultsTable1, javax.swing.GroupLayout.PREFERRED_SIZE, 356, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(searchMatchView1, javax.swing.GroupLayout.DEFAULT_SIZE, 276, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        desktopPane.setLayer(searchEntryPanel1, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        desktopPane.setLayer(jDesktopPane1, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        javax.swing.GroupLayout desktopPaneLayout = new javax.swing.GroupLayout(desktopPane);
+        desktopPane.setLayout(desktopPaneLayout);
+        desktopPaneLayout.setHorizontalGroup(
+            desktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(desktopPaneLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(desktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(searchEntryPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jDesktopPane1))
+                .addContainerGap())
+        );
+        desktopPaneLayout.setVerticalGroup(
+            desktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(desktopPaneLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(searchEntryPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jDesktopPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
 
         fileMenu.setMnemonic('f');
         fileMenu.setText("File");
@@ -152,11 +216,17 @@ public class Searchmonkey extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(desktopPane, javax.swing.GroupLayout.DEFAULT_SIZE, 559, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(desktopPane)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(desktopPane, javax.swing.GroupLayout.DEFAULT_SIZE, 447, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(desktopPane)
+                .addGap(166, 166, 166))
         );
 
         pack();
@@ -213,11 +283,15 @@ public class Searchmonkey extends javax.swing.JFrame {
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JMenu fileMenu;
     private javax.swing.JMenu helpMenu;
+    private javax.swing.JDesktopPane jDesktopPane1;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenuItem openMenuItem;
     private javax.swing.JMenuItem pasteMenuItem;
     private javax.swing.JMenuItem saveAsMenuItem;
     private javax.swing.JMenuItem saveMenuItem;
+    private com.embeddediq.searchmonkey.SearchEntryPanel searchEntryPanel1;
+    private com.embeddediq.searchmonkey.SearchMatchView searchMatchView1;
+    private com.embeddediq.searchmonkey.SearchResultsTable searchResultsTable1;
     // End of variables declaration//GEN-END:variables
 
 }

@@ -42,7 +42,7 @@ public class SearchResultsTable extends javax.swing.JPanel {
      * @param queue
      * @param rateMillis
      */
-    public SearchResultsTable(SearchResultQueue queue, int rateMillis) {
+    public SearchResultsTable() {
         initComponents();
 
         myModel = new MyTableModel();
@@ -65,9 +65,20 @@ public class SearchResultsTable extends javax.swing.JPanel {
         this.setLayout(new BorderLayout());
         this.add(scrollPane, BorderLayout.CENTER);
        
+    }
+    
+    /*
+    public void setQueue(SearchResultQueue queue, int rateMillis)
+    {
         // Start thread timer
         timer = new Timer(rateMillis, new ResultsListener(queue, rowData));
     }
+    public void getQueue(SearchResultQueue queue, int rateMillis)
+    {
+        // Start thread timer
+        timer = new Timer(rateMillis, new ResultsListener(queue, rowData));
+    }
+    */
  
     public void resizeAllColumnWidth() {
     final TableColumnModel columnModel = table.getColumnModel();
@@ -85,8 +96,9 @@ public class SearchResultsTable extends javax.swing.JPanel {
 }
 
     // Call this at the start of the search
-    public void start()
+    public void start(SearchResultQueue queue, int rateMillis)
     {
+        timer = new Timer(rateMillis, new ResultsListener(queue, rowData));
         timer.start();
     }
 
