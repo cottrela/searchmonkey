@@ -5,6 +5,14 @@
  */
 package com.embeddediq.searchmonkey;
 
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import java.nio.file.PathMatcher;
+import java.nio.file.Paths;
+import java.util.Date;
+import java.util.List;
+import java.util.regex.Pattern;
+
 /**
  *
  * @author cottr
@@ -18,6 +26,93 @@ public class SearchEntryPanel extends javax.swing.JPanel {
         initComponents();
     }
 
+    public class SearchRequest {
+        List<Path> lookIn; // Add one or more folders to look in
+        boolean lookInSubFolders; // List of folders vs look in all
+        PathMatcher fileName; // Filename match object
+        ContentMatch containingText; // Text contents
+        Date modifiedBefore; // null is off, otherwise set to max date
+        Date modifiedAfter; // null is off, otherwise set to min date
+        Date createdBefore; // null is off, otherwise set to max date
+        Date createdAfter; // null is off, otherwise set to min date
+        Date accessedBefore; // null is off, otherwise set to max date
+        Date accessedAfter; // null is off, otherwise set to min date
+        long smallerThan; // <=0 is off, otherwise smaller than file size in bytes
+        long largerThan; // <=0 is off, otherwise smaller than file size in bytes
+        int setFlags; // Flags that must be set to match
+        int unsetFlags; // Flags that must be not set to match
+    }
+    
+    public Path getPath() {
+       
+        // Choose starting folder
+        String item = (String)jLookIn.getSelectedItem();
+        return Paths.get(item);
+    }
+
+    private final static int FILENAME_GLOB = 0;
+    private final static int FILENAME_REGEX = 1;
+    private final static String[] FILENAME_PREFIX_LIST = new String[] { "glob:", "regex:" };
+    String prefix = FILENAME_PREFIX_LIST[FILENAME_GLOB]; // "glob:"; // Either "glob:" or "regex:"
+    
+    public void setLookInRegex(boolean enable)
+    {
+        prefix = FILENAME_PREFIX_LIST[enable ? FILENAME_REGEX : FILENAME_GLOB];
+    }
+    public boolean getLookInRegex()
+    {
+        return (prefix == null ? FILENAME_PREFIX_LIST[FILENAME_REGEX] == null : prefix.equals(FILENAME_PREFIX_LIST[FILENAME_REGEX]));
+    }
+    
+    public Path getLookIn() {
+        String item = (String)jLookIn.getSelectedItem();
+        return Paths.get(item);
+    }
+    
+    public PathMatcher getFileName() {
+        String item = (String)jFileName.getSelectedItem();
+        return FileSystems.getDefault().getPathMatcher(prefix + item);
+    }
+
+    private boolean useContentRegex = false;
+    public void setContainingTextRegex(boolean enable)
+    {
+        useContentRegex = enable;
+    }
+    public boolean getContainingTextRegex()
+    {
+        return useContentRegex;
+    }
+
+    public ContentMatch getContainingText() {
+        String item = (String)jContainingText.getSelectedItem();
+        if (useContentRegex)
+        {
+            Pattern regex = Pattern.compile(item);
+            return new ContentMatch(regex);
+        }
+        return new ContentMatch(item);
+    }
+        // Path startingDir = Paths.get("C:\\");
+        //String globPath = "*.{doc,docx}";
+        //PathMatcher path = FileSystems.getDefault().getPathMatcher("glob:" + globPath);
+        //String regexPath = ".*\\.doc[x]?";
+        //PathMatcher path = FileSystems.getDefault().getPathMatcher("regex:" + regexPath);
+
+        // PathMatcher path = new PathMatcher();
+        //SearchResultQueue queue = new SearchResultQueue(200);
+        //AtomicBoolean cancel = new AtomicBoolean(false);
+        //ContentMatch match = new ContentMatch("a");
+        //PathFinder finder = new PathFinder(path, queue, cancel, match);
+        
+        
+//        SearchEngine engine = new SearchEngine(startingDir, finder);
+//        SearchResultsTable panel = new SearchResultsTable(queue, 200);
+//        desktopPane.add(panel);
+//        engine.start();
+//        panel.start();
+    //}
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -174,6 +269,11 @@ public class SearchEntryPanel extends javax.swing.JPanel {
 
         jLookIn.setEditable(true);
         jLookIn.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jLookIn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jLookInActionPerformed(evt);
+            }
+        });
 
         jButton9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/folder-150113_640.png"))); // NOI18N
         jButton9.setMargin(new java.awt.Insets(0, 0, 0, 0));
@@ -324,8 +424,7 @@ public class SearchEntryPanel extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jModifiedPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())
+                        .addComponent(jModifiedPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING)
@@ -335,8 +434,8 @@ public class SearchEntryPanel extends javax.swing.JPanel {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLookInPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addContainerGap())))
+                            .addComponent(jLookInPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -439,6 +538,30 @@ public class SearchEntryPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jLookInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jLookInActionPerformed
+//        String s = (String) date1.getSelectedItem();//get the selected item
+//
+//        switch (s) {//check for a match
+//            case "Day":
+//                emailvalue = 1.1;
+//                System.out.println("Day selected, emailvalue:" + emailvalue);
+//                break;
+//            case "Week":
+//                emailvalue = 2.2;
+//                System.out.println("Week selected, emailvalue:" + emailvalue);
+//                break;
+//            case "Month":
+//                emailvalue = 3.3;
+//                System.out.println("Month selected, emailvalue:" + emailvalue);
+//                break;
+//            default:
+//                emailvalue = 4.4;
+//                System.out.println("No match selected, emailvalue:" + emailvalue);
+//                break;
+//        }
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jLookInActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
