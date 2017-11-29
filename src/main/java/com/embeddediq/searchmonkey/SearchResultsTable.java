@@ -22,6 +22,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import javax.swing.JLabel;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
@@ -98,6 +99,13 @@ public class SearchResultsTable extends javax.swing.JPanel {
     // Call this at the start of the search
     public void start(SearchResultQueue queue, int rateMillis)
     {
+        rowData.clear();
+        DefaultTableModel model = (DefaultTableModel)table.getModel();
+        model.setRowCount(0);
+        
+//        if (table.getRowCount() > 0) {
+//            table.removeRowSelectionInterval(0, table.getRowCount()-1); // Clear all
+//        }
         timer = new Timer(rateMillis, new ResultsListener(queue, rowData));
         timer.start();
     }
@@ -133,7 +141,7 @@ public class SearchResultsTable extends javax.swing.JPanel {
         }        
     }
     
-    class MyTableModel extends AbstractTableModel 
+    class MyTableModel extends DefaultTableModel 
     {
         @Override
         public String getColumnName(int col) {

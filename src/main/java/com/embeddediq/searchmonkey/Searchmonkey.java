@@ -48,25 +48,35 @@ public class Searchmonkey extends javax.swing.JFrame {
 //        Start(entry);
     }
     
+    private final int rate = 200; // 200 ms
+    private final int queue_sz = 200; // 200 deep
+    private SearchEngine engine = null;
+    private AtomicBoolean cancel = null;
+    private SearchResultQueue queue = null;
     public void Start(SearchEntry entry)
     {
-        // PathMatcher path = new PathMatcher();
-        SearchResultQueue queue = new SearchResultQueue(200);
-        AtomicBoolean cancel = new AtomicBoolean(false);
-        PathFinder finder = new PathFinder(entry.fileName, queue, cancel, entry.containingText);
+        if (cancel == null)
+        {
+            queue = new SearchResultQueue(queue_sz);
+            cancel = new AtomicBoolean(false);
 
-        SearchEngine engine = new SearchEngine(entry.lookIn.get(0), finder);
-        // SearchResultsTable panel = new SearchResultsTable(); // queue, 200
-        //desktopPane.add(panel);
-        engine.start();
-        this.searchResultsTable1.start(queue, 200);
-        // panel.start(queue, 200);
+            // Create a new engine
+            engine = new SearchEngine(entry, queue, cancel);
+
+            engine.start();
+            searchResultsTable1.start(queue, rate);
+        }
     }
     
-    private void Stop()
+    public void Stop()
     {
-        //engine.stop();
-        //panel.stop();
+        if (cancel != null && !cancel.get())
+        {
+            cancel.set(true);
+            // engine.stop(); // TODO Join thread
+            searchResultsTable1.stop();
+            cancel = null;
+        }
     }
 
     /**

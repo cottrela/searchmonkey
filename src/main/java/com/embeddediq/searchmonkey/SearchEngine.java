@@ -9,6 +9,7 @@ import java.io.*;
 import static java.lang.System.nanoTime;
 import java.nio.file.*;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,8 +19,6 @@ import java.util.logging.Logger;
  */
 public class SearchEngine {
     
-//    private Path startingDir;
-//    private PathFinder finder;
     private final Thread thread;
     
     /**
@@ -28,14 +27,21 @@ public class SearchEngine {
      * @param startingDir
      * @param finder
      */
-    public SearchEngine(Path startingDir, PathFinder finder)
-    {
-        thread = new Thread(new SearchRunnnable(startingDir, finder));
-        
-        //this.startingDir = startingDir;
-        //this.finder = finder;
-    }
+    //public SearchEngine(Path startingDir, PathFinder finder)
+    //{
+//        thread = new Thread(new SearchRunnnable(startingDir, finder));
+//    }
     
+    public SearchEngine(SearchEntry entry, SearchResultQueue queue, AtomicBoolean cancel)
+    {
+        this.entry = entry;
+        finder = new PathFinder(entry.fileName, queue, cancel, entry.containingText);
+        thread = new Thread(new SearchRunnnable(entry.lookIn.get(0), finder));
+    }
+
+    PathFinder finder;
+    SearchEntry entry;
+        
     public void start()
     {
         thread.start();

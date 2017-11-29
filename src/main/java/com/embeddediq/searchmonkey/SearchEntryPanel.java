@@ -5,6 +5,8 @@
  */
 package com.embeddediq.searchmonkey;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.nio.file.FileSystems;
@@ -13,8 +15,11 @@ import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
 import javax.swing.SpinnerDateModel;
+
+import org.json.*;
 
 /**
  *
@@ -27,17 +32,16 @@ public class SearchEntryPanel extends javax.swing.JPanel {
      */
     public SearchEntryPanel() {
         initComponents();
+        
+        // Restore the settings
+        Restore();
     }
 
-    private final static int FILENAME_GLOB = 0;
-    private final static int FILENAME_REGEX = 1;
-    private final static String[] FILENAME_PREFIX_LIST = new String[] { "glob:", "regex:" };
-    String prefix = FILENAME_PREFIX_LIST[FILENAME_GLOB]; // "glob:"; // Either "glob:" or "regex:"
-    
+   
     private SearchEntry getSearchRequest() {
         SearchEntry req = new SearchEntry();
         String strItem;
-        
+
         // Get look in folder
         req.lookIn = new ArrayList<>();
         Object folder = jLookIn.getSelectedItem();
@@ -59,6 +63,7 @@ public class SearchEntryPanel extends javax.swing.JPanel {
         
         // Get filename folder
         strItem = (String)jFileName.getSelectedItem();
+        String prefix = (jUseFileRegex.isSelected() ? SearchEntry.PREFIX_REGEX : SearchEntry.PREFIX_GLOB);
         req.fileName = FileSystems.getDefault().getPathMatcher(prefix + strItem);
         
         // Get containing text
@@ -78,7 +83,7 @@ public class SearchEntryPanel extends javax.swing.JPanel {
             req.greaterThan = (long)((double)scaler * (double)jGreaterThanSpinner.getValue());
         }
 
-        // Get before/after date
+        // Get modifed before/after date
         if (jBeforeToggle.isSelected()) {
             req.modifiedAfter = ((SpinnerDateModel)jAfterSpinner.getModel()).getDate();
         }
@@ -86,9 +91,71 @@ public class SearchEntryPanel extends javax.swing.JPanel {
             req.modifiedBefore = ((SpinnerDateModel)jBeforeSpinner.getModel()).getDate();
         }
 
+        // Set flags from the options tab
+        req.flags.useFilenameRegex = jUseFileRegex.isSelected();
+        req.flags.useContentRegex = jUseContentRegex.isSelected();
+        req.flags.ignoreHiddenFiles = jIgnoreHiddenFiles.isSelected();
+        req.flags.ignoreHiddenFolders = jIgnoreHiddenFolders.isSelected();
+        req.flags.ignoreHiddenFiles = jIgnoreHiddenFiles.isSelected();
+        req.flags.ignoreDotFiles = jIgnoreDotFiles.isSelected();
+        req.flags.ignoreDotFolders = jIgnoreDotFolders.isSelected();
+        req.flags.ignoreSymbolicLinks = jIgnoreSymbolicLinks.isSelected();
+        req.flags.ignoreSystemFiles = jIgnoreSystemFiles.isSelected();
+
+        // Get created before/after date
+        if (jBeforeToggle1.isSelected()) {
+            req.createdAfter = ((SpinnerDateModel)jAfterSpinner1.getModel()).getDate();
+        }
+        if (jBeforeToggle1.isSelected()) {
+            req.createdBefore = ((SpinnerDateModel)jBeforeSpinner1.getModel()).getDate();
+        }
+
+        // Get accessed before/after date
+        if (jBeforeToggle2.isSelected()) {
+            req.accessedAfter = ((SpinnerDateModel)jAfterSpinner2.getModel()).getDate();
+        }
+        if (jBeforeToggle2.isSelected()) {
+            req.accessedBefore = ((SpinnerDateModel)jBeforeSpinner2.getModel()).getDate();
+        }
         return req;
     }
-
+    
+    public void Save()
+    {
+        Preferences prefs = Preferences.userNodeForPackage(SearchEntry.class);
+        String json;
+        
+        Gson g = new Gson();
+        List<String> items = new ArrayList<>();
+        for (int i=0; i<jLookIn.getItemCount(); i++)
+        {
+            items.add(jLookIn.getItemAt(i));
+        }
+        json = g.toJson(items);
+        prefs.put("LookIn", json); // Add list of look in folders
+        
+        prefs.putBoolean("LookInSubFolders", jSubFolders.isSelected());
+    }
+    
+    public void Restore()
+    {
+        Preferences prefs = Preferences.userNodeForPackage(SearchEntry.class);
+        String json;
+        
+        Gson g = new Gson();
+        json = prefs.get("LookIn", "['Hello', 'World']"); // Add list of look in folders
+        List<String> items;
+        // items = g.fromJson(json, new ArrayList<String>(){}.getClass());
+        items = g.fromJson(json, new TypeToken<ArrayList<String>>() {}.getType());
+        
+        jLookIn.removeAllItems(); // Clear the list
+        for (String item: items)
+        {
+            jLookIn.addItem(item);
+        }
+    }
+        
+    /*
     public Path getPath() {
        
         // Choose starting folder
@@ -153,6 +220,7 @@ public class SearchEntryPanel extends javax.swing.JPanel {
 //        engine.start();
 //        panel.start();
     //}
+    */
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -200,16 +268,16 @@ public class SearchEntryPanel extends javax.swing.JPanel {
         jFileName = new javax.swing.JComboBox<>();
         jButton4 = new javax.swing.JButton();
         jPanel8 = new javax.swing.JPanel();
-        jRadioButton1 = new javax.swing.JRadioButton();
-        jRadioButton2 = new javax.swing.JRadioButton();
-        jRadioButton3 = new javax.swing.JRadioButton();
-        jRadioButton4 = new javax.swing.JRadioButton();
-        jCheckBox2 = new javax.swing.JCheckBox();
-        jCheckBox3 = new javax.swing.JCheckBox();
-        jCheckBox4 = new javax.swing.JCheckBox();
-        jCheckBox5 = new javax.swing.JCheckBox();
-        jCheckBox6 = new javax.swing.JCheckBox();
-        jCheckBox7 = new javax.swing.JCheckBox();
+        jUseFileGlobs = new javax.swing.JRadioButton();
+        jUseFileRegex = new javax.swing.JRadioButton();
+        jUseContentSearch = new javax.swing.JRadioButton();
+        jUseContentRegex = new javax.swing.JRadioButton();
+        jIgnoreHiddenFiles = new javax.swing.JCheckBox();
+        jIgnoreSystemFiles = new javax.swing.JCheckBox();
+        jIgnoreDotFolders = new javax.swing.JCheckBox();
+        jIgnoreDotFiles = new javax.swing.JCheckBox();
+        jIgnoreHiddenFolders = new javax.swing.JCheckBox();
+        jIgnoreSymbolicLinks = new javax.swing.JCheckBox();
         jPanel9 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
         jModifiedPanel1 = new javax.swing.JPanel();
@@ -259,8 +327,6 @@ public class SearchEntryPanel extends javax.swing.JPanel {
         jButton6.setBorderPainted(false);
         jButton6.setContentAreaFilled(false);
         jButton6.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        jButton6.setMaximumSize(new java.awt.Dimension(23, 23));
-        jButton6.setMinimumSize(new java.awt.Dimension(23, 23));
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -282,7 +348,7 @@ public class SearchEntryPanel extends javax.swing.JPanel {
                     .addComponent(jBeforeToggle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton6)
                             .addComponent(jBeforeSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
@@ -298,8 +364,6 @@ public class SearchEntryPanel extends javax.swing.JPanel {
         jButton3.setBorderPainted(false);
         jButton3.setContentAreaFilled(false);
         jButton3.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        jButton3.setMaximumSize(new java.awt.Dimension(23, 23));
-        jButton3.setMinimumSize(new java.awt.Dimension(23, 23));
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -559,30 +623,30 @@ public class SearchEntryPanel extends javax.swing.JPanel {
 
         jTabbedPane1.addTab("Main", jPanel1);
 
-        FilenameSearchType.add(jRadioButton1);
-        jRadioButton1.setText("Search filenames using 'glob' expressions e.g. *.txt");
+        FilenameSearchType.add(jUseFileGlobs);
+        jUseFileGlobs.setText("Search filenames using 'glob' expressions e.g. *.txt");
 
-        FilenameSearchType.add(jRadioButton2);
-        jRadioButton2.setText("Search filenames using regular expressions");
+        FilenameSearchType.add(jUseFileRegex);
+        jUseFileRegex.setText("Search filenames using regular expressions");
 
-        ContentSearchType.add(jRadioButton3);
-        jRadioButton3.setSelected(true);
-        jRadioButton3.setText("Search file content using key words");
+        ContentSearchType.add(jUseContentSearch);
+        jUseContentSearch.setSelected(true);
+        jUseContentSearch.setText("Search file content using key words");
 
-        ContentSearchType.add(jRadioButton4);
-        jRadioButton4.setText("Search file content using regular expressions");
+        ContentSearchType.add(jUseContentRegex);
+        jUseContentRegex.setText("Search file content using regular expressions");
 
-        jCheckBox2.setText("Ignore hidden files");
+        jIgnoreHiddenFiles.setText("Ignore hidden files");
 
-        jCheckBox3.setText("Ignore system folders and files");
+        jIgnoreSystemFiles.setText("Ignore system folders and files");
 
-        jCheckBox4.setText("Ignore dot folders e.g. .svn");
+        jIgnoreDotFolders.setText("Ignore dot folders e.g. .svn");
 
-        jCheckBox5.setText("Ignore dot files e.g. .backup");
+        jIgnoreDotFiles.setText("Ignore dot files e.g. .backup");
 
-        jCheckBox6.setText("Ignore hidden folders");
+        jIgnoreHiddenFolders.setText("Ignore hidden folders");
 
-        jCheckBox7.setText("Ignore symbolic links and shortcuts");
+        jIgnoreSymbolicLinks.setText("Ignore symbolic links and shortcuts");
 
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
@@ -593,22 +657,22 @@ public class SearchEntryPanel extends javax.swing.JPanel {
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel8Layout.createSequentialGroup()
                         .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jRadioButton2)
-                            .addComponent(jRadioButton1)
-                            .addComponent(jCheckBox2))
+                            .addComponent(jUseFileRegex)
+                            .addComponent(jUseFileGlobs)
+                            .addComponent(jIgnoreHiddenFiles))
                         .addGap(39, 39, 39)
                         .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jCheckBox6)
-                            .addComponent(jRadioButton4)
-                            .addComponent(jRadioButton3)))
+                            .addComponent(jIgnoreHiddenFolders)
+                            .addComponent(jUseContentRegex)
+                            .addComponent(jUseContentSearch)))
                     .addGroup(jPanel8Layout.createSequentialGroup()
                         .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jCheckBox5)
-                            .addComponent(jCheckBox3))
+                            .addComponent(jIgnoreDotFiles)
+                            .addComponent(jIgnoreSystemFiles))
                         .addGap(137, 137, 137)
                         .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jCheckBox7)
-                            .addComponent(jCheckBox4))))
+                            .addComponent(jIgnoreSymbolicLinks)
+                            .addComponent(jIgnoreDotFolders))))
                 .addContainerGap(185, Short.MAX_VALUE))
         );
         jPanel8Layout.setVerticalGroup(
@@ -616,24 +680,24 @@ public class SearchEntryPanel extends javax.swing.JPanel {
             .addGroup(jPanel8Layout.createSequentialGroup()
                 .addGap(22, 22, 22)
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jRadioButton2)
-                    .addComponent(jRadioButton4))
+                    .addComponent(jUseFileRegex)
+                    .addComponent(jUseContentRegex))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jRadioButton3)
-                    .addComponent(jRadioButton1))
+                    .addComponent(jUseContentSearch)
+                    .addComponent(jUseFileGlobs))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jCheckBox2)
-                    .addComponent(jCheckBox6))
+                    .addComponent(jIgnoreHiddenFiles)
+                    .addComponent(jIgnoreHiddenFolders))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jCheckBox4)
-                    .addComponent(jCheckBox5))
+                    .addComponent(jIgnoreDotFolders)
+                    .addComponent(jIgnoreDotFiles))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jCheckBox3)
-                    .addComponent(jCheckBox7))
+                    .addComponent(jIgnoreSystemFiles)
+                    .addComponent(jIgnoreSymbolicLinks))
                 .addContainerGap(21, Short.MAX_VALUE))
         );
 
@@ -866,6 +930,11 @@ public class SearchEntryPanel extends javax.swing.JPanel {
         });
 
         jButton2.setText("Stop");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         jCheckBox1.setSelected(true);
         jCheckBox1.setText("Expert");
@@ -950,14 +1019,19 @@ public class SearchEntryPanel extends javax.swing.JPanel {
         SearchEntry entry = this.getSearchRequest();
         parent.Start(entry);
     }
+    public void Stop()
+    {
+        // Call the parent
+        parent.Stop();
+    }
     
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         Start();
-        // Allow this event to be called from the container
-        // Call pass this on to the parent listener
-        //Component source = (Component)evt.getSource();
-        //source.getParent().dispatchEvent(evt);
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        Stop();
+    }//GEN-LAST:event_jButton2ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -990,17 +1064,17 @@ public class SearchEntryPanel extends javax.swing.JPanel {
     private javax.swing.JButton jButton8;
     private javax.swing.JButton jButton9;
     private javax.swing.JCheckBox jCheckBox1;
-    private javax.swing.JCheckBox jCheckBox2;
-    private javax.swing.JCheckBox jCheckBox3;
-    private javax.swing.JCheckBox jCheckBox4;
-    private javax.swing.JCheckBox jCheckBox5;
-    private javax.swing.JCheckBox jCheckBox6;
-    private javax.swing.JCheckBox jCheckBox7;
     private javax.swing.JComboBox<String> jContainingText;
     private javax.swing.JComboBox<String> jFileName;
     private javax.swing.JComboBox<String> jFileSizeScaler;
     private javax.swing.JSpinner jGreaterThanSpinner;
     private javax.swing.JToggleButton jGreaterThanToggle;
+    private javax.swing.JCheckBox jIgnoreDotFiles;
+    private javax.swing.JCheckBox jIgnoreDotFolders;
+    private javax.swing.JCheckBox jIgnoreHiddenFiles;
+    private javax.swing.JCheckBox jIgnoreHiddenFolders;
+    private javax.swing.JCheckBox jIgnoreSymbolicLinks;
+    private javax.swing.JCheckBox jIgnoreSystemFiles;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -1027,11 +1101,11 @@ public class SearchEntryPanel extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
-    private javax.swing.JRadioButton jRadioButton1;
-    private javax.swing.JRadioButton jRadioButton2;
-    private javax.swing.JRadioButton jRadioButton3;
-    private javax.swing.JRadioButton jRadioButton4;
     private javax.swing.JCheckBox jSubFolders;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JRadioButton jUseContentRegex;
+    private javax.swing.JRadioButton jUseContentSearch;
+    private javax.swing.JRadioButton jUseFileGlobs;
+    private javax.swing.JRadioButton jUseFileRegex;
     // End of variables declaration//GEN-END:variables
 }
