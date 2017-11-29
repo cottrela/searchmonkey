@@ -17,28 +17,36 @@ import java.util.logging.Logger;
  *
  * @author cottr
  */
-public class SearchEngine {
+public class SearchEngine implements ThreadCompleteListener {
     
     private final Thread thread;
     
+    Searchmonkey parent;
     /**
      * Create a new search instance
      * 
-     * @param startingDir
-     * @param finder
+     * @param entry
+     * @param queue
+     * @param cancel
+     * @param parent
      */
-    //public SearchEngine(Path startingDir, PathFinder finder)
-    //{
-//        thread = new Thread(new SearchRunnnable(startingDir, finder));
-//    }
-    
-    public SearchEngine(SearchEntry entry, SearchResultQueue queue, AtomicBoolean cancel)
+    public SearchEngine(SearchEntry entry, SearchResultQueue queue, AtomicBoolean cancel, Searchmonkey parent)
     {
+        this.parent = parent;
         this.entry = entry;
         finder = new PathFinder(entry.fileName, queue, cancel, entry.containingText);
-        thread = new Thread(new SearchRunnnable(entry.lookIn.get(0), finder));
+        runable = new SearchRunnnable(entry.lookIn.get(0), finder);
+        runable.setListener((ThreadCompleteListener)this);
+        thread = new Thread(runable);
+    }
+    
+    @Override
+    public void notifyOfThreadComplete()
+    {
+        parent.Done();
     }
 
+    SearchRunnnable runable;
     PathFinder finder;
     SearchEntry entry;
         
@@ -81,6 +89,7 @@ public class SearchEngine {
     
     private class SearchRunnnable implements Runnable
     {
+        private ThreadCompleteListener listener;
         private final Path startingDir;
         private final PathFinder finder;
         
@@ -89,21 +98,27 @@ public class SearchEngine {
             this.startingDir = startingDir;
             this.finder = finder;
         }
+
+        public void setListener(ThreadCompleteListener listener)
+        {
+            this.listener = listener;
+        }
         
         @Override
         public void run() {
             // TODO - fix the start/end time issues
-            startTime = nanoTime();
             try {
+                startTime = nanoTime();
                 Files.walkFileTree(startingDir, finder);
+                endTime = nanoTime(); // We are done!
             } catch (IOException ex) {
                 Logger.getLogger(SearchEngine.class.getName()).log(Level.SEVERE, null, ex);
+            } finally {
+                listener.notifyOfThreadComplete();
             }
-            endTime = nanoTime(); // We are done!
         }
-        
     }
-    /*
+        /*
 public void Start() throws IOException
     {
         startTime = nanoTime();

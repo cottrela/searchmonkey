@@ -99,13 +99,12 @@ public class SearchResultsTable extends javax.swing.JPanel {
     // Call this at the start of the search
     public void start(SearchResultQueue queue, int rateMillis)
     {
+        // Clear the previous entries
         rowData.clear();
         DefaultTableModel model = (DefaultTableModel)table.getModel();
         model.setRowCount(0);
         
-//        if (table.getRowCount() > 0) {
-//            table.removeRowSelectionInterval(0, table.getRowCount()-1); // Clear all
-//        }
+        // Start a new session
         timer = new Timer(rateMillis, new ResultsListener(queue, rowData));
         timer.start();
     }

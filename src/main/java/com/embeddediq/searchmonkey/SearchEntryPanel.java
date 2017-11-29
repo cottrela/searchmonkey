@@ -1016,13 +1016,21 @@ public class SearchEntryPanel extends javax.swing.JPanel {
     public void Start()
     {
         // Call the parent
+        jButton1.setEnabled(false);
         SearchEntry entry = this.getSearchRequest();
         parent.Start(entry);
+        jButton2.setEnabled(true);
     }
     public void Stop()
     {
         // Call the parent
-        parent.Stop();
+        parent.stop();
+        Done();
+    }
+    public void Done()
+    {
+        jButton2.setEnabled(false);
+        jButton1.setEnabled(true);
     }
     
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed

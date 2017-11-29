@@ -61,8 +61,7 @@ public class Searchmonkey extends javax.swing.JFrame {
             cancel = new AtomicBoolean(false);
 
             // Create a new engine
-            engine = new SearchEngine(entry, queue, cancel);
-
+            engine = new SearchEngine(entry, queue, cancel, this);
             engine.start();
             searchResultsTable1.start(queue, rate);
         }
@@ -77,6 +76,12 @@ public class Searchmonkey extends javax.swing.JFrame {
             searchResultsTable1.stop();
             cancel = null;
         }
+    }
+    
+    public void Done()
+    {
+        Stop();
+        searchEntryPanel1.Done();
     }
 
     /**
