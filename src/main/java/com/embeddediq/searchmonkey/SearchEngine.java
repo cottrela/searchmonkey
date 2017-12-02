@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.SwingUtilities;
 
 /**
  *
@@ -43,7 +44,9 @@ public class SearchEngine implements ThreadCompleteListener {
     @Override
     public void notifyOfThreadComplete()
     {
-        parent.Done();
+        SwingUtilities.invokeLater(() -> {
+            parent.Done();
+        });
     }
 
     SearchRunnnable runable;

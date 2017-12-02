@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
 import javax.swing.SpinnerDateModel;
+import javax.swing.SwingUtilities;
 
 import org.json.*;
 
@@ -70,8 +71,11 @@ public class SearchEntryPanel extends javax.swing.JPanel {
         if (jContainingText.getSelectedItem() != null)
         {
             strItem = (String)jContainingText.getSelectedItem();
-            Pattern regex = Pattern.compile(strItem);
-            req.containingText = new ContentMatch(regex);
+            if (strItem.length() > 0) // Is there a content match to make?
+            {
+                Pattern regex = Pattern.compile(strItem);
+                req.containingText = new ContentMatch(regex);
+            }
         }
         
         // Get min/max size
@@ -154,74 +158,7 @@ public class SearchEntryPanel extends javax.swing.JPanel {
             jLookIn.addItem(item);
         }
     }
-        
-    /*
-    public Path getPath() {
-       
-        // Choose starting folder
-        String item = (String)jLookIn.getSelectedItem();
-        return Paths.get(item);
-    }
-    
-    public void setLookInRegex(boolean enable)
-    {
-        prefix = FILENAME_PREFIX_LIST[enable ? FILENAME_REGEX : FILENAME_GLOB];
-    }
-    public boolean getLookInRegex()
-    {
-        return (prefix == null ? FILENAME_PREFIX_LIST[FILENAME_REGEX] == null : prefix.equals(FILENAME_PREFIX_LIST[FILENAME_REGEX]));
-    }
-    
-    public Path getLookIn() {
-        String item = (String)jLookIn.getSelectedItem();
-        return Paths.get(item);
-    }
-    
-    public PathMatcher getFileName() {
-        String item = (String)jFileName.getSelectedItem();
-        return FileSystems.getDefault().getPathMatcher(prefix + item);
-    }
-
-    private boolean useContentRegex = false;
-    public void setContainingTextRegex(boolean enable)
-    {
-        useContentRegex = enable;
-    }
-    public boolean getContainingTextRegex()
-    {
-        return useContentRegex;
-    }
-
-    public ContentMatch getContainingText() {
-        String item = (String)jContainingText.getSelectedItem();
-        if (useContentRegex)
-        {
-            Pattern regex = Pattern.compile(item);
-            return new ContentMatch(regex);
-        }
-        return new ContentMatch(item);
-    }
-        // Path startingDir = Paths.get("C:\\");
-        //String globPath = "*.{doc,docx}";
-        //PathMatcher path = FileSystems.getDefault().getPathMatcher("glob:" + globPath);
-        //String regexPath = ".*\\.doc[x]?";
-        //PathMatcher path = FileSystems.getDefault().getPathMatcher("regex:" + regexPath);
-
-        // PathMatcher path = new PathMatcher();
-        //SearchResultQueue queue = new SearchResultQueue(200);
-        //AtomicBoolean cancel = new AtomicBoolean(false);
-        //ContentMatch match = new ContentMatch("a");
-        //PathFinder finder = new PathFinder(path, queue, cancel, match);
-        
-        
-//        SearchEngine engine = new SearchEngine(startingDir, finder);
-//        SearchResultsTable panel = new SearchResultsTable(queue, 200);
-//        desktopPane.add(panel);
-//        engine.start();
-//        panel.start();
-    //}
-    */
-    
+         
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -1024,7 +961,7 @@ public class SearchEntryPanel extends javax.swing.JPanel {
     public void Stop()
     {
         // Call the parent
-        parent.stop();
+        parent.Stop();
         Done();
     }
     public void Done()

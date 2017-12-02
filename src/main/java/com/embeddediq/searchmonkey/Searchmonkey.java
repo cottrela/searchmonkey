@@ -5,17 +5,9 @@
  */
 package com.embeddediq.searchmonkey;
 
-import java.awt.Image;
 import java.awt.Toolkit;
 import java.net.URL;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
-import java.nio.file.PathMatcher;
-import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.regex.Pattern;
-import javax.swing.ImageIcon;
 
 /**
  *

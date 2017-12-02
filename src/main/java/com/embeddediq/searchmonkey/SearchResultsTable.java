@@ -12,19 +12,17 @@ import java.util.List;
 import java.util.ArrayList;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.table.AbstractTableModel;
 import javax.swing.Timer;
 import java.awt.Component;
-import java.awt.FontMetrics;
 import java.nio.file.attribute.FileTime;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
 /**
@@ -40,8 +38,6 @@ public class SearchResultsTable extends javax.swing.JPanel {
     
     /**
      * Creates new form SearchResults
-     * @param queue
-     * @param rateMillis
      */
     public SearchResultsTable() {
         initComponents();
@@ -113,6 +109,7 @@ public class SearchResultsTable extends javax.swing.JPanel {
     public void stop()
     {
         timer.stop();
+        myModel.fireTableDataChanged();
     }
     
     private class ResultsListener implements ActionListener
@@ -133,9 +130,7 @@ public class SearchResultsTable extends javax.swing.JPanel {
                 int startRow = myModel.getRowCount();
                 int endRow = startRow + sz;
                 queue.drainTo(results);
-                // TODO - Not sure why -1 is required
-                // TODO - Check that all rows are being shown
-                myModel.fireTableRowsInserted(startRow, endRow - 1); // Not sure why - 1 is required... 
+                myModel.fireTableRowsInserted(startRow, endRow - 1);
             }
         }        
     }
