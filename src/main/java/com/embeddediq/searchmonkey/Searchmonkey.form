@@ -166,6 +166,11 @@
       </Layout>
       <SubComponents>
         <Component class="com.embeddediq.searchmonkey.SearchEntryPanel" name="searchEntryPanel1">
+          <Properties>
+            <Property name="parent" type="com.embeddediq.searchmonkey.Searchmonkey" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="this" type="code"/>
+            </Property>
+          </Properties>
         </Component>
         <Container class="javax.swing.JDesktopPane" name="jDesktopPane1">
 

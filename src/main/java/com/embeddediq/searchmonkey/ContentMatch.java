@@ -9,6 +9,8 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -41,10 +43,7 @@ public class ContentMatch {
             BufferedReader bufferedReader = new BufferedReader(fileReader);
             String line;
             while ((line = bufferedReader.readLine()) != null) {
-                if (regexMatch.matcher(line).find()) {
-                    count ++;
-                    // return true; // on first find within string
-                }
+                count += getMatchCount(line);
             }
         } catch (IOException ex) {
             System.err.println(ex);
@@ -52,15 +51,27 @@ public class ContentMatch {
         }
         return count;
     }
-    
-    public MatchResult getMatch(String line)
+
+    private int getMatchCount(String line)
     {
         Matcher match = regexMatch.matcher(line);
-        if (match.find())
+        int result = 0;
+        while (match.find())
         {
-            return match.toMatchResult();
+            result++;
         }
-        return null;
+        return result;
+    }
+
+    public List<MatchResult> getMatches(String line)
+    {
+        Matcher match = regexMatch.matcher(line);
+        List<MatchResult> results = new ArrayList<>();
+        while (match.find())
+        {
+            results.add(match.toMatchResult());
+        }
+        return results;
     }
 }
 

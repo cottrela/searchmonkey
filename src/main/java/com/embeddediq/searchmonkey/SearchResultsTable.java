@@ -21,6 +21,8 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
@@ -48,6 +50,11 @@ public class SearchResultsTable extends javax.swing.JPanel {
         table.setAutoCreateRowSorter(true);
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         
+        table.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
+            handleSelectionEvent(e);
+        });
+        
+        
         // Show/hide columns using this code
         /*
         TableColumn hidden = table.getColumn(SearchResult.COLUMN_NAMES[SearchResult.ACCESSED]);
@@ -62,6 +69,25 @@ public class SearchResultsTable extends javax.swing.JPanel {
         this.setLayout(new BorderLayout());
         this.add(scrollPane, BorderLayout.CENTER);
        
+    }
+    public void handleSelectionEvent(ListSelectionEvent e)
+    {
+        parent.ClearContent();
+        //boolean ok = !e.getValueIsAdjusting();
+        //int a = e.getFirstIndex();
+        //int b = e.getLastIndex();
+        int[] rows = table.getSelectedRows();
+        for (int row: rows)
+        {
+            SearchResult val = rowData.get(table.convertRowIndexToModel(row));
+            parent.UpdateContent(val);
+        }
+    }
+    
+    Searchmonkey parent;
+    public void setParent(Searchmonkey parent)
+    {
+        this.parent = parent;
     }
     
     /*
@@ -101,15 +127,31 @@ public class SearchResultsTable extends javax.swing.JPanel {
         model.setRowCount(0);
         
         // Start a new session
+        this.queue = queue;
         timer = new Timer(rateMillis, new ResultsListener(queue, rowData));
         timer.start();
     }
+    
+    private SearchResultQueue queue;
 
     // Call this when the search is complete (or has been cancelled)
     public void stop()
     {
         timer.stop();
-        myModel.fireTableDataChanged();
+        actionCompleted();
+        // myModel.fireTableDataChanged();
+    }
+
+    public void actionCompleted()
+    {
+        int sz = queue.size();
+        if (sz > 0)
+        {
+            int startRow = myModel.getRowCount();
+            int endRow = startRow + sz;
+            queue.drainTo(rowData);
+            myModel.fireTableRowsInserted(startRow, endRow - 1);
+        }
     }
     
     private class ResultsListener implements ActionListener
@@ -132,7 +174,8 @@ public class SearchResultsTable extends javax.swing.JPanel {
                 queue.drainTo(results);
                 myModel.fireTableRowsInserted(startRow, endRow - 1);
             }
-        }        
+        }
+        
     }
     
     class MyTableModel extends DefaultTableModel 

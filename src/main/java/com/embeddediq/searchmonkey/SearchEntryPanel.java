@@ -7,20 +7,13 @@ package com.embeddediq.searchmonkey;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import java.awt.Component;
-import java.awt.event.ActionEvent;
 import java.nio.file.FileSystems;
-import java.nio.file.Path;
-import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
 import javax.swing.SpinnerDateModel;
-import javax.swing.SwingUtilities;
-
-import org.json.*;
 
 /**
  *

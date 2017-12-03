@@ -7,6 +7,8 @@ package com.embeddediq.searchmonkey;
 
 import java.awt.Toolkit;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -28,7 +30,6 @@ public class Searchmonkey extends javax.swing.JFrame {
         
         //this.searchEntryPanel1.add
         // searchEntryPanel1.setSearchResultsTable(panel);
-        searchEntryPanel1.setParent(this);
         
 //        // Example panel
 //        SearchEntry entry = new SearchEntry();
@@ -38,6 +39,8 @@ public class Searchmonkey extends javax.swing.JFrame {
 //        entry.fileName = FileSystems.getDefault().getPathMatcher("regex:" + ".*\\.doc[x]?");
 //        entry.containingText = new ContentMatch("a");
 //        Start(entry);
+
+        // Passing a reference at the end of the constructor
     }
     
     private final int rate = 200; // 200 ms
@@ -49,6 +52,9 @@ public class Searchmonkey extends javax.swing.JFrame {
     {
         if (cancel == null)
         {
+            searchEntryPanel1.setParent(this);
+            searchResultsTable1.setParent(this);
+            
             queue = new SearchResultQueue(queue_sz);
             cancel = new AtomicBoolean(false);
 
@@ -56,6 +62,7 @@ public class Searchmonkey extends javax.swing.JFrame {
             engine = new SearchEngine(entry, queue, cancel, this);
             engine.start();
             searchResultsTable1.start(queue, rate);
+            searchMatchView1.setContentMatch(entry.containingText); // Update the content match
         }
     }
     
@@ -74,6 +81,18 @@ public class Searchmonkey extends javax.swing.JFrame {
     {
         Stop();
         searchEntryPanel1.Done();
+    }
+    
+
+    public void ClearContent()
+    {
+        searchMatchView1.clearContent();
+    }
+    
+    public void UpdateContent(SearchResult result)
+    {
+        Path path = Paths.get(result.pathName, result.fileName); // Logger.getLogger(Searchmonkey.class.getName()).log(Level.SEVERE, null, ex);
+        searchMatchView1.UpdateView(path);
     }
 
     /**
@@ -107,6 +126,8 @@ public class Searchmonkey extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Searchmonkey 3.0");
+
+        searchEntryPanel1.setParent(this);
 
         jDesktopPane1.setLayer(searchResultsTable1, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jDesktopPane1.setLayer(searchMatchView1, javax.swing.JLayeredPane.DEFAULT_LAYER);
