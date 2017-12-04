@@ -72,10 +72,13 @@ public class SearchResultsTable extends javax.swing.JPanel {
     }
     public void handleSelectionEvent(ListSelectionEvent e)
     {
-        parent.ClearContent();
+        if (e.getValueIsAdjusting()) {
+            return;
+        }
         //boolean ok = !e.getValueIsAdjusting();
         //int a = e.getFirstIndex();
         //int b = e.getLastIndex();
+        parent.ClearContent();
         int[] rows = table.getSelectedRows();
         for (int row: rows)
         {
@@ -204,10 +207,10 @@ public class SearchResultsTable extends javax.swing.JPanel {
             SearchResult val = rowData.get(row);
             return val.get(col);
         }
-        /*
         @Override
         public boolean isCellEditable(int row, int col)
             { return false; }
+        /*
         @Override
         public void setValueAt(Object value, int row, int col) {
             // TODO - allow user editing of these fields
