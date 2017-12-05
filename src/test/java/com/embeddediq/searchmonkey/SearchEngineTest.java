@@ -45,8 +45,8 @@ public class SearchEngineTest {
     public void testAddDirectory() {
         System.out.println("AddDirectory");
         PathMatcher folder = null;
-        SearchEngine instance = new SearchEngine();
-        instance.AddDirectory(folder);
+        //SearchEngine instance = new SearchEngine();
+        //instance.AddDirectory(folder);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
@@ -57,8 +57,8 @@ public class SearchEngineTest {
     @Test
     public void testStart() throws Exception {
         System.out.println("Start");
-        SearchEngine instance = new SearchEngine();
-        instance.Start();
+        //SearchEngine instance = new SearchEngine();
+        //instance.Start();
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
@@ -69,8 +69,8 @@ public class SearchEngineTest {
     @Test
     public void testCancel() {
         System.out.println("Cancel");
-        SearchEngine instance = new SearchEngine();
-        instance.Cancel();
+        // SearchEngine instance = new SearchEngine();
+        //instance.Cancel();
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }

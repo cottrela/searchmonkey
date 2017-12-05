@@ -5,6 +5,8 @@
  */
 package com.embeddediq.searchmonkey;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JDialog;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -48,10 +50,15 @@ public class SearchResultsIT {
         int rateMillis = 50;
         JDialog dlg = new JDialog();
         // dlg.start
-        SearchResultsTable jPanel = new SearchResultsTable(queue, rateMillis);
-        jPanel.start();
+        SearchResultsTable jPanel = new SearchResultsTable();
+        // jPanel.setParent(this);
+        jPanel.start(queue, rateMillis);
         
-        Thread.sleep(1000);
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(SearchResultsIT.class.getName()).log(Level.SEVERE, null, ex);
+        }
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
@@ -77,7 +84,7 @@ public class SearchResultsIT {
         int columnIdent = 0;
         int position = 0;
         SearchResultsTable instance = null;
-        instance.insertColumn(columnIdent, position);
+        //instance.insertColumn(columnIdent, position);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
@@ -90,7 +97,7 @@ public class SearchResultsIT {
         System.out.println("removeColumn");
         int position = 0;
         SearchResultsTable instance = null;
-        instance.removeColumn(position);
+        //instance.removeColumn(position);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
