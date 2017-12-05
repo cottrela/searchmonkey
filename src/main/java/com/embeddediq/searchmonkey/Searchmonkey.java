@@ -109,6 +109,7 @@ public class Searchmonkey extends javax.swing.JFrame {
         jSplitPane1 = new javax.swing.JSplitPane();
         searchResultsTable1 = new com.embeddediq.searchmonkey.SearchResultsTable();
         searchMatchView1 = new com.embeddediq.searchmonkey.SearchMatchView();
+        searchSummary2 = new com.embeddediq.searchmonkey.SearchSummary();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         openMenuItem = new javax.swing.JMenuItem();
@@ -126,6 +127,7 @@ public class Searchmonkey extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Searchmonkey 3.0");
+        setMinimumSize(new java.awt.Dimension(500, 500));
 
         jPanel1.setLayout(new java.awt.BorderLayout());
 
@@ -135,10 +137,11 @@ public class Searchmonkey extends javax.swing.JFrame {
         jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
         jSplitPane1.setResizeWeight(0.5);
         jSplitPane1.setToolTipText("");
-        jSplitPane1.setLeftComponent(searchResultsTable1);
-        jSplitPane1.setRightComponent(searchMatchView1);
+        jSplitPane1.setTopComponent(searchResultsTable1);
+        jSplitPane1.setBottomComponent(searchMatchView1);
 
         jPanel1.add(jSplitPane1, java.awt.BorderLayout.CENTER);
+        jPanel1.add(searchSummary2, java.awt.BorderLayout.SOUTH);
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
 
@@ -267,6 +270,7 @@ public class Searchmonkey extends javax.swing.JFrame {
     private com.embeddediq.searchmonkey.SearchEntryPanel searchEntryPanel1;
     private com.embeddediq.searchmonkey.SearchMatchView searchMatchView1;
     private com.embeddediq.searchmonkey.SearchResultsTable searchResultsTable1;
+    private com.embeddediq.searchmonkey.SearchSummary searchSummary2;
     // End of variables declaration//GEN-END:variables
 
 }
