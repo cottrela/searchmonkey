@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
+import javax.swing.JFrame;
 import javax.swing.SpinnerDateModel;
 // import org.jdesktop.swingx.JXDatePicker;
 
@@ -315,6 +316,11 @@ public class SearchEntryPanel extends javax.swing.JPanel {
         jButton3.setBorderPainted(false);
         jButton3.setContentAreaFilled(false);
         jButton3.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -1065,6 +1071,20 @@ public class SearchEntryPanel extends javax.swing.JPanel {
         File fname = jFileChooser1.getSelectedFile();
         this.jLookIn.getModel().setSelectedItem(fname.getPath());
     }//GEN-LAST:event_jButton9ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        JFrame frame = new JFrame("Calendar");
+        CalendarPopup panel = new CalendarPopup();
+//        panel.setVisible(true);
+        //JPanel panel = new JPanel();
+
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setBounds(400, 400, 250, 100);
+
+        frame.getContentPane().add(panel);
+
+        frame.setVisible(true);        
+    }//GEN-LAST:event_jButton3ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

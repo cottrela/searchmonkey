@@ -9,7 +9,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Map;
-import java.util.Set;
+import javax.swing.table.TableColumn;
 
 /**
  *
@@ -17,53 +17,15 @@ import java.util.Set;
  */
 public class CalendarPopup extends javax.swing.JPanel {
 
+    Calendar calendar;
     /**
      * Creates new form CalendarPopup
      */
     public CalendarPopup() {
         initComponents();
 
-        Calendar cal = GregorianCalendar.getInstance();
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-        int fd = cal.getFirstDayOfWeek();
-        
-        // Update days of the week titles
-        Map<String, Integer>weeknames = cal.getDisplayNames(Calendar.DAY_OF_WEEK, Calendar.SHORT_STANDALONE, getLocale());
-        weeknames.entrySet().forEach((entry) -> {
-            int col = entry.getValue() - fd;
-            if (col < 1) {
-                col += 7;
-            } //
-            jTable1.getColumn(col).setHeaderValue(entry.getKey().substring(0, 1));
-        });
-        
-        // Update month name
-        this.jLabel1.setText(cal.getDisplayName(Calendar.MONTH, Calendar.LONG_STANDALONE, getLocale()));
-
-        // Update days of the month
-        cal.set(Calendar.DAY_OF_MONTH, 1);
-        int wd = cal.get(Calendar.DAY_OF_WEEK);
-        cal.roll(Calendar.DAY_OF_MONTH, 31);
-        int last_day = cal.get(Calendar.DAY_OF_MONTH); // Get the last day
-        int col = wd - fd;
-        if (col < 1) {
-            col += 7;
-        }
-        int row = 0;
-        for (int i = 0; i<last_day; i++)
-        {
-            jTable1.getModel().setValueAt(i+1, row, col);
-            row ++;
-            if (row >= 7)
-            {
-                row = 0;
-                col ++;
-            }
-        }
-        
+        calendar = GregorianCalendar.getInstance();
+        UpdateCalendar();
     }
     
     Date date;
@@ -77,6 +39,88 @@ public class CalendarPopup extends javax.swing.JPanel {
         return this.date;
     }
     
+    private void UpdateCalendar()
+    {
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        int fd = calendar.getFirstDayOfWeek();
+        
+        // Update days of the week titles
+        Map<String, Integer>weeknames = calendar.getDisplayNames(Calendar.DAY_OF_WEEK, Calendar.SHORT_STANDALONE, getLocale());
+        weeknames.entrySet().forEach((entry) -> {
+            int col = entry.getValue() - fd;
+            if (col < 0) {
+                col += 7;
+            } //
+            String dow = entry.getKey();
+            TableColumn column = jTable1.getTableHeader().getColumnModel().getColumn(col);
+            column.setHeaderValue(dow.substring(0,1));
+            // TODO - highlight today's date
+        });
+        
+        // Update month name
+        String m = calendar.getDisplayName(Calendar.MONTH, Calendar.LONG_STANDALONE, getLocale());
+        int y = calendar.get(Calendar.YEAR);
+        this.jLabel1.setText(String.format("%s %d", m, y));
+
+        // Clear first and last rows
+        for (int i = 0; i<7 ; i++)
+        {
+            jTable1.getModel().setValueAt(null, 0, i);
+            jTable1.getModel().setValueAt(null, jTable1.getRowCount()-1, i);
+        }
+
+        // Update days of the month
+        {
+            calendar.set(Calendar.DAY_OF_MONTH, 1);
+            int wd = calendar.get(Calendar.DAY_OF_WEEK);
+            calendar.add(Calendar.MONTH, 1);
+            calendar.add(Calendar.DAY_OF_MONTH, -1);
+            int last_day = calendar.get(Calendar.DAY_OF_MONTH); // Get the last day
+            int col = wd - fd;
+            if (col < 0) {
+                col += 7;
+            }
+            int row = 0;
+            for (int i = 0; i<last_day; i++)
+            {
+                jTable1.getModel().setValueAt(i+1, row, col);
+                col ++;
+                if (col >= 7)
+                {
+                    col = 0;
+                    row ++;
+                }
+            }    
+        }
+
+        // Set all of the days from the calendar
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        Calendar tmp = (Calendar)calendar.clone(); // set(Calendar.DAY_OF_MONTH, 1);
+        int cM = tmp.get(Calendar.MONTH);
+        int wd2 = tmp.get(Calendar.DAY_OF_WEEK);
+        //calendar.add(Calendar.MONTH, 1);
+        //calendar.add(Calendar.DAY_OF_MONTH, -1);
+        // int last_day = calendar.get(Calendar.DAY_OF_MONTH); // Get the last day
+        int col2 = wd2 - fd;
+        if (col2 < 0) {
+            col2 += 7;
+        }
+        //calendar.set(Calendar.DAY_OF_MONTH, 1);
+        tmp.add(Calendar.DAY_OF_MONTH, -col2); // Go back N days
+        for (int row=0; row<jTable1.getRowCount(); row++)
+        {
+            for (int col=0; col<7; col++)
+            {
+                // TODO - change the cell values if from last month
+                int val = tmp.get(Calendar.DAY_OF_MONTH);
+                jTable1.getModel().setValueAt(val, row, col);
+                tmp.add(Calendar.DAY_OF_MONTH, 1); // next
+            }
+        }
+    }
     
 
     /**
@@ -91,16 +135,19 @@ public class CalendarPopup extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jPanel1 = new javax.swing.JPanel();
-        jButton4 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        jPanel3 = new javax.swing.JPanel();
+        jButton4 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
 
         setLayout(new java.awt.BorderLayout());
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
+                {null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null},
@@ -146,34 +193,11 @@ public class CalendarPopup extends javax.swing.JPanel {
 
         add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
-        jButton4.setBackground(new java.awt.Color(102, 102, 102));
-        jButton4.setText("<<");
-        jButton4.setBorder(null);
-        jButton4.setBorderPainted(false);
-        jButton4.setContentAreaFilled(false);
-        jButton4.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        jButton4.setDefaultCapable(false);
-        jButton4.setFocusPainted(false);
-        jButton4.setFocusable(false);
-        jButton4.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        jButton4.setOpaque(false);
-        jPanel1.add(jButton4);
+        jPanel1.setLayout(new java.awt.BorderLayout());
 
-        jButton3.setBackground(new java.awt.Color(102, 102, 102));
-        jButton3.setText("<");
-        jButton3.setBorder(null);
-        jButton3.setBorderPainted(false);
-        jButton3.setContentAreaFilled(false);
-        jButton3.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        jButton3.setDefaultCapable(false);
-        jButton3.setFocusPainted(false);
-        jButton3.setFocusable(false);
-        jButton3.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        jButton3.setOpaque(false);
-        jPanel1.add(jButton3);
-
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("December 2017");
-        jPanel1.add(jLabel1);
+        jPanel1.add(jLabel1, java.awt.BorderLayout.CENTER);
 
         jButton1.setBackground(new java.awt.Color(102, 102, 102));
         jButton1.setText(">");
@@ -185,8 +209,12 @@ public class CalendarPopup extends javax.swing.JPanel {
         jButton1.setFocusPainted(false);
         jButton1.setFocusable(false);
         jButton1.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        jButton1.setOpaque(false);
-        jPanel1.add(jButton1);
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+        jPanel2.add(jButton1);
 
         jButton2.setBackground(new java.awt.Color(102, 102, 102));
         jButton2.setText(">>");
@@ -196,11 +224,73 @@ public class CalendarPopup extends javax.swing.JPanel {
         jButton2.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jButton2.setDefaultCapable(false);
         jButton2.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        jButton2.setOpaque(false);
-        jPanel1.add(jButton2);
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+        jPanel2.add(jButton2);
+
+        jPanel1.add(jPanel2, java.awt.BorderLayout.EAST);
+
+        jButton4.setBackground(new java.awt.Color(102, 102, 102));
+        jButton4.setText("<<");
+        jButton4.setBorder(null);
+        jButton4.setBorderPainted(false);
+        jButton4.setContentAreaFilled(false);
+        jButton4.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jButton4.setDefaultCapable(false);
+        jButton4.setFocusPainted(false);
+        jButton4.setFocusable(false);
+        jButton4.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+        jPanel3.add(jButton4);
+
+        jButton3.setBackground(new java.awt.Color(102, 102, 102));
+        jButton3.setText("<");
+        jButton3.setBorder(null);
+        jButton3.setBorderPainted(false);
+        jButton3.setContentAreaFilled(false);
+        jButton3.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jButton3.setDefaultCapable(false);
+        jButton3.setFocusPainted(false);
+        jButton3.setFocusable(false);
+        jButton3.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+        jPanel3.add(jButton3);
+
+        jPanel1.add(jPanel3, java.awt.BorderLayout.WEST);
 
         add(jPanel1, java.awt.BorderLayout.PAGE_START);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        calendar.add(Calendar.MONTH, -1);
+        UpdateCalendar();
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        calendar.add(Calendar.YEAR, 1);
+        UpdateCalendar();
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        calendar.add(Calendar.MONTH, 1);
+        UpdateCalendar();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        calendar.add(Calendar.YEAR, -1);
+        UpdateCalendar();
+    }//GEN-LAST:event_jButton4ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -210,6 +300,8 @@ public class CalendarPopup extends javax.swing.JPanel {
     private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables
