@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
 import javax.swing.SpinnerDateModel;
+import org.jdesktop.swingx.JXDatePicker;
 
 /**
  *
@@ -73,10 +74,10 @@ public class SearchEntryPanel extends javax.swing.JPanel {
         
         // Get min/max size
         int scaler = 1024^jFileSizeScaler.getSelectedIndex(); // 1024^0 = 1; 1024^1=1K, 1024^2=1M, etc
-        if (jLessThanToggle.isSelected()) {
+        if (jGreaterThanToggle.isSelected()) {
             req.lessThan = (long)((double)scaler * (double)jLessThanSpinner.getValue());
         }
-        if (jGreaterThanToggle.isSelected()) {
+        if (jLessThanToggle.isSelected()) {
             req.greaterThan = (long)((double)scaler * (double)jGreaterThanSpinner.getValue());
         }
 
@@ -184,9 +185,9 @@ public class SearchEntryPanel extends javax.swing.JPanel {
         jButton9 = new javax.swing.JButton();
         jButton10 = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
-        jGreaterThanToggle = new javax.swing.JToggleButton();
-        jGreaterThanSpinner = new javax.swing.JSpinner();
         jLessThanToggle = new javax.swing.JToggleButton();
+        jGreaterThanSpinner = new javax.swing.JSpinner();
+        jGreaterThanToggle = new javax.swing.JToggleButton();
         jLessThanSpinner = new javax.swing.JSpinner();
         jFileSizeScaler = new javax.swing.JComboBox<>();
         jPanel6 = new javax.swing.JPanel();
@@ -249,8 +250,14 @@ public class SearchEntryPanel extends javax.swing.JPanel {
 
         jBeforeToggle.setText("Before:");
         jBeforeToggle.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jBeforeToggle.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBeforeToggleActionPerformed(evt);
+            }
+        });
 
         jBeforeSpinner.setModel(new javax.swing.SpinnerDateModel());
+        jBeforeSpinner.setEnabled(false);
 
         jButton6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/calendar.png"))); // NOI18N
         jButton6.setBorder(null);
@@ -286,8 +293,14 @@ public class SearchEntryPanel extends javax.swing.JPanel {
 
         jAfterToggle.setText("After:");
         jAfterToggle.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jAfterToggle.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jAfterToggleActionPerformed(evt);
+            }
+        });
 
         jAfterSpinner.setModel(new javax.swing.SpinnerDateModel());
+        jAfterSpinner.setEnabled(false);
 
         jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/calendar.png"))); // NOI18N
         jButton3.setBorder(null);
@@ -388,15 +401,27 @@ public class SearchEntryPanel extends javax.swing.JPanel {
                 .addGap(0, 0, 0))
         );
 
-        jGreaterThanToggle.setText("≤");
-        jGreaterThanToggle.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jLessThanToggle.setText("≤");
+        jLessThanToggle.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jLessThanToggle.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jLessThanToggleActionPerformed(evt);
+            }
+        });
 
         jGreaterThanSpinner.setModel(new javax.swing.SpinnerNumberModel(0.0d, 0.0d, null, 1.0d));
+        jGreaterThanSpinner.setEnabled(false);
 
-        jLessThanToggle.setText("≥");
-        jLessThanToggle.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jGreaterThanToggle.setText("≥");
+        jGreaterThanToggle.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jGreaterThanToggle.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jGreaterThanToggleActionPerformed(evt);
+            }
+        });
 
         jLessThanSpinner.setModel(new javax.swing.SpinnerNumberModel(0.0d, 0.0d, null, 1.0d));
+        jLessThanSpinner.setEnabled(false);
 
         jFileSizeScaler.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Size (Bytes):", "Size (KBytes):", "Size (MBytes):", "Size (GBytes):", "Size (TBytes):" }));
         jFileSizeScaler.setSelectedIndex(1);
@@ -409,11 +434,11 @@ public class SearchEntryPanel extends javax.swing.JPanel {
                 .addGap(0, 0, 0)
                 .addComponent(jFileSizeScaler, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLessThanToggle, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jGreaterThanToggle, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jGreaterThanSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jGreaterThanToggle, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jLessThanToggle, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLessThanSpinner, javax.swing.GroupLayout.DEFAULT_SIZE, 69, Short.MAX_VALUE)
                 .addContainerGap())
@@ -429,8 +454,8 @@ public class SearchEntryPanel extends javax.swing.JPanel {
                             .addComponent(jFileSizeScaler)
                             .addComponent(jGreaterThanSpinner)
                             .addComponent(jLessThanSpinner)))
-                    .addComponent(jGreaterThanToggle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLessThanToggle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(jLessThanToggle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jGreaterThanToggle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
 
         jContainingText.setEditable(true);
@@ -585,25 +610,19 @@ public class SearchEntryPanel extends javax.swing.JPanel {
             .addGroup(jPanel8Layout.createSequentialGroup()
                 .addGap(39, 39, 39)
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel8Layout.createSequentialGroup()
-                        .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jUseFileRegex)
-                            .addComponent(jUseFileGlobs)
-                            .addComponent(jIgnoreHiddenFiles))
-                        .addGap(39, 39, 39)
-                        .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jIgnoreHiddenFolders)
-                            .addComponent(jUseContentRegex)
-                            .addComponent(jUseContentSearch)))
-                    .addGroup(jPanel8Layout.createSequentialGroup()
-                        .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jIgnoreDotFiles)
-                            .addComponent(jIgnoreSystemFiles))
-                        .addGap(137, 137, 137)
-                        .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jIgnoreSymbolicLinks)
-                            .addComponent(jIgnoreDotFolders))))
-                .addContainerGap(185, Short.MAX_VALUE))
+                    .addComponent(jUseFileRegex)
+                    .addComponent(jUseFileGlobs)
+                    .addComponent(jIgnoreHiddenFiles)
+                    .addComponent(jIgnoreDotFiles)
+                    .addComponent(jIgnoreSystemFiles))
+                .addGap(121, 121, 121)
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jIgnoreHiddenFolders)
+                    .addComponent(jUseContentRegex)
+                    .addComponent(jUseContentSearch)
+                    .addComponent(jIgnoreSymbolicLinks)
+                    .addComponent(jIgnoreDotFolders))
+                .addContainerGap(103, Short.MAX_VALUE))
         );
         jPanel8Layout.setVerticalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -638,8 +657,14 @@ public class SearchEntryPanel extends javax.swing.JPanel {
 
         jBeforeToggle1.setText("Before:");
         jBeforeToggle1.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jBeforeToggle1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBeforeToggle1ActionPerformed(evt);
+            }
+        });
 
         jBeforeSpinner1.setModel(new javax.swing.SpinnerDateModel());
+        jBeforeSpinner1.setEnabled(false);
 
         jButton11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/calendar.png"))); // NOI18N
         jButton11.setBorder(null);
@@ -675,8 +700,14 @@ public class SearchEntryPanel extends javax.swing.JPanel {
 
         jAfterToggle1.setText("After:");
         jAfterToggle1.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jAfterToggle1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jAfterToggle1ActionPerformed(evt);
+            }
+        });
 
         jAfterSpinner1.setModel(new javax.swing.SpinnerDateModel());
+        jAfterSpinner1.setEnabled(false);
 
         jButton12.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/calendar.png"))); // NOI18N
         jButton12.setBorder(null);
@@ -732,8 +763,14 @@ public class SearchEntryPanel extends javax.swing.JPanel {
 
         jBeforeToggle2.setText("Before:");
         jBeforeToggle2.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jBeforeToggle2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBeforeToggle2ActionPerformed(evt);
+            }
+        });
 
         jBeforeSpinner2.setModel(new javax.swing.SpinnerDateModel());
+        jBeforeSpinner2.setEnabled(false);
 
         jButton13.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/calendar.png"))); // NOI18N
         jButton13.setBorder(null);
@@ -769,8 +806,14 @@ public class SearchEntryPanel extends javax.swing.JPanel {
 
         jAfterToggle2.setText("After:");
         jAfterToggle2.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jAfterToggle2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jAfterToggle2ActionPerformed(evt);
+            }
+        });
 
         jAfterSpinner2.setModel(new javax.swing.SpinnerDateModel());
+        jAfterSpinner2.setEnabled(false);
 
         jButton14.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/calendar.png"))); // NOI18N
         jButton14.setBorder(null);
@@ -970,6 +1013,38 @@ public class SearchEntryPanel extends javax.swing.JPanel {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         Stop();
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jGreaterThanToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jGreaterThanToggleActionPerformed
+        jGreaterThanSpinner.setEnabled(jGreaterThanToggle.isSelected());
+    }//GEN-LAST:event_jGreaterThanToggleActionPerformed
+
+    private void jLessThanToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jLessThanToggleActionPerformed
+        jLessThanSpinner.setEnabled(jLessThanToggle.isSelected());
+    }//GEN-LAST:event_jLessThanToggleActionPerformed
+
+    private void jAfterToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jAfterToggleActionPerformed
+        jAfterSpinner.setEnabled(jAfterToggle.isSelected());
+    }//GEN-LAST:event_jAfterToggleActionPerformed
+
+    private void jBeforeToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBeforeToggleActionPerformed
+        jBeforeSpinner.setEnabled(jBeforeToggle.isSelected());
+    }//GEN-LAST:event_jBeforeToggleActionPerformed
+
+    private void jAfterToggle1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jAfterToggle1ActionPerformed
+        jAfterSpinner1.setEnabled(jAfterToggle1.isSelected());
+    }//GEN-LAST:event_jAfterToggle1ActionPerformed
+
+    private void jAfterToggle2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jAfterToggle2ActionPerformed
+        jAfterSpinner2.setEnabled(jAfterToggle2.isSelected());
+    }//GEN-LAST:event_jAfterToggle2ActionPerformed
+
+    private void jBeforeToggle1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBeforeToggle1ActionPerformed
+        jBeforeSpinner1.setEnabled(jBeforeToggle1.isSelected());
+    }//GEN-LAST:event_jBeforeToggle1ActionPerformed
+
+    private void jBeforeToggle2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBeforeToggle2ActionPerformed
+        jBeforeSpinner2.setEnabled(jBeforeToggle2.isSelected());
+    }//GEN-LAST:event_jBeforeToggle2ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -219,12 +219,16 @@
                           <Insets value="[0, 0, 0, 0]"/>
                         </Property>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jBeforeToggleActionPerformed"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JSpinner" name="jBeforeSpinner">
                       <Properties>
                         <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
                           <SpinnerModel initial="now" stepSize="5" type="date"/>
                         </Property>
+                        <Property name="enabled" type="boolean" value="false"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JButton" name="jButton6">
@@ -281,12 +285,16 @@
                           <Insets value="[0, 0, 0, 0]"/>
                         </Property>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jAfterToggleActionPerformed"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JSpinner" name="jAfterSpinner">
                       <Properties>
                         <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
                           <SpinnerModel initial="now" stepSize="5" type="date"/>
                         </Property>
+                        <Property name="enabled" type="boolean" value="false"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JButton" name="jButton3">
@@ -408,11 +416,11 @@
                           <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                           <Component id="jFileSizeScaler" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jLessThanToggle" min="-2" pref="32" max="-2" attributes="0"/>
+                          <Component id="jGreaterThanToggle" min="-2" pref="32" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jGreaterThanSpinner" min="-2" pref="68" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Component id="jGreaterThanToggle" min="-2" pref="32" max="-2" attributes="0"/>
+                          <Component id="jLessThanToggle" min="-2" pref="32" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jLessThanSpinner" pref="69" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
@@ -432,42 +440,50 @@
                                       <Component id="jLessThanSpinner" max="32767" attributes="0"/>
                                   </Group>
                               </Group>
-                              <Component id="jGreaterThanToggle" max="32767" attributes="0"/>
-                              <Component id="jLessThanToggle" alignment="0" max="32767" attributes="0"/>
+                              <Component id="jLessThanToggle" max="32767" attributes="0"/>
+                              <Component id="jGreaterThanToggle" alignment="0" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
                 </DimensionLayout>
               </Layout>
               <SubComponents>
-                <Component class="javax.swing.JToggleButton" name="jGreaterThanToggle">
+                <Component class="javax.swing.JToggleButton" name="jLessThanToggle">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="&#x2264;"/>
                     <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                       <Insets value="[0, 0, 0, 0]"/>
                     </Property>
                   </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jLessThanToggleActionPerformed"/>
+                  </Events>
                 </Component>
                 <Component class="javax.swing.JSpinner" name="jGreaterThanSpinner">
                   <Properties>
                     <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
                       <SpinnerModel initial="0.0" minimum="0.0" numberType="java.lang.Double" stepSize="1.0" type="number"/>
                     </Property>
+                    <Property name="enabled" type="boolean" value="false"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JToggleButton" name="jLessThanToggle">
+                <Component class="javax.swing.JToggleButton" name="jGreaterThanToggle">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="&#x2265;"/>
                     <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                       <Insets value="[0, 0, 0, 0]"/>
                     </Property>
                   </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jGreaterThanToggleActionPerformed"/>
+                  </Events>
                 </Component>
                 <Component class="javax.swing.JSpinner" name="jLessThanSpinner">
                   <Properties>
                     <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
                       <SpinnerModel initial="0.0" minimum="0.0" numberType="java.lang.Double" stepSize="1.0" type="number"/>
                     </Property>
+                    <Property name="enabled" type="boolean" value="false"/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JComboBox" name="jFileSizeScaler">
@@ -654,32 +670,21 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="39" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jUseFileRegex" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jUseFileGlobs" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jIgnoreHiddenFiles" alignment="0" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace min="-2" pref="39" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jIgnoreHiddenFolders" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jUseContentRegex" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jUseContentSearch" alignment="0" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                          </Group>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jIgnoreDotFiles" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jIgnoreSystemFiles" alignment="0" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace min="-2" pref="137" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jIgnoreSymbolicLinks" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jIgnoreDotFolders" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                          </Group>
+                          <Component id="jUseFileRegex" min="-2" max="-2" attributes="0"/>
+                          <Component id="jUseFileGlobs" min="-2" max="-2" attributes="0"/>
+                          <Component id="jIgnoreHiddenFiles" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="jIgnoreDotFiles" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="jIgnoreSystemFiles" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="185" max="32767" attributes="0"/>
+                      <EmptySpace min="-2" pref="121" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="jIgnoreHiddenFolders" min="-2" max="-2" attributes="0"/>
+                          <Component id="jUseContentRegex" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="jUseContentSearch" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="jIgnoreSymbolicLinks" min="-2" max="-2" attributes="0"/>
+                          <Component id="jIgnoreDotFolders" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace pref="103" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -905,12 +910,16 @@
                           <Insets value="[0, 0, 0, 0]"/>
                         </Property>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jBeforeToggle1ActionPerformed"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JSpinner" name="jBeforeSpinner1">
                       <Properties>
                         <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
                           <SpinnerModel initial="now" stepSize="5" type="date"/>
                         </Property>
+                        <Property name="enabled" type="boolean" value="false"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JButton" name="jButton11">
@@ -967,12 +976,16 @@
                           <Insets value="[0, 0, 0, 0]"/>
                         </Property>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jAfterToggle1ActionPerformed"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JSpinner" name="jAfterSpinner1">
                       <Properties>
                         <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
                           <SpinnerModel initial="now" stepSize="5" type="date"/>
                         </Property>
+                        <Property name="enabled" type="boolean" value="false"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JButton" name="jButton12">
@@ -1071,12 +1084,16 @@
                           <Insets value="[0, 0, 0, 0]"/>
                         </Property>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jBeforeToggle2ActionPerformed"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JSpinner" name="jBeforeSpinner2">
                       <Properties>
                         <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
                           <SpinnerModel initial="now" stepSize="5" type="date"/>
                         </Property>
+                        <Property name="enabled" type="boolean" value="false"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JButton" name="jButton13">
@@ -1133,12 +1150,16 @@
                           <Insets value="[0, 0, 0, 0]"/>
                         </Property>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jAfterToggle2ActionPerformed"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JSpinner" name="jAfterSpinner2">
                       <Properties>
                         <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
                           <SpinnerModel initial="now" stepSize="5" type="date"/>
                         </Property>
+                        <Property name="enabled" type="boolean" value="false"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JButton" name="jButton14">
