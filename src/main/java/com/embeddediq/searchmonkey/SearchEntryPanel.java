@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
 import javax.swing.SpinnerDateModel;
-import org.jdesktop.swingx.JXDatePicker;
+// import org.jdesktop.swingx.JXDatePicker;
 
 /**
  *
