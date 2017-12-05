@@ -7,15 +7,29 @@ package com.embeddediq.searchmonkey;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.nio.file.FileSystems;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JPopupMenu;
+import javax.swing.JSpinner;
+import javax.swing.JWindow;
 import javax.swing.SpinnerDateModel;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 // import org.jdesktop.swingx.JXDatePicker;
 
 /**
@@ -24,11 +38,35 @@ import javax.swing.SpinnerDateModel;
  */
 public class SearchEntryPanel extends javax.swing.JPanel {
 
+    JSpinner popup_link;
+    
     /**
      * Creates new form SearchEntryPanel
      */
     public SearchEntryPanel() {
         initComponents();
+        
+        JPopupMenu frame = new JPopupMenu("Calendar");
+        CalendarPopup panel = new CalendarPopup();
+        frame.add(panel);
+        frame.pack();
+        this.jButton3.addMouseListener(new MouseAdapter () {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                int x = jButton3.getLocationOnScreen().x +(jButton3.getWidth() / 2);
+                int y = jButton3.getLocationOnScreen().y +(jButton3.getHeight() / 2);        
+                popup_link = jAfterSpinner;
+                panel.setDate((Date)popup_link.getValue());
+                frame.show(jButton3, 0, jButton3.getHeight());
+            }
+        });
+        panel.addChangeListener(new ChangeListener(){
+            @Override
+            public void stateChanged(ChangeEvent ce) {
+                CalendarPopup p2 = (CalendarPopup)ce.getSource();
+                popup_link.setValue(p2.getDate());
+            }
+        });
         
         // Restore the settings
         Restore();
@@ -1073,19 +1111,21 @@ public class SearchEntryPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_jButton9ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        JFrame frame = new JFrame("Calendar");
-        CalendarPopup panel = new CalendarPopup();
-//        panel.setVisible(true);
-        //JPanel panel = new JPanel();
 
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setBounds(400, 400, 250, 100);
+        //frame.sho
+        //
+        //frame.dispose();
 
-        frame.getContentPane().add(panel);
-
-        frame.setVisible(true);        
+        // frame.setVisible(true);        
     }//GEN-LAST:event_jButton3ActionPerformed
 
+    public void focusGained(FocusEvent e) {
+    System.out.println("gain" );
+    }
+
+    public void focusLost(FocusEvent e) {
+    System.out.println("lost" );
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup ContentSearchType;

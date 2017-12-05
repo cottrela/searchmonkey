@@ -27,20 +27,6 @@ public class Searchmonkey extends javax.swing.JFrame {
         URL url = getClass().getResource("/images/searchmonkey-300x300.png");
         Toolkit kit = Toolkit.getDefaultToolkit();
         setIconImage(kit.createImage(url));
-        
-        //this.searchEntryPanel1.add
-        // searchEntryPanel1.setSearchResultsTable(panel);
-        
-//        // Example panel
-//        SearchEntry entry = new SearchEntry();
-//        entry.lookIn = new ArrayList<>();
-//        entry.lookIn.add(Paths.get("C:\\"));
-//        entry.lookInSubFolders = true;
-//        entry.fileName = FileSystems.getDefault().getPathMatcher("regex:" + ".*\\.doc[x]?");
-//        entry.containingText = new ContentMatch("a");
-//        Start(entry);
-
-        // Passing a reference at the end of the constructor
     }
     
     private final int rate = 200; // 200 ms

@@ -6,9 +6,15 @@
 package com.embeddediq.searchmonkey;
 
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.LinkedList;
 import java.util.Map;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
 
 /**
@@ -25,18 +31,66 @@ public class CalendarPopup extends javax.swing.JPanel {
         initComponents();
 
         calendar = GregorianCalendar.getInstance();
+        baseCal = GregorianCalendar.getInstance();
         UpdateCalendar();
+        
+        // This is being overriden by the HMI
+        jTable1.setCellSelectionEnabled(true);
+
+        // Handle row changes
+        jTable1.getSelectionModel().addListSelectionListener(new ListSelectionListener () {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                //Ignore extra messages.
+                if (e.getValueIsAdjusting()) return;
+                updateDate();
+            }
+        });
+
+        // Handle column changes
+        jTable1.getColumnModel().getSelectionModel().addListSelectionListener(new ListSelectionListener () {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (e.getValueIsAdjusting()) return;
+                updateDate();
+            }
+        });
+    
+        
     }
     
     Date date;
     public void setDate(Date date)
     {
-        this.date = date;
+        // this.date = date;
+        calendar.setTime(date);
+        UpdateCalendar();
+        //int count = calendar - baseVal;
+        //jTable1.getColumnModel().getSelectionModel().addSelectionInterval(, WIDTH);
+        //TODO - select the cell after it has been chosen
     }
-
     public Date getDate()
     {
         return this.date;
+    }
+    private Collection<ChangeListener> listeners = new LinkedList<>();
+    public void addChangeListener(ChangeListener listener)
+    {
+        listeners.add(listener);
+    }
+    
+    private void updateDate()
+    {
+        Calendar my_copy = (Calendar) baseCal.clone();
+        int col = jTable1.getSelectedColumn();
+        int row = jTable1.getSelectedRow();
+        my_copy.add(Calendar.DAY_OF_MONTH, col + (row * 7));
+        this.date = my_copy.getTime();
+        
+        // Implement a change listener
+        for(ChangeListener listener: listeners){
+            listener.stateChanged(new ChangeEvent(this));
+        }        
     }
     
     private void UpdateCalendar()
@@ -98,9 +152,10 @@ public class CalendarPopup extends javax.swing.JPanel {
 
         // Set all of the days from the calendar
         calendar.set(Calendar.DAY_OF_MONTH, 1);
-        Calendar tmp = (Calendar)calendar.clone(); // set(Calendar.DAY_OF_MONTH, 1);
-        int cM = tmp.get(Calendar.MONTH);
-        int wd2 = tmp.get(Calendar.DAY_OF_WEEK);
+        baseCal.setTime(calendar.getTime());
+        // baseCal = (Calendar)calendar.clone(); // set(Calendar.DAY_OF_MONTH, 1);
+        int cM = baseCal.get(Calendar.MONTH);
+        int wd2 = baseCal.get(Calendar.DAY_OF_WEEK);
         //calendar.add(Calendar.MONTH, 1);
         //calendar.add(Calendar.DAY_OF_MONTH, -1);
         // int last_day = calendar.get(Calendar.DAY_OF_MONTH); // Get the last day
@@ -109,7 +164,8 @@ public class CalendarPopup extends javax.swing.JPanel {
             col2 += 7;
         }
         //calendar.set(Calendar.DAY_OF_MONTH, 1);
-        tmp.add(Calendar.DAY_OF_MONTH, -col2); // Go back N days
+        baseCal.add(Calendar.DAY_OF_MONTH, -col2); // Go back N days
+        Calendar tmp = (Calendar)baseCal.clone();
         for (int row=0; row<jTable1.getRowCount(); row++)
         {
             for (int col=0; col<7; col++)
@@ -120,7 +176,10 @@ public class CalendarPopup extends javax.swing.JPanel {
                 tmp.add(Calendar.DAY_OF_MONTH, 1); // next
             }
         }
+        updateDate();
     }
+
+    private Calendar baseCal; //  = Calendar.getInstance();
     
 
     /**
@@ -143,7 +202,14 @@ public class CalendarPopup extends javax.swing.JPanel {
         jButton4 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
 
+        setMaximumSize(new java.awt.Dimension(180, 150));
+        setMinimumSize(new java.awt.Dimension(180, 150));
+        setName(""); // NOI18N
+        setPreferredSize(new java.awt.Dimension(180, 150));
         setLayout(new java.awt.BorderLayout());
+
+        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -175,20 +241,29 @@ public class CalendarPopup extends javax.swing.JPanel {
         });
         jTable1.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
         jTable1.setAutoscrolls(false);
-        jTable1.setColumnSelectionAllowed(true);
+        jTable1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jTable1.setFillsViewportHeight(true);
         jTable1.setIntercellSpacing(new java.awt.Dimension(0, 0));
+        jTable1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jTable1.getTableHeader().setResizingAllowed(false);
         jTable1.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(jTable1);
         jTable1.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         if (jTable1.getColumnModel().getColumnCount() > 0) {
             jTable1.getColumnModel().getColumn(0).setResizable(false);
+            jTable1.getColumnModel().getColumn(0).setPreferredWidth(20);
             jTable1.getColumnModel().getColumn(1).setResizable(false);
+            jTable1.getColumnModel().getColumn(1).setPreferredWidth(20);
             jTable1.getColumnModel().getColumn(2).setResizable(false);
+            jTable1.getColumnModel().getColumn(2).setPreferredWidth(20);
             jTable1.getColumnModel().getColumn(3).setResizable(false);
+            jTable1.getColumnModel().getColumn(3).setPreferredWidth(20);
             jTable1.getColumnModel().getColumn(4).setResizable(false);
+            jTable1.getColumnModel().getColumn(4).setPreferredWidth(20);
             jTable1.getColumnModel().getColumn(5).setResizable(false);
+            jTable1.getColumnModel().getColumn(5).setPreferredWidth(20);
             jTable1.getColumnModel().getColumn(6).setResizable(false);
+            jTable1.getColumnModel().getColumn(6).setPreferredWidth(20);
         }
 
         add(jScrollPane1, java.awt.BorderLayout.CENTER);
