@@ -7,6 +7,7 @@ package com.embeddediq.searchmonkey;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import java.io.File;
 import java.nio.file.FileSystems;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -164,6 +165,7 @@ public class SearchEntryPanel extends javax.swing.JPanel {
 
         FilenameSearchType = new javax.swing.ButtonGroup();
         ContentSearchType = new javax.swing.ButtonGroup();
+        jFileChooser1 = new javax.swing.JFileChooser();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -234,6 +236,12 @@ public class SearchEntryPanel extends javax.swing.JPanel {
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jCheckBox1 = new javax.swing.JCheckBox();
+
+        jFileChooser1.setApproveButtonText("");
+        jFileChooser1.setApproveButtonToolTipText("");
+        jFileChooser1.setDialogTitle("Select folder to look in");
+        jFileChooser1.setFileSelectionMode(javax.swing.JFileChooser.DIRECTORIES_ONLY);
+        jFileChooser1.setToolTipText("");
 
         jLabel1.setLabelFor(jFileName);
         jLabel1.setText("File name:");
@@ -367,6 +375,11 @@ public class SearchEntryPanel extends javax.swing.JPanel {
         jButton9.setBorderPainted(false);
         jButton9.setContentAreaFilled(false);
         jButton9.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jButton9.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton9ActionPerformed(evt);
+            }
+        });
 
         jButton10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/folder-tree.png"))); // NOI18N
         jButton10.setBorder(null);
@@ -579,6 +592,7 @@ public class SearchEntryPanel extends javax.swing.JPanel {
         jTabbedPane1.addTab("Main", jPanel1);
 
         FilenameSearchType.add(jUseFileGlobs);
+        jUseFileGlobs.setSelected(true);
         jUseFileGlobs.setText("Search filenames using 'glob' expressions e.g. *.txt");
 
         FilenameSearchType.add(jUseFileRegex);
@@ -1046,6 +1060,12 @@ public class SearchEntryPanel extends javax.swing.JPanel {
         jBeforeSpinner2.setEnabled(jBeforeToggle2.isSelected());
     }//GEN-LAST:event_jBeforeToggle2ActionPerformed
 
+    private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
+        jFileChooser1.setVisible(true);
+        File fname = jFileChooser1.getSelectedFile();
+        this.jLookIn.getModel().setSelectedItem(fname.getPath());
+    }//GEN-LAST:event_jButton9ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup ContentSearchType;
@@ -1078,6 +1098,7 @@ public class SearchEntryPanel extends javax.swing.JPanel {
     private javax.swing.JButton jButton9;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JComboBox<String> jContainingText;
+    private javax.swing.JFileChooser jFileChooser1;
     private javax.swing.JComboBox<String> jFileName;
     private javax.swing.JComboBox<String> jFileSizeScaler;
     private javax.swing.JSpinner jGreaterThanSpinner;

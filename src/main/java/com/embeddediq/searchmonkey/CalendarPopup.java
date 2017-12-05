@@ -8,7 +8,8 @@ package com.embeddediq.searchmonkey;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -22,9 +23,47 @@ public class CalendarPopup extends javax.swing.JPanel {
     public CalendarPopup() {
         initComponents();
 
-        Calendar cal = new GregorianCalendar();
-        cal.getFirstDayOfWeek();
-        jTable1.getColumn(0).setHeaderValue("M");
+        Calendar cal = GregorianCalendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        int fd = cal.getFirstDayOfWeek();
+        
+        // Update days of the week titles
+        Map<String, Integer>weeknames = cal.getDisplayNames(Calendar.DAY_OF_WEEK, Calendar.SHORT_STANDALONE, getLocale());
+        weeknames.entrySet().forEach((entry) -> {
+            int col = entry.getValue() - fd;
+            if (col < 1) {
+                col += 7;
+            } //
+            jTable1.getColumn(col).setHeaderValue(entry.getKey().substring(0, 1));
+        });
+        
+        // Update month name
+        this.jLabel1.setText(cal.getDisplayName(Calendar.MONTH, Calendar.LONG_STANDALONE, getLocale()));
+
+        // Update days of the month
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+        int wd = cal.get(Calendar.DAY_OF_WEEK);
+        cal.roll(Calendar.DAY_OF_MONTH, 31);
+        int last_day = cal.get(Calendar.DAY_OF_MONTH); // Get the last day
+        int col = wd - fd;
+        if (col < 1) {
+            col += 7;
+        }
+        int row = 0;
+        for (int i = 0; i<last_day; i++)
+        {
+            jTable1.getModel().setValueAt(i+1, row, col);
+            row ++;
+            if (row >= 7)
+            {
+                row = 0;
+                col ++;
+            }
+        }
+        
     }
     
     Date date;
@@ -35,7 +74,7 @@ public class CalendarPopup extends javax.swing.JPanel {
 
     public Date getDate()
     {
-        date = this.date;
+        return this.date;
     }
     
     
