@@ -15,6 +15,8 @@ import java.nio.file.PathMatcher;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 /**
@@ -81,7 +83,11 @@ public class PathFinder extends SimpleFileVisitor<Path> {
             {
                 // Collect matching files
                 SearchResult result = new SearchResult(file, attrs, count);
-                queue.add(result);
+                try {
+                    queue.put(result);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(PathFinder.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         }
         return CONTINUE;

@@ -5,11 +5,14 @@
  */
 package com.embeddediq.searchmonkey;
 
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
+import javax.swing.ImageIcon;
 
 /**
  *
@@ -17,6 +20,15 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class Searchmonkey extends javax.swing.JFrame {
 
+    private String[] iconList = new String[] {
+        "/images/searchmonkey-16x16.png",
+        "/images/searchmonkey-22x22.png",
+        "/images/searchmonkey-24x24.png",
+        "/images/searchmonkey-32x32.png",
+        "/images/searchmonkey-48x48.png",
+        "/images/searchmonkey-96x96.png",
+        "/images/searchmonkey-300x300.png",
+    };
     /**
      * Creates new form NewMDIApplication
      */
@@ -24,9 +36,16 @@ public class Searchmonkey extends javax.swing.JFrame {
         initComponents();
         
         // Update icon
-        URL url = getClass().getResource("/images/searchmonkey-300x300.png");
-        Toolkit kit = Toolkit.getDefaultToolkit();
-        setIconImage(kit.createImage(url));
+        ArrayList<Image> imageList = new ArrayList<>();
+        for (String fn: iconList)
+        {
+            imageList.add(new ImageIcon(getClass().getResource(fn)).getImage());
+        }
+        setIconImages(imageList);
+
+        //URL url = getClass().getResource("/images/searchmonkey-300x300.png");
+        //Toolkit kit = Toolkit.getDefaultToolkit();
+        //setIconImage(kit.createImage(url));
     }
     
     private final int rate = 200; // 200 ms
@@ -204,6 +223,8 @@ public class Searchmonkey extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
+        System.setProperty("sun.java2d.noddraw", Boolean.TRUE.toString()); // Speed up the resize time
+        
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -227,7 +248,8 @@ public class Searchmonkey extends javax.swing.JFrame {
         }
         //</editor-fold>
         //</editor-fold>
-
+        setDefaultLookAndFeelDecorated(true); // Speed up the resize time
+        
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {

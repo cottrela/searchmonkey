@@ -192,11 +192,11 @@
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
-                              <Component id="jBeforeToggle" min="-2" max="-2" attributes="0"/>
+                              <Component id="jBeforeToggle" max="32767" attributes="0"/>
                               <EmptySpace max="32767" attributes="0"/>
-                              <Component id="jBeforeSpinner" min="-2" max="-2" attributes="0"/>
+                              <Component id="jBeforeSpinner" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jButton6" min="-2" pref="23" max="-2" attributes="0"/>
+                              <Component id="jButton6" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -209,8 +209,8 @@
                                   <Component id="jBeforeToggle" max="32767" attributes="0"/>
                                   <Group type="102" attributes="0">
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="jButton6" min="-2" max="-2" attributes="0"/>
-                                          <Component id="jBeforeSpinner" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Component id="jButton6" max="32767" attributes="0"/>
+                                          <Component id="jBeforeSpinner" alignment="0" max="32767" attributes="0"/>
                                       </Group>
                                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                                   </Group>
@@ -263,11 +263,11 @@
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" attributes="0">
-                              <Component id="jAfterToggle" min="-2" max="-2" attributes="0"/>
+                              <Component id="jAfterToggle" max="32767" attributes="0"/>
                               <EmptySpace max="32767" attributes="0"/>
-                              <Component id="jAfterSpinner" min="-2" max="-2" attributes="0"/>
+                              <Component id="jAfterSpinner" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jButton3" min="-2" pref="23" max="-2" attributes="0"/>
+                              <Component id="jButton3" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -426,16 +426,16 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
                           <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                          <Component id="jFileSizeScaler" min="-2" max="-2" attributes="0"/>
+                          <Component id="jFileSizeScaler" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jGreaterThanToggle" min="-2" pref="32" max="-2" attributes="0"/>
+                          <Component id="jGreaterThanToggle" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jGreaterThanSpinner" min="-2" pref="68" max="-2" attributes="0"/>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Component id="jLessThanToggle" min="-2" pref="32" max="-2" attributes="0"/>
+                          <Component id="jGreaterThanSpinner" min="-2" pref="70" max="-2" attributes="0"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Component id="jLessThanToggle" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jLessThanSpinner" pref="69" max="32767" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="jLessThanSpinner" pref="70" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -452,8 +452,11 @@
                                       <Component id="jLessThanSpinner" max="32767" attributes="0"/>
                                   </Group>
                               </Group>
-                              <Component id="jLessThanToggle" max="32767" attributes="0"/>
-                              <Component id="jGreaterThanToggle" alignment="0" max="32767" attributes="0"/>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Component id="jGreaterThanToggle" max="32767" attributes="0"/>
+                                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                              </Group>
+                              <Component id="jLessThanToggle" alignment="0" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>

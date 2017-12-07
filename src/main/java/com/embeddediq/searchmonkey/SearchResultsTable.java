@@ -14,13 +14,22 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.Timer;
 import java.awt.Component;
+import java.awt.FlowLayout;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
+import java.net.URL;
 import java.nio.file.attribute.FileTime;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import javafx.scene.layout.Border;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
-import javax.swing.SwingUtilities;
+import javax.swing.JPanel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
@@ -31,12 +40,12 @@ import javax.swing.table.TableColumnModel;
  *
  * @author cottr
  */
-public class SearchResultsTable extends javax.swing.JPanel {
+public class SearchResultsTable extends javax.swing.JPanel implements ListSelectionListener {
 
     private Timer timer;
-    private List<SearchResult> rowData = new ArrayList<>();
-    private JTable table;
-    private MyTableModel myModel;
+    private final List<SearchResult> rowData;
+    // private final JTable table;
+    private final MyTableModel myModel;
     
     /**
      * Creates new form SearchResults
@@ -44,79 +53,52 @@ public class SearchResultsTable extends javax.swing.JPanel {
     public SearchResultsTable() {
         initComponents();
 
+        rowData = new ArrayList<>();
         myModel = new MyTableModel();
-        table = new JTable(myModel);
-        table.setDefaultRenderer(Object.class, new SearchMonkeyTableRenderer());
-        table.setAutoCreateRowSorter(true);
-        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        
-        table.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
-            handleSelectionEvent(e);
-        });
-        
-        
-        // Show/hide columns using this code
-        /*
-        TableColumn hidden = table.getColumn(SearchResult.COLUMN_NAMES[SearchResult.ACCESSED]);
-        table.removeColumn(hidden);
-        table.addColumn(hidden);
-        table.moveColumn(last_pos, new_pos);
-        */
-                
-        JScrollPane scrollPane = new JScrollPane(table);
-        table.setFillsViewportHeight(true);
-        
-        this.setLayout(new BorderLayout());
-        this.add(scrollPane, BorderLayout.CENTER);
-       
+        jTable1.setModel(myModel);
+        jTable1.setDefaultRenderer(Object.class, new SearchMonkeyTableRenderer());
+        jTable1.setAutoCreateRowSorter(true);
+        //jTable1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        jTable1.setFillsViewportHeight(true);
+        // table = jTable1;
+        jTable1.getColumn(SearchResult.COLUMN_NAMES[SearchResult.FLAGS]).setCellRenderer(new IconTableRenderer(jTable1.getRowHeight()-6));
+
+        jTable1.getSelectionModel().addListSelectionListener(this);
     }
-    public void handleSelectionEvent(ListSelectionEvent e)
-    {
-        if (e.getValueIsAdjusting()) {
+
+    @Override
+    public void valueChanged(ListSelectionEvent lse) {
+        if (lse.getValueIsAdjusting()) {
             return;
         }
-        //boolean ok = !e.getValueIsAdjusting();
-        //int a = e.getFirstIndex();
-        //int b = e.getLastIndex();
+
         parent.ClearContent();
-        int[] rows = table.getSelectedRows();
+        int[] rows = jTable1.getSelectedRows();
         for (int row: rows)
         {
-            SearchResult val = rowData.get(table.convertRowIndexToModel(row));
+            SearchResult val = rowData.get(jTable1.convertRowIndexToModel(row));
             parent.UpdateContent(val);
-        }
+        }        
     }
-    
-    Searchmonkey parent;
+
+    private Searchmonkey parent;
     public void setParent(Searchmonkey parent)
     {
         this.parent = parent;
     }
     
-    /*
-    public void setQueue(SearchResultQueue queue, int rateMillis)
-    {
-        // Start thread timer
-        timer = new Timer(rateMillis, new ResultsListener(queue, rowData));
-    }
-    public void getQueue(SearchResultQueue queue, int rateMillis)
-    {
-        // Start thread timer
-        timer = new Timer(rateMillis, new ResultsListener(queue, rowData));
-    }
-    */
- 
     public void resizeAllColumnWidth() {
-    final TableColumnModel columnModel = table.getColumnModel();
-    for (int column = 0; column < table.getColumnCount(); column++) {
+    final TableColumnModel columnModel = jTable1.getColumnModel();
+    for (int column = 0; column < jTable1.getColumnCount(); column++) {
         int width = 15; // Min width
-        for (int row = 0; row < table.getRowCount(); row++) {
-            TableCellRenderer renderer = table.getCellRenderer(row, column);
-            Component comp = table.prepareRenderer(renderer, row, column);
+        for (int row = 0; row < jTable1.getRowCount(); row++) {
+            TableCellRenderer renderer = jTable1.getCellRenderer(row, column);
+            Component comp = jTable1.prepareRenderer(renderer, row, column);
             width = Math.max(comp.getPreferredSize().width +1 , width);
         }
-        if(width > 300)
+        if(width > 300) {
             width=300;
+        }
         columnModel.getColumn(column).setPreferredWidth(width);
     }
 }
@@ -126,7 +108,7 @@ public class SearchResultsTable extends javax.swing.JPanel {
     {
         // Clear the previous entries
         rowData.clear();
-        DefaultTableModel model = (DefaultTableModel)table.getModel();
+        DefaultTableModel model = (DefaultTableModel)jTable1.getModel();
         model.setRowCount(0);
         
         // Start a new session
@@ -142,7 +124,6 @@ public class SearchResultsTable extends javax.swing.JPanel {
     {
         timer.stop();
         actionCompleted();
-        // myModel.fireTableDataChanged();
     }
 
     public void actionCompleted()
@@ -178,10 +159,9 @@ public class SearchResultsTable extends javax.swing.JPanel {
                 myModel.fireTableRowsInserted(startRow, endRow - 1);
             }
         }
-        
     }
     
-    class MyTableModel extends DefaultTableModel 
+    private class MyTableModel extends DefaultTableModel 
     {
         @Override
         public String getColumnName(int col) {
@@ -220,12 +200,96 @@ public class SearchResultsTable extends javax.swing.JPanel {
         */
     }
     
+    class IconTableRenderer extends JPanel implements TableCellRenderer
+    {
+
+        private final JLabel hidden;
+        private final JLabel linked;
+        public IconTableRenderer(int height) {
+            setOpaque(true); //MUST do this for background to show up.
+            hidden = new JLabel(getScaledIcon(getClass().getResource("/images/File-Hide-icon.png"), height));
+            hidden.setToolTipText("Hidden file");
+            linked = new JLabel(getScaledIcon(getClass().getResource("/images/link-icon-614x460.png"), height));
+            linked.setToolTipText("Symbolic link");
+            //setBorder(Border.EMPTY);
+            //hidden.setBorder(Border.EMPTY);
+            //linked.setBorder(Border.EMPTY);
+            this.setLayout(new FlowLayout());
+        }
+
+        private Icon getScaledIcon(URL srcImg, int height) {
+            ImageIcon image = new ImageIcon(srcImg);
+            
+            image.setImage(getScaledImage(image.getImage(), height));
+            return (Icon)image;
+        }
+
+        private Image getScaledImage(Image srcImg, int height){
+            int w = height * srcImg.getWidth(this) / srcImg.getHeight(this);
+            BufferedImage resizedImg = new BufferedImage(w, height, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2 = resizedImg.createGraphics();
+
+            g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+            g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.drawImage(srcImg, 0, 0, w, height, null);
+            g2.dispose();
+
+            return resizedImg;
+        }
+
+        /**
+         *
+         * @param table
+         * @param value
+         * @param isSelected
+         * @param hasFocus
+         * @param row
+         * @param column
+         * @return
+         */
+        @Override
+        public Component getTableCellRendererComponent(
+                                JTable table, Object value,
+                                boolean isSelected, boolean hasFocus,
+                                int row, int column) {
+            int flags = (int)value;
+            this.removeAll();
+            List<String> flagText = new ArrayList<>();
+            if (flags == SearchResult.HIDDEN_FILE)
+            {
+                this.add(hidden);
+                //setIcon(hidden);
+                flagText.add("Hidden file");
+            }
+            if (flags == SearchResult.SYMBOLIC_LINK){
+                this.add(linked);
+                // setIcon(linked);
+                flagText.add("Symbolic link");
+            }
+            // Update tool tips
+            String txtToolTip = String.join(", ", flagText); 
+            if (txtToolTip.isEmpty())
+            {
+                txtToolTip = "Normal file";
+            }
+            this.setToolTipText(txtToolTip);
+//            break;
+            return this;
+            
+        }
+    }
+    
     public class SearchMonkeyTableRenderer extends JLabel
                            implements TableCellRenderer {
 
         public SearchMonkeyTableRenderer() {
             setOpaque(true); //MUST do this for background to show up.
+            hidden = new ImageIcon(getClass().getResource("/images/File-Hide-icon.png"));
+            linked = new ImageIcon(getClass().getResource("/images/link-icon-614x460.png"));
         }
+        Icon hidden;
+        Icon linked;
         
         private final String[] MAG_NAMES = new String[] {"Bytes", "KBytes", "MBytes", "GBytes", "TBytes"};
 
@@ -245,7 +309,8 @@ public class SearchResultsTable extends javax.swing.JPanel {
                                 boolean isSelected, boolean hasFocus,
                                 int row, int column) {
 
-            // int idx = table.convertColumnIndexToModel(colunn)
+            setIcon(null);
+
             String txtVal;
             String txtToolTip = new String();
             int idx = table.convertColumnIndexToModel(column);
@@ -273,10 +338,13 @@ public class SearchResultsTable extends javax.swing.JPanel {
                     List<String> flagText = new ArrayList<>();
                     if (flags == SearchResult.HIDDEN_FILE)
                     {
-                        // this.setIcon(hidden_file_icon);
+                        //this.add(hidden);
+                        //setIcon(hidden);
                         flagText.add("HIDDEN");
                     }
                     if (flags == SearchResult.SYMBOLIC_LINK){
+                        //this.add(linked);
+                        // setIcon(linked);
                         flagText.add("SYMBOLIC");
                     }
                     txtVal = String.join(", ", flagText); 
@@ -330,19 +398,33 @@ public class SearchResultsTable extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 945, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 368, Short.MAX_VALUE)
-        );
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
+
+        setLayout(new java.awt.BorderLayout());
+
+        jTable1.setAutoCreateRowSorter(true);
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jTable1.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+        jTable1.setFillsViewportHeight(true);
+        jScrollPane1.setViewportView(jTable1);
+
+        add(jScrollPane1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables
 
 
