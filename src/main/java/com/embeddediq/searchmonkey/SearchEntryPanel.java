@@ -7,11 +7,18 @@ package com.embeddediq.searchmonkey;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
+import java.awt.Component;
+import java.awt.Composite;
+import java.awt.CompositeContext;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
+import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.Raster;
+import java.awt.image.WritableRaster;
 import java.nio.file.FileSystems;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -19,17 +26,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
-import javax.swing.JButton;
-import javax.swing.JFrame;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JPopupMenu;
 import javax.swing.JSpinner;
-import javax.swing.JWindow;
 import javax.swing.SpinnerDateModel;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.event.PopupMenuEvent;
-import javax.swing.event.PopupMenuListener;
 // import org.jdesktop.swingx.JXDatePicker;
 
 /**
@@ -53,8 +56,6 @@ public class SearchEntryPanel extends javax.swing.JPanel {
         this.jButton3.addMouseListener(new MouseAdapter () {
             @Override
             public void mousePressed(MouseEvent e) {
-                int x = jButton3.getLocationOnScreen().x +(jButton3.getWidth() / 2);
-                int y = jButton3.getLocationOnScreen().y +(jButton3.getHeight() / 2);        
                 popup_link = jAfterSpinner;
                 panel.setDate((Date)popup_link.getValue());
                 frame.show(jButton3, 0, jButton3.getHeight());
@@ -63,11 +64,20 @@ public class SearchEntryPanel extends javax.swing.JPanel {
         panel.addChangeListener(new ChangeListener(){
             @Override
             public void stateChanged(ChangeEvent ce) {
+                if (popup_link == null) return;
                 CalendarPopup p2 = (CalendarPopup)ce.getSource();
                 popup_link.setValue(p2.getDate());
             }
         });
-        
+        this.jButton6.addMouseListener(new MouseAdapter () {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                popup_link = jBeforeSpinner;
+                panel.setDate((Date)popup_link.getValue());
+                frame.show(jButton6, 0, jButton6.getHeight());
+            }
+        });
+
         // Restore the settings
         Restore();
     }
@@ -192,7 +202,37 @@ public class SearchEntryPanel extends javax.swing.JPanel {
             jLookIn.addItem(item);
         }
     }
-         
+    
+    /**
+    * this class was created by two ibm authors.
+    * @see http://www.ibm.com/developerworks/web/library/us-j2d/
+    */
+    public class RolloverIcon extends ImageIcon
+    {
+        /**
+         * Generated SUID
+         */
+        private static final long serialVersionUID = 3757470229899737051L;
+        protected ImageIcon fIcon;
+
+        /**
+         * Construct us with the icon we will create paint a rollover icon for
+         * @param component
+         * @param anIcon
+         */
+        public RolloverIcon(Component component, ImageIcon anIcon) {
+            super();
+            int width = anIcon.getImage().getWidth(null);
+            int height = anIcon.getImage().getHeight(null);
+            BufferedImage bufferedImage = new BufferedImage(width ,height, BufferedImage.TYPE_4BYTE_ABGR);
+            Graphics2D g2D = (Graphics2D) bufferedImage.getGraphics();
+            g2D.setComposite(RolloverComposite.getInstance());
+            anIcon.paintIcon(component, g2D, 0, 0);
+            setImage(bufferedImage);
+        }
+        
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -311,6 +351,11 @@ public class SearchEntryPanel extends javax.swing.JPanel {
         jButton6.setBorderPainted(false);
         jButton6.setContentAreaFilled(false);
         jButton6.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton6ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -1106,8 +1151,8 @@ public class SearchEntryPanel extends javax.swing.JPanel {
 
     private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
         jFileChooser1.setVisible(true);
-        File fname = jFileChooser1.getSelectedFile();
-        this.jLookIn.getModel().setSelectedItem(fname.getPath());
+        //File fname = jFileChooser1.getSelectedFile();
+        //this.jLookIn.getModel().setSelectedItem(fname.getPath());
     }//GEN-LAST:event_jButton9ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
@@ -1119,13 +1164,9 @@ public class SearchEntryPanel extends javax.swing.JPanel {
         // frame.setVisible(true);        
     }//GEN-LAST:event_jButton3ActionPerformed
 
-    public void focusGained(FocusEvent e) {
-    System.out.println("gain" );
-    }
-
-    public void focusLost(FocusEvent e) {
-    System.out.println("lost" );
-    }
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton6ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup ContentSearchType;

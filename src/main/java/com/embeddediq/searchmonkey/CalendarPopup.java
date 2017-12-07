@@ -5,16 +5,22 @@
  */
 package com.embeddediq.searchmonkey;
 
+import java.awt.Color;
+import java.awt.Component;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.Map;
+import javax.swing.JLabel;
+import javax.swing.JTable;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 
 /**
@@ -55,8 +61,42 @@ public class CalendarPopup extends javax.swing.JPanel {
                 updateDate();
             }
         });
+    }
     
-        
+    public class StatusColumnCellRenderer extends DefaultTableCellRenderer {
+        public StatusColumnCellRenderer()
+        {
+            super();
+        }
+                
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col) {
+
+            //Cells are by default rendered as a JLabel.
+            JLabel l = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
+
+            Calendar now = Calendar.getInstance();
+            Calendar c = (Calendar)now.clone();
+            c.setTime((Date)value);
+            
+            l.setText(Integer.toString(c.get(Calendar.DAY_OF_MONTH)));
+            //Get the status for the current row.
+            if (c.get(Calendar.MONTH) != monthView.get(Calendar.MONTH)) {
+                l.setForeground(Color.GRAY);
+            } else {
+                l.setForeground(Color.BLACK);
+            }
+            if ((c.get(Calendar.DAY_OF_YEAR) == now.get(Calendar.DAY_OF_YEAR)) &&
+                    (c.get(Calendar.YEAR) == now.get(Calendar.YEAR))) {
+                l.setBackground(Color.GREEN);
+            } else {
+                l.setBackground(Color.WHITE);
+            }
+
+            //Return the JLabel which renders the cell.
+            return l;
+
+        }
     }
     
     Date date;
@@ -93,16 +133,14 @@ public class CalendarPopup extends javax.swing.JPanel {
         }        
     }
     
+    private Calendar monthView;
     private void UpdateCalendar()
     {
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        int fd = calendar.getFirstDayOfWeek();
+        monthView = (Calendar)calendar.clone();
+        int fd = monthView.getFirstDayOfWeek();
         
         // Update days of the week titles
-        Map<String, Integer>weeknames = calendar.getDisplayNames(Calendar.DAY_OF_WEEK, Calendar.SHORT_STANDALONE, getLocale());
+        Map<String, Integer>weeknames = monthView.getDisplayNames(Calendar.DAY_OF_WEEK, Calendar.SHORT_STANDALONE, getLocale());
         weeknames.entrySet().forEach((entry) -> {
             int col = entry.getValue() - fd;
             if (col < 0) {
@@ -114,9 +152,9 @@ public class CalendarPopup extends javax.swing.JPanel {
             // TODO - highlight today's date
         });
         
-        // Update month name
-        String m = calendar.getDisplayName(Calendar.MONTH, Calendar.LONG_STANDALONE, getLocale());
-        int y = calendar.get(Calendar.YEAR);
+        // Update month nam
+        String m = monthView.getDisplayName(Calendar.MONTH, Calendar.LONG_STANDALONE, getLocale());
+        int y = monthView.get(Calendar.YEAR);
         this.jLabel1.setText(String.format("%s %d", m, y));
 
         // Clear first and last rows
@@ -128,11 +166,11 @@ public class CalendarPopup extends javax.swing.JPanel {
 
         // Update days of the month
         {
-            calendar.set(Calendar.DAY_OF_MONTH, 1);
-            int wd = calendar.get(Calendar.DAY_OF_WEEK);
-            calendar.add(Calendar.MONTH, 1);
-            calendar.add(Calendar.DAY_OF_MONTH, -1);
-            int last_day = calendar.get(Calendar.DAY_OF_MONTH); // Get the last day
+            monthView.set(Calendar.DAY_OF_MONTH, 1);
+            int wd = monthView.get(Calendar.DAY_OF_WEEK);
+            monthView.add(Calendar.MONTH, 1);
+            monthView.add(Calendar.DAY_OF_MONTH, -1);
+            int last_day = monthView.get(Calendar.DAY_OF_MONTH); // Get the last day
             int col = wd - fd;
             if (col < 0) {
                 col += 7;
@@ -151,8 +189,8 @@ public class CalendarPopup extends javax.swing.JPanel {
         }
 
         // Set all of the days from the calendar
-        calendar.set(Calendar.DAY_OF_MONTH, 1);
-        baseCal.setTime(calendar.getTime());
+        monthView.set(Calendar.DAY_OF_MONTH, 1);
+        baseCal.setTime(monthView.getTime());
         // baseCal = (Calendar)calendar.clone(); // set(Calendar.DAY_OF_MONTH, 1);
         int cM = baseCal.get(Calendar.MONTH);
         int wd2 = baseCal.get(Calendar.DAY_OF_WEEK);
@@ -172,11 +210,23 @@ public class CalendarPopup extends javax.swing.JPanel {
             {
                 // TODO - change the cell values if from last month
                 int val = tmp.get(Calendar.DAY_OF_MONTH);
-                jTable1.getModel().setValueAt(val, row, col);
+                jTable1.getModel().setValueAt(tmp.getTime(), row, col);
+                if (tmp.equals(calendar))
+                {
+                    jTable1.changeSelection(row, col, false, false);
+                }
                 tmp.add(Calendar.DAY_OF_MONTH, 1); // next
+                
             }
         }
-        updateDate();
+
+        // Date renderer
+        Enumeration<TableColumn> en = jTable1.getColumnModel().getColumns();
+        while (en.hasMoreElements())
+        {
+            TableColumn column = en.nextElement();
+            column.setCellRenderer(new StatusColumnCellRenderer());
+        }
     }
 
     private Calendar baseCal; //  = Calendar.getInstance();
@@ -350,21 +400,25 @@ public class CalendarPopup extends javax.swing.JPanel {
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         calendar.add(Calendar.MONTH, -1);
         UpdateCalendar();
+        updateDate();
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         calendar.add(Calendar.YEAR, 1);
         UpdateCalendar();
+        updateDate();
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         calendar.add(Calendar.MONTH, 1);
         UpdateCalendar();
+        updateDate();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         calendar.add(Calendar.YEAR, -1);
         UpdateCalendar();
+        updateDate();
     }//GEN-LAST:event_jButton4ActionPerformed
 
 
