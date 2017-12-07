@@ -15,6 +15,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.Raster;
@@ -28,6 +29,7 @@ import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JPopupMenu;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerDateModel;
@@ -39,49 +41,80 @@ import javax.swing.event.ChangeListener;
  *
  * @author cottr
  */
-public class SearchEntryPanel extends javax.swing.JPanel {
+public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListener {
 
     JSpinner popup_link;
-    
+    PopupCalendar cal;
     /**
      * Creates new form SearchEntryPanel
      */
     public SearchEntryPanel() {
         initComponents();
         
-        JPopupMenu frame = new JPopupMenu("Calendar");
-        CalendarPopup panel = new CalendarPopup();
-        frame.add(panel);
-        frame.pack();
-        this.jButton3.addMouseListener(new MouseAdapter () {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                popup_link = jAfterSpinner;
-                panel.setDate((Date)popup_link.getValue());
-                frame.show(jButton3, 0, jButton3.getHeight());
-            }
-        });
-        panel.addChangeListener(new ChangeListener(){
-            @Override
-            public void stateChanged(ChangeEvent ce) {
-                if (popup_link == null) return;
-                CalendarPopup p2 = (CalendarPopup)ce.getSource();
-                popup_link.setValue(p2.getDate());
-            }
-        });
-        this.jButton6.addMouseListener(new MouseAdapter () {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                popup_link = jBeforeSpinner;
-                panel.setDate((Date)popup_link.getValue());
-                frame.show(jButton6, 0, jButton6.getHeight());
-            }
-        });
+        cal = new PopupCalendar();
+        cal.getCalendar().addChangeListener(this);
+
+        jButton3.addMouseListener(new MyMouseAdapter(jButton3, jAfterSpinner));
+        jButton6.addMouseListener(new MyMouseAdapter(jButton6, jBeforeSpinner));
+        jButton12.addMouseListener(new MyMouseAdapter(jButton12, jAfterSpinner1));
+        jButton11.addMouseListener(new MyMouseAdapter(jButton11, jBeforeSpinner1));
+        jButton14.addMouseListener(new MyMouseAdapter(jButton14, jAfterSpinner2));
+        jButton13.addMouseListener(new MyMouseAdapter(jButton13, jBeforeSpinner2));
 
         // Restore the settings
         Restore();
     }
+    
+    public class PopupCalendar extends JPopupMenu {
+        CalendarPopup panel;
+        public PopupCalendar (){
+            panel = new CalendarPopup();
+            
+            this.add(panel);
+            this.pack();
+        }
+        
+        public CalendarPopup getCalendar()
+        {
+            return panel;
+        }
+        
+        private JSpinner popup_link;
+        public void show(JButton jButton, JSpinner link)
+        {
+            popup_link = link;
+            panel.setDate((Date)link.getValue());
+            this.show(jButton, 0, jButton.getHeight());
+        }
+        public void updateDate()
+        {
+            if (popup_link == null) return;
+            popup_link.setValue(panel.getDate());
+        }
+    }
 
+    @Override
+    public void stateChanged(ChangeEvent ce) {
+        cal.updateDate();
+    }
+    
+    public class MyMouseAdapter extends MouseAdapter {
+        //PopupCalendar cal;
+        JButton jButton;
+        JSpinner link;
+        public MyMouseAdapter(/*PopupCalendar cal, */ JButton jButton, JSpinner link)
+        {
+            //this.cal = cal;
+            this.jButton = jButton;
+            this.link = link;
+        }
+        
+        @Override
+        public void mousePressed(MouseEvent e)
+        {
+            cal.show(jButton, link);
+        }
+    }
    
     private SearchEntry getSearchRequest() {
         SearchEntry req = new SearchEntry();
@@ -351,11 +384,6 @@ public class SearchEntryPanel extends javax.swing.JPanel {
         jButton6.setBorderPainted(false);
         jButton6.setContentAreaFilled(false);
         jButton6.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        jButton6.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton6ActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -399,11 +427,6 @@ public class SearchEntryPanel extends javax.swing.JPanel {
         jButton3.setBorderPainted(false);
         jButton3.setContentAreaFilled(false);
         jButton3.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -1154,19 +1177,6 @@ public class SearchEntryPanel extends javax.swing.JPanel {
         //File fname = jFileChooser1.getSelectedFile();
         //this.jLookIn.getModel().setSelectedItem(fname.getPath());
     }//GEN-LAST:event_jButton9ActionPerformed
-
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-
-        //frame.sho
-        //
-        //frame.dispose();
-
-        // frame.setVisible(true);        
-    }//GEN-LAST:event_jButton3ActionPerformed
-
-    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton6ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup ContentSearchType;
