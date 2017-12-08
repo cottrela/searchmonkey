@@ -13,6 +13,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,6 +22,7 @@ import javax.swing.SwingWorker;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultCaret;
 import javax.swing.text.DefaultStyledDocument;
+import javax.swing.text.Document;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
@@ -45,31 +47,45 @@ public class SearchMatchView extends javax.swing.JPanel {
         DefaultCaret caret = (DefaultCaret) jTextPane1.getCaret();
         caret.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
         
-        doc = (StyledDocument) jTextPane1.getDocument();
+        doc = new MyStyledDocument();
+        // jTextPane1.getDocument();
+        jTextPane1.setDocument(doc);
+        // createStyles(doc);
 
-        nameStyle = doc.addStyle("nameStyle", null);
-        pathStyle = doc.addStyle("pathStyle", null);
-        StyleConstants.setForeground(pathStyle, Color.GREEN);
-        StyleConstants.setItalic(pathStyle, true);
-        numberStyle = doc.addStyle("numberStyle", null);
-        StyleConstants.setBold(numberStyle, true);
-        linkStyle = doc.addStyle("linkStyle", null);
-        StyleConstants.setForeground(linkStyle, Color.BLUE);
-        StyleConstants.setUnderline(linkStyle, true);
         
-        queue = new ArrayBlockingQueue<>(count);
-        task = new ViewUpdate(queue);
-        task.addPropertyChangeListener(
-            new SwingWorkerCompletionWaiter());
-        task.execute();
+        //queue = new ArrayBlockingQueue<>(count);
+        //task = new ViewUpdate(queue);
+        //task.addPropertyChangeListener(
+//            new SwingWorkerCompletionWaiter());
+//        task.execute();
     }
     BlockingQueue<Path> queue;
-    StyledDocument doc;
-    Style nameStyle;
-    Style pathStyle;
-    Style numberStyle;
-    Style linkStyle;
+    MyStyledDocument doc;
+    //Style nameStyle;
+    //Style pathStyle;
+    //Style numberStyle;
+    //Style linkStyle;
 
+    public class MyStyledDocument extends DefaultStyledDocument
+    {
+        public Style nameStyle;
+        public Style pathStyle;
+        public Style numberStyle;
+        public Style linkStyle;
+        public MyStyledDocument()
+        {
+            nameStyle = addStyle("nameStyle", null);
+            pathStyle = addStyle("pathStyle", null);
+            StyleConstants.setForeground(pathStyle, Color.GREEN);
+            StyleConstants.setItalic(pathStyle, true);
+            numberStyle = addStyle("numberStyle", null);
+            StyleConstants.setBold(numberStyle, true);
+            linkStyle = addStyle("linkStyle", null);
+            StyleConstants.setForeground(linkStyle, Color.BLUE);
+            StyleConstants.setUnderline(linkStyle, true);
+        }
+    }
+    
     class SwingWorkerCompletionWaiter implements PropertyChangeListener
     {
 //        private JDialog dialog;
@@ -80,12 +96,15 @@ public class SearchMatchView extends javax.swing.JPanel {
 
         @Override
         public void propertyChange(PropertyChangeEvent event) {
+            
             if ("state".equals(event.getPropertyName())
                     && SwingWorker.StateValue.DONE == event.getNewValue()) {
                 try {
                     //ViewUpdate task = event.getSource();
                     StyledDocument doc2 = task.get();
-                    jTextArea2.setDocument(doc2);
+                    if (doc2 != null) {
+                        jTextPane2.setDocument(doc2);
+                    }
                     
                     //dialog.setVisible(false);
                     //dialog.dispose();
@@ -109,10 +128,6 @@ public class SearchMatchView extends javax.swing.JPanel {
     
     public void clearContent()
     {
-        //queue.clear();
-        //task.cancel(true);
-        //task.get();
-        // queue.add(path);
         jTextPane1.setText(""); // Clear all
     }
 
@@ -140,7 +155,7 @@ public class SearchMatchView extends javax.swing.JPanel {
         public int end; // List of start/end results
     }
 
-    public class ViewUpdate extends SwingWorker<StyledDocument, MatchResult2> { 
+    public class ViewUpdate extends SwingWorker<MyStyledDocument, MatchResult2> { 
 
         private BlockingQueue<Path> pathQueue;
         public ViewUpdate(BlockingQueue<Path> pathQueue)
@@ -149,44 +164,79 @@ public class SearchMatchView extends javax.swing.JPanel {
             this.pathQueue = pathQueue;
         }
         
+        Path[] paths;
+        public ViewUpdate(Path[] paths)
+        {
+            super();
+            this.paths = paths;
+            // this.pathQueue = pathQueue;
+        }
+        
+
         @Override
-        protected StyledDocument doInBackground() {            
-            StyledDocument previewDoc = null;
-            try{
-                while(true)
-                {
-                    previewDoc = consumePath(pathQueue.take());
-                }
-            }
-            catch (InterruptedException ex)
+        protected MyStyledDocument doInBackground() {            
+            MyStyledDocument previewDoc = null;
+            for (Path path: paths)
             {
-                System.out.println(ex);
+                if (isCancelled()) break; // Check for cancel
+                previewDoc = consumePath(path);
             }
             return previewDoc;
         }
 
-        private StyledDocument consumePath(Path path)
+//        @Override
+//        protected StyledDocument doInBackground() {            
+//            StyledDocument previewDoc = null;
+//            try{
+//                while(true)
+//                {
+//                    previewDoc = consumePath(pathQueue.take());
+//                }
+//            }
+//            catch (InterruptedException ex)
+//            {
+//                System.out.println(ex);
+//            }
+//
+//            if (previewDoc == null) return new DefaultStyledDocument();
+//            return previewDoc;
+//        }
+
+        @Override
+        protected void done() {
+            // TODO - handle cancellation exception too
+            try {
+                MyStyledDocument doc2 = get();
+                jTextPane2.setDocument(doc2);
+            } catch (InterruptedException | ExecutionException | CancellationException ex) {
+                Logger.getLogger(SearchMatchView.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        private MyStyledDocument consumePath(Path path)
         {
-            StyledDocument previewDoc = new DefaultStyledDocument();
+            MyStyledDocument previewDoc = new MyStyledDocument();
             // ArrayList<String> resultList = new ArrayList<>();
             try {
                 LineIterator lineIterator = FileUtils.lineIterator(path.toFile());
                 try
                 {
                     publish(new MatchResult2(path.toString() + "\n"));
-                    previewDoc.insertString(previewDoc.getLength(), path.toString() + "\n", linkStyle);
+                    previewDoc.insertString(previewDoc.getLength(), path.toString() + "\n", previewDoc.linkStyle);
                     int i = 0;
                     while (lineIterator.hasNext())
                     {
                         if (isCancelled()) break; // Check for cancel
                         String line = lineIterator.nextLine();
                         i ++;
-                        List<MatchResult> results = match.getMatches(line);
-                        if (results.size() > 0)
+                        if (match != null)
                         {
-                            publish(new MatchResult2(i, line, results));
+                            List<MatchResult> results = match.getMatches(line);
+                            if (results.size() > 0)
+                            {
+                                publish(new MatchResult2(i, line, results));
+                            }
                         }
-                        previewDoc.insertString(previewDoc.getLength(), line, nameStyle);
+                        previewDoc.insertString(previewDoc.getLength(), line + "\n", previewDoc.nameStyle);
                     }
                     // return resultList;
                 }
@@ -217,9 +267,9 @@ public class SearchMatchView extends javax.swing.JPanel {
                 {
                     if (result.isTitle)
                     {
-                        doc.insertString(doc.getLength(), result.title, linkStyle);
+                        doc.insertString(doc.getLength(), result.title, doc.linkStyle);
                     } else {
-                        doc.insertString(doc.getLength(), String.format("Line %d:\t", result.line_nr), numberStyle);
+                        doc.insertString(doc.getLength(), String.format("Line %d:\t", result.line_nr), doc.numberStyle);
 
                         // Append the match text and format
                         List<MatchResult> resultsx = result.results;
@@ -229,11 +279,11 @@ public class SearchMatchView extends javax.swing.JPanel {
                         {
                             int s = res.start();
                             int e = res.end();
-                            doc.insertString(doc.getLength(), line.substring(pos, s), nameStyle);
-                            doc.insertString(doc.getLength(), line.substring(s, e), linkStyle);
+                            doc.insertString(doc.getLength(), line.substring(pos, s), doc.nameStyle);
+                            doc.insertString(doc.getLength(), line.substring(s, e), doc.linkStyle);
                             pos = e;
                         }
-                        doc.insertString(doc.getLength(), line.substring(pos) + "\n", nameStyle);
+                        doc.insertString(doc.getLength(), line.substring(pos) + "\n", doc.nameStyle);
                     }
                 }
             } catch (BadLocationException ex) {
@@ -248,10 +298,25 @@ public class SearchMatchView extends javax.swing.JPanel {
     {
         queue.add(path);
     }
-    
-    public void UpdatePreview(Path path)
+    public void UpdateView(Path[] paths)
     {
+        if (task != null && !task.isDone())
+        {
+            try {
+                task.cancel(true);
+                task.get();
+            } catch (InterruptedException | ExecutionException | CancellationException ex) {
+                Logger.getLogger(SearchMatchView.class.getName()).log(Level.SEVERE, null, ex);
+                return;
+            }
+            task = null; // Close down the previous task
+        }
+        // TODO - check to see if running, and cancel if this gets called again
+        task = new ViewUpdate(paths);
+        //queue.add(path);
+        task.execute();
     }
+
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -267,9 +332,8 @@ public class SearchMatchView extends javax.swing.JPanel {
         jTextArea1 = new javax.swing.JTextArea();
         jScrollPane3 = new javax.swing.JScrollPane();
         jTextPane1 = new javax.swing.JTextPane();
-        jPanel1 = new javax.swing.JPanel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        jTextArea2 = new javax.swing.JTextArea();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        jTextPane2 = new javax.swing.JTextPane();
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
 
@@ -287,15 +351,11 @@ public class SearchMatchView extends javax.swing.JPanel {
 
         jTabbedPane1.addTab("Hits", jScrollPane3);
 
-        jPanel1.setLayout(new java.awt.BorderLayout());
+        jTextPane2.setEditable(false);
+        jTextPane2.setToolTipText("");
+        jScrollPane4.setViewportView(jTextPane2);
 
-        jTextArea2.setColumns(20);
-        jTextArea2.setRows(5);
-        jScrollPane2.setViewportView(jTextArea2);
-
-        jPanel1.add(jScrollPane2, java.awt.BorderLayout.CENTER);
-
-        jTabbedPane1.addTab("Text", jPanel1);
+        jTabbedPane1.addTab("Preview", jScrollPane4);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -328,15 +388,14 @@ public class SearchMatchView extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextArea jTextArea2;
     private javax.swing.JTextPane jTextPane1;
+    private javax.swing.JTextPane jTextPane2;
     // End of variables declaration//GEN-END:variables
 }

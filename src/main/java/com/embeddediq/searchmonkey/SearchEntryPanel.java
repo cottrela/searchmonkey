@@ -20,6 +20,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
+import java.io.File;
 import java.nio.file.FileSystems;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ import java.util.regex.Pattern;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JPopupMenu;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerDateModel;
@@ -54,12 +56,12 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
         cal = new PopupCalendar();
         cal.getCalendar().addChangeListener(this);
 
-        jButton3.addMouseListener(new MyMouseAdapter(jButton3, jAfterSpinner));
-        jButton6.addMouseListener(new MyMouseAdapter(jButton6, jBeforeSpinner));
-        jButton12.addMouseListener(new MyMouseAdapter(jButton12, jAfterSpinner1));
-        jButton11.addMouseListener(new MyMouseAdapter(jButton11, jBeforeSpinner1));
-        jButton14.addMouseListener(new MyMouseAdapter(jButton14, jAfterSpinner2));
-        jButton13.addMouseListener(new MyMouseAdapter(jButton13, jBeforeSpinner2));
+        jAfter.addMouseListener(new MyMouseAdapter(jAfter, jAfterSpinner));
+        jBefore.addMouseListener(new MyMouseAdapter(jBefore, jBeforeSpinner));
+        jAfter1.addMouseListener(new MyMouseAdapter(jAfter1, jAfterSpinner1));
+        jBefore1.addMouseListener(new MyMouseAdapter(jBefore1, jBeforeSpinner1));
+        jAfter2.addMouseListener(new MyMouseAdapter(jAfter2, jAfterSpinner2));
+        jBefore2.addMouseListener(new MyMouseAdapter(jBefore2, jBeforeSpinner2));
 
         // Restore the settings
         Restore();
@@ -288,11 +290,11 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
         jPanel3 = new javax.swing.JPanel();
         jBeforeToggle = new javax.swing.JToggleButton();
         jBeforeSpinner = new javax.swing.JSpinner();
-        jButton6 = new javax.swing.JButton();
+        jBefore = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jAfterToggle = new javax.swing.JToggleButton();
         jAfterSpinner = new javax.swing.JSpinner();
-        jButton3 = new javax.swing.JButton();
+        jAfter = new javax.swing.JButton();
         jLookInPanel = new javax.swing.JPanel();
         jSubFolders = new javax.swing.JCheckBox();
         jLookIn = new javax.swing.JComboBox<>();
@@ -329,28 +331,28 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
         jPanel10 = new javax.swing.JPanel();
         jBeforeToggle1 = new javax.swing.JToggleButton();
         jBeforeSpinner1 = new javax.swing.JSpinner();
-        jButton11 = new javax.swing.JButton();
+        jBefore1 = new javax.swing.JButton();
         jPanel11 = new javax.swing.JPanel();
         jAfterToggle1 = new javax.swing.JToggleButton();
         jAfterSpinner1 = new javax.swing.JSpinner();
-        jButton12 = new javax.swing.JButton();
+        jAfter1 = new javax.swing.JButton();
         jLabel7 = new javax.swing.JLabel();
         jModifiedPanel2 = new javax.swing.JPanel();
         jPanel12 = new javax.swing.JPanel();
         jBeforeToggle2 = new javax.swing.JToggleButton();
         jBeforeSpinner2 = new javax.swing.JSpinner();
-        jButton13 = new javax.swing.JButton();
+        jBefore2 = new javax.swing.JButton();
         jPanel13 = new javax.swing.JPanel();
         jAfterToggle2 = new javax.swing.JToggleButton();
         jAfterSpinner2 = new javax.swing.JSpinner();
-        jButton14 = new javax.swing.JButton();
+        jAfter2 = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jCheckBox1 = new javax.swing.JCheckBox();
 
-        jFileChooser1.setApproveButtonText("");
-        jFileChooser1.setApproveButtonToolTipText("");
+        jFileChooser1.setApproveButtonText("OK");
+        jFileChooser1.setApproveButtonToolTipText("Click to select base folder");
         jFileChooser1.setDialogTitle("Select folder to look in");
         jFileChooser1.setFileSelectionMode(javax.swing.JFileChooser.DIRECTORIES_ONLY);
         jFileChooser1.setToolTipText("");
@@ -379,11 +381,11 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
         jBeforeSpinner.setModel(new javax.swing.SpinnerDateModel());
         jBeforeSpinner.setEnabled(false);
 
-        jButton6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/calendar.png"))); // NOI18N
-        jButton6.setBorder(null);
-        jButton6.setBorderPainted(false);
-        jButton6.setContentAreaFilled(false);
-        jButton6.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jBefore.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/calendar.png"))); // NOI18N
+        jBefore.setBorder(null);
+        jBefore.setBorderPainted(false);
+        jBefore.setContentAreaFilled(false);
+        jBefore.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -394,7 +396,7 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jBeforeSpinner)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jBefore, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
@@ -403,11 +405,8 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
                 .addGap(1, 1, 1)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jBeforeToggle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jBeforeSpinner))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                    .addComponent(jBefore, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jBeforeSpinner))
                 .addContainerGap())
         );
 
@@ -422,11 +421,11 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
         jAfterSpinner.setModel(new javax.swing.SpinnerDateModel());
         jAfterSpinner.setEnabled(false);
 
-        jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/calendar.png"))); // NOI18N
-        jButton3.setBorder(null);
-        jButton3.setBorderPainted(false);
-        jButton3.setContentAreaFilled(false);
-        jButton3.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jAfter.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/calendar.png"))); // NOI18N
+        jAfter.setBorder(null);
+        jAfter.setBorderPainted(false);
+        jAfter.setContentAreaFilled(false);
+        jAfter.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -437,7 +436,7 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jAfterSpinner)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jAfter, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -447,7 +446,7 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jAfterToggle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jAfterSpinner)
-                    .addComponent(jButton3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jAfter, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -579,9 +578,7 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
                             .addComponent(jFileSizeScaler)
                             .addComponent(jGreaterThanSpinner)
                             .addComponent(jLessThanSpinner)))
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(jGreaterThanToggle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jGreaterThanToggle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLessThanToggle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
 
@@ -794,11 +791,11 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
         jBeforeSpinner1.setModel(new javax.swing.SpinnerDateModel());
         jBeforeSpinner1.setEnabled(false);
 
-        jButton11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/calendar.png"))); // NOI18N
-        jButton11.setBorder(null);
-        jButton11.setBorderPainted(false);
-        jButton11.setContentAreaFilled(false);
-        jButton11.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jBefore1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/calendar.png"))); // NOI18N
+        jBefore1.setBorder(null);
+        jBefore1.setBorderPainted(false);
+        jBefore1.setContentAreaFilled(false);
+        jBefore1.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
         javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
         jPanel10.setLayout(jPanel10Layout);
@@ -809,7 +806,7 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jBeforeSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton11, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jBefore1, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         jPanel10Layout.setVerticalGroup(
@@ -820,7 +817,7 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
                     .addComponent(jBeforeToggle1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel10Layout.createSequentialGroup()
                         .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jButton11)
+                            .addComponent(jBefore1)
                             .addComponent(jBeforeSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
@@ -837,11 +834,11 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
         jAfterSpinner1.setModel(new javax.swing.SpinnerDateModel());
         jAfterSpinner1.setEnabled(false);
 
-        jButton12.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/calendar.png"))); // NOI18N
-        jButton12.setBorder(null);
-        jButton12.setBorderPainted(false);
-        jButton12.setContentAreaFilled(false);
-        jButton12.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jAfter1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/calendar.png"))); // NOI18N
+        jAfter1.setBorder(null);
+        jAfter1.setBorderPainted(false);
+        jAfter1.setContentAreaFilled(false);
+        jAfter1.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
         javax.swing.GroupLayout jPanel11Layout = new javax.swing.GroupLayout(jPanel11);
         jPanel11.setLayout(jPanel11Layout);
@@ -852,7 +849,7 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jAfterSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton12, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jAfter1, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         jPanel11Layout.setVerticalGroup(
@@ -860,7 +857,7 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
             .addGroup(jPanel11Layout.createSequentialGroup()
                 .addGap(1, 1, 1)
                 .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jAfter1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jAfterToggle1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jAfterSpinner1))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -900,11 +897,11 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
         jBeforeSpinner2.setModel(new javax.swing.SpinnerDateModel());
         jBeforeSpinner2.setEnabled(false);
 
-        jButton13.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/calendar.png"))); // NOI18N
-        jButton13.setBorder(null);
-        jButton13.setBorderPainted(false);
-        jButton13.setContentAreaFilled(false);
-        jButton13.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jBefore2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/calendar.png"))); // NOI18N
+        jBefore2.setBorder(null);
+        jBefore2.setBorderPainted(false);
+        jBefore2.setContentAreaFilled(false);
+        jBefore2.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
         javax.swing.GroupLayout jPanel12Layout = new javax.swing.GroupLayout(jPanel12);
         jPanel12.setLayout(jPanel12Layout);
@@ -915,7 +912,7 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jBeforeSpinner2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton13, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jBefore2, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         jPanel12Layout.setVerticalGroup(
@@ -926,7 +923,7 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
                     .addComponent(jBeforeToggle2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel12Layout.createSequentialGroup()
                         .addGroup(jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jButton13)
+                            .addComponent(jBefore2)
                             .addComponent(jBeforeSpinner2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
@@ -943,11 +940,11 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
         jAfterSpinner2.setModel(new javax.swing.SpinnerDateModel());
         jAfterSpinner2.setEnabled(false);
 
-        jButton14.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/calendar.png"))); // NOI18N
-        jButton14.setBorder(null);
-        jButton14.setBorderPainted(false);
-        jButton14.setContentAreaFilled(false);
-        jButton14.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jAfter2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/calendar.png"))); // NOI18N
+        jAfter2.setBorder(null);
+        jAfter2.setBorderPainted(false);
+        jAfter2.setContentAreaFilled(false);
+        jAfter2.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
         javax.swing.GroupLayout jPanel13Layout = new javax.swing.GroupLayout(jPanel13);
         jPanel13.setLayout(jPanel13Layout);
@@ -958,7 +955,7 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jAfterSpinner2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton14, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jAfter2, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         jPanel13Layout.setVerticalGroup(
@@ -966,7 +963,7 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
             .addGroup(jPanel13Layout.createSequentialGroup()
                 .addGap(1, 1, 1)
                 .addGroup(jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jAfter2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jAfterToggle2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jAfterSpinner2))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -1085,27 +1082,6 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
     }// </editor-fold>//GEN-END:initComponents
 
     private void jLookInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jLookInActionPerformed
-//        String s = (String) date1.getSelectedItem();//get the selected item
-//
-//        switch (s) {//check for a match
-//            case "Day":
-//                emailvalue = 1.1;
-//                System.out.println("Day selected, emailvalue:" + emailvalue);
-//                break;
-//            case "Week":
-//                emailvalue = 2.2;
-//                System.out.println("Week selected, emailvalue:" + emailvalue);
-//                break;
-//            case "Month":
-//                emailvalue = 3.3;
-//                System.out.println("Month selected, emailvalue:" + emailvalue);
-//                break;
-//            default:
-//                emailvalue = 4.4;
-//                System.out.println("No match selected, emailvalue:" + emailvalue);
-//                break;
-//        }
-        // TODO add your handling code here:
     }//GEN-LAST:event_jLookInActionPerformed
     
     private Searchmonkey parent;
@@ -1175,20 +1151,30 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
     }//GEN-LAST:event_jBeforeToggle2ActionPerformed
 
     private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
-        jFileChooser1.setVisible(true);
-        //File fname = jFileChooser1.getSelectedFile();
-        //this.jLookIn.getModel().setSelectedItem(fname.getPath());
+        jFileChooser1.setApproveButtonText("OK");
+        int ret = jFileChooser1.showOpenDialog(this);
+        if (ret == JFileChooser.APPROVE_OPTION)
+        {
+            File fname = jFileChooser1.getSelectedFile();
+            jLookIn.getModel().setSelectedItem(fname.getPath());
+        }
     }//GEN-LAST:event_jButton9ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup ContentSearchType;
     private javax.swing.ButtonGroup FilenameSearchType;
+    private javax.swing.JButton jAfter;
+    private javax.swing.JButton jAfter1;
+    private javax.swing.JButton jAfter2;
     private javax.swing.JSpinner jAfterSpinner;
     private javax.swing.JSpinner jAfterSpinner1;
     private javax.swing.JSpinner jAfterSpinner2;
     private javax.swing.JToggleButton jAfterToggle;
     private javax.swing.JToggleButton jAfterToggle1;
     private javax.swing.JToggleButton jAfterToggle2;
+    private javax.swing.JButton jBefore;
+    private javax.swing.JButton jBefore1;
+    private javax.swing.JButton jBefore2;
     private javax.swing.JSpinner jBeforeSpinner;
     private javax.swing.JSpinner jBeforeSpinner1;
     private javax.swing.JSpinner jBeforeSpinner2;
@@ -1197,15 +1183,9 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
     private javax.swing.JToggleButton jBeforeToggle2;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton10;
-    private javax.swing.JButton jButton11;
-    private javax.swing.JButton jButton12;
-    private javax.swing.JButton jButton13;
-    private javax.swing.JButton jButton14;
     private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton7;
     private javax.swing.JButton jButton8;
     private javax.swing.JButton jButton9;

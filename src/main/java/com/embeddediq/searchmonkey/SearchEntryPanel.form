@@ -8,8 +8,8 @@
     </Component>
     <Component class="javax.swing.JFileChooser" name="jFileChooser1">
       <Properties>
-        <Property name="approveButtonText" type="java.lang.String" value=""/>
-        <Property name="approveButtonToolTipText" type="java.lang.String" value=""/>
+        <Property name="approveButtonText" type="java.lang.String" value="OK"/>
+        <Property name="approveButtonToolTipText" type="java.lang.String" value="Click to select base folder"/>
         <Property name="dialogTitle" type="java.lang.String" value="Select folder to look in"/>
         <Property name="fileSelectionMode" type="int" value="1"/>
         <Property name="toolTipText" type="java.lang.String" value=""/>
@@ -196,7 +196,7 @@
                               <EmptySpace max="32767" attributes="0"/>
                               <Component id="jBeforeSpinner" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jButton6" max="32767" attributes="0"/>
+                              <Component id="jBefore" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -207,13 +207,8 @@
                               <EmptySpace min="1" pref="1" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="jBeforeToggle" max="32767" attributes="0"/>
-                                  <Group type="102" attributes="0">
-                                      <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="jButton6" max="32767" attributes="0"/>
-                                          <Component id="jBeforeSpinner" alignment="0" max="32767" attributes="0"/>
-                                      </Group>
-                                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                                  </Group>
+                                  <Component id="jBefore" max="32767" attributes="0"/>
+                                  <Component id="jBeforeSpinner" alignment="0" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -240,7 +235,7 @@
                         <Property name="enabled" type="boolean" value="false"/>
                       </Properties>
                     </Component>
-                    <Component class="javax.swing.JButton" name="jButton6">
+                    <Component class="javax.swing.JButton" name="jBefore">
                       <Properties>
                         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                           <Image iconType="3" name="/images/calendar.png"/>
@@ -267,7 +262,7 @@
                               <EmptySpace max="32767" attributes="0"/>
                               <Component id="jAfterSpinner" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jButton3" max="32767" attributes="0"/>
+                              <Component id="jAfter" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -279,7 +274,7 @@
                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                                   <Component id="jAfterToggle" alignment="0" max="32767" attributes="0"/>
                                   <Component id="jAfterSpinner" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="jButton3" alignment="1" max="32767" attributes="0"/>
+                                  <Component id="jAfter" alignment="1" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace max="32767" attributes="0"/>
                           </Group>
@@ -306,7 +301,7 @@
                         <Property name="enabled" type="boolean" value="false"/>
                       </Properties>
                     </Component>
-                    <Component class="javax.swing.JButton" name="jButton3">
+                    <Component class="javax.swing.JButton" name="jAfter">
                       <Properties>
                         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                           <Image iconType="3" name="/images/calendar.png"/>
@@ -452,10 +447,7 @@
                                       <Component id="jLessThanSpinner" max="32767" attributes="0"/>
                                   </Group>
                               </Group>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="jGreaterThanToggle" max="32767" attributes="0"/>
-                                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                              </Group>
+                              <Component id="jGreaterThanToggle" alignment="0" max="32767" attributes="0"/>
                               <Component id="jLessThanToggle" alignment="0" max="32767" attributes="0"/>
                           </Group>
                       </Group>
@@ -894,7 +886,7 @@
                               <EmptySpace max="32767" attributes="0"/>
                               <Component id="jBeforeSpinner1" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jButton11" min="-2" pref="23" max="-2" attributes="0"/>
+                              <Component id="jBefore1" min="-2" pref="23" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -907,7 +899,7 @@
                                   <Component id="jBeforeToggle1" alignment="0" max="32767" attributes="0"/>
                                   <Group type="102" alignment="0" attributes="0">
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="jButton11" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Component id="jBefore1" alignment="0" min="-2" max="-2" attributes="0"/>
                                           <Component id="jBeforeSpinner1" alignment="0" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
@@ -938,7 +930,7 @@
                         <Property name="enabled" type="boolean" value="false"/>
                       </Properties>
                     </Component>
-                    <Component class="javax.swing.JButton" name="jButton11">
+                    <Component class="javax.swing.JButton" name="jBefore1">
                       <Properties>
                         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                           <Image iconType="3" name="/images/calendar.png"/>
@@ -965,7 +957,7 @@
                               <EmptySpace max="32767" attributes="0"/>
                               <Component id="jAfterSpinner1" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jButton12" min="-2" pref="23" max="-2" attributes="0"/>
+                              <Component id="jAfter1" min="-2" pref="23" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -975,7 +967,7 @@
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace min="1" pref="1" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Component id="jButton12" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="jAfter1" alignment="0" max="32767" attributes="0"/>
                                   <Component id="jAfterToggle1" alignment="0" max="32767" attributes="0"/>
                                   <Component id="jAfterSpinner1" alignment="0" max="32767" attributes="0"/>
                               </Group>
@@ -1004,7 +996,7 @@
                         <Property name="enabled" type="boolean" value="false"/>
                       </Properties>
                     </Component>
-                    <Component class="javax.swing.JButton" name="jButton12">
+                    <Component class="javax.swing.JButton" name="jAfter1">
                       <Properties>
                         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                           <Image iconType="3" name="/images/calendar.png"/>
@@ -1068,7 +1060,7 @@
                               <EmptySpace max="32767" attributes="0"/>
                               <Component id="jBeforeSpinner2" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jButton13" min="-2" pref="23" max="-2" attributes="0"/>
+                              <Component id="jBefore2" min="-2" pref="23" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -1081,7 +1073,7 @@
                                   <Component id="jBeforeToggle2" alignment="0" max="32767" attributes="0"/>
                                   <Group type="102" alignment="0" attributes="0">
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="jButton13" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Component id="jBefore2" alignment="0" min="-2" max="-2" attributes="0"/>
                                           <Component id="jBeforeSpinner2" alignment="0" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
@@ -1112,7 +1104,7 @@
                         <Property name="enabled" type="boolean" value="false"/>
                       </Properties>
                     </Component>
-                    <Component class="javax.swing.JButton" name="jButton13">
+                    <Component class="javax.swing.JButton" name="jBefore2">
                       <Properties>
                         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                           <Image iconType="3" name="/images/calendar.png"/>
@@ -1139,7 +1131,7 @@
                               <EmptySpace max="32767" attributes="0"/>
                               <Component id="jAfterSpinner2" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jButton14" min="-2" pref="23" max="-2" attributes="0"/>
+                              <Component id="jAfter2" min="-2" pref="23" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -1149,7 +1141,7 @@
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace min="1" pref="1" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Component id="jButton14" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="jAfter2" alignment="0" max="32767" attributes="0"/>
                                   <Component id="jAfterToggle2" alignment="0" max="32767" attributes="0"/>
                                   <Component id="jAfterSpinner2" alignment="0" max="32767" attributes="0"/>
                               </Group>
@@ -1178,7 +1170,7 @@
                         <Property name="enabled" type="boolean" value="false"/>
                       </Properties>
                     </Component>
-                    <Component class="javax.swing.JButton" name="jButton14">
+                    <Component class="javax.swing.JButton" name="jAfter2">
                       <Properties>
                         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                           <Image iconType="3" name="/images/calendar.png"/>

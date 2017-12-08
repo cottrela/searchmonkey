@@ -74,11 +74,12 @@ public class SearchResultsTable extends javax.swing.JPanel implements ListSelect
 
         parent.ClearContent();
         int[] rows = jTable1.getSelectedRows();
-        for (int row: rows)
+        SearchResult[] results = new SearchResult[rows.length];
+        for (int i=0; i<rows.length; i++)
         {
-            SearchResult val = rowData.get(jTable1.convertRowIndexToModel(row));
-            parent.UpdateContent(val);
+            results[i] = rowData.get(jTable1.convertRowIndexToModel(rows[i]));
         }        
+        parent.UpdateContent(results);
     }
 
     private Searchmonkey parent;
@@ -311,7 +312,7 @@ public class SearchResultsTable extends javax.swing.JPanel implements ListSelect
 
             setIcon(null);
 
-            String txtVal;
+            String txtVal = "";
             String txtToolTip = new String();
             int idx = table.convertColumnIndexToModel(column);
             switch (idx) {
@@ -364,7 +365,9 @@ public class SearchResultsTable extends javax.swing.JPanel implements ListSelect
                         txtToolTip = String.format("%d Match%s", count, (count > 1 ? "es" : ""));
                     }
                 default:
-                    txtVal = value.toString();
+                    if (value != null) {
+                        txtVal = value.toString();
+                    }
                     break;
             }
 

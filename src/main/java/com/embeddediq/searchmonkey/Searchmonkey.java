@@ -100,6 +100,19 @@ public class Searchmonkey extends javax.swing.JFrame {
         searchMatchView1.UpdateView(path);
     }
 
+    public void UpdateContent(SearchResult[] results)
+    {
+        //searchMatchView1.clearContent();
+        Path[] paths = new Path[results.length];
+        for (int i=0; i<results.length; i++)
+        {
+            paths[i] = Paths.get(results[i].pathName, results[i].fileName); // Logger.getLogger(Searchmonkey.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        //ClearContent();
+        //Path path = Paths.get(result.pathName, result.fileName); // Logger.getLogger(Searchmonkey.class.getName()).log(Level.SEVERE, null, ex);
+        searchMatchView1.UpdateView(paths);
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
