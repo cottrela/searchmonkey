@@ -6,6 +6,8 @@
 package com.embeddediq.searchmonkey;
 
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
@@ -28,12 +30,13 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.LineIterator;
+import javax.swing.Timer;
 
 /**
  *
  * @author adam
  */
-public class SearchMatchView extends javax.swing.JPanel {
+public class SearchMatchView extends javax.swing.JPanel implements ActionListener {
 
     /**
      * Creates new form SearchMatchView
@@ -52,13 +55,13 @@ public class SearchMatchView extends javax.swing.JPanel {
         jTextPane1.setDocument(doc);
         // createStyles(doc);
 
-        
-        //queue = new ArrayBlockingQueue<>(count);
-        //task = new ViewUpdate(queue);
-        //task.addPropertyChangeListener(
-//            new SwingWorkerCompletionWaiter());
-//        task.execute();
+        // Create delay
+        int delayMs = 250;
+        timer = new Timer(delayMs, this);
+        timer.setInitialDelay(delayMs);
+        timer.setRepeats(false);
     }
+    
     BlockingQueue<Path> queue;
     MyStyledDocument doc;
     //Style nameStyle;
@@ -204,6 +207,7 @@ public class SearchMatchView extends javax.swing.JPanel {
 
         @Override
         protected void done() {
+            if (isCancelled()) return; // Ignore cancelled
             // TODO - handle cancellation exception too
             try {
                 MyStyledDocument doc2 = get();
@@ -265,6 +269,7 @@ public class SearchMatchView extends javax.swing.JPanel {
             try {
                 for (MatchResult2 result: results)
                 {
+                    if (isCancelled()) break; // Check for cancel
                     if (result.isTitle)
                     {
                         doc.insertString(doc.getLength(), result.title, doc.linkStyle);
@@ -298,23 +303,39 @@ public class SearchMatchView extends javax.swing.JPanel {
     {
         queue.add(path);
     }
+    
+    private Timer timer;
+
     public void UpdateView(Path[] paths)
     {
         if (task != null && !task.isDone())
         {
             try {
                 task.cancel(true);
-                task.get();
-            } catch (InterruptedException | ExecutionException | CancellationException ex) {
+                //task.get();
+            } catch (CancellationException ex) {
                 Logger.getLogger(SearchMatchView.class.getName()).log(Level.SEVERE, null, ex);
-                return;
+                // return;
             }
             task = null; // Close down the previous task
         }
+        // start (or restart) timer
+        this.paths = paths;
+        timer.restart();
+    }
+
+    private Path[] paths;
+    @Override
+    public void actionPerformed(ActionEvent ae) {
         // TODO - check to see if running, and cancel if this gets called again
         task = new ViewUpdate(paths);
-        //queue.add(path);
         task.execute();
+    }
+
+    
+    
+    public void UpdateView2(Path[] paths)
+    {
     }
 
     
