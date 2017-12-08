@@ -88,18 +88,6 @@ public class Searchmonkey extends javax.swing.JFrame {
         searchEntryPanel1.Done();
     }
     
-
-    public void ClearContent()
-    {
-        searchMatchView1.clearContent();
-    }
-    
-    public void UpdateContent(SearchResult result)
-    {
-        Path path = Paths.get(result.pathName, result.fileName); // Logger.getLogger(Searchmonkey.class.getName()).log(Level.SEVERE, null, ex);
-        searchMatchView1.UpdateView(path);
-    }
-
     public void UpdateContent(SearchResult[] results)
     {
         //searchMatchView1.clearContent();

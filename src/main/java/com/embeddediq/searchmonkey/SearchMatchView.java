@@ -61,8 +61,7 @@ public class SearchMatchView extends javax.swing.JPanel implements ActionListene
         timer.setInitialDelay(delayMs);
         timer.setRepeats(false);
     }
-    
-    BlockingQueue<Path> queue;
+
     MyStyledDocument doc;
     //Style nameStyle;
     //Style pathStyle;
@@ -128,11 +127,6 @@ public class SearchMatchView extends javax.swing.JPanel implements ActionListene
     public ContentMatch getContentMatch() {
         return this.match;
     }
-    
-    public void clearContent()
-    {
-        jTextPane1.setText(""); // Clear all
-    }
 
     public class MatchResult2 {
         public MatchResult2(String title)
@@ -159,51 +153,24 @@ public class SearchMatchView extends javax.swing.JPanel implements ActionListene
     }
 
     public class ViewUpdate extends SwingWorker<MyStyledDocument, MatchResult2> { 
-
-        private BlockingQueue<Path> pathQueue;
-        public ViewUpdate(BlockingQueue<Path> pathQueue)
-        {
-            super();
-            this.pathQueue = pathQueue;
-        }
-        
         Path[] paths;
         public ViewUpdate(Path[] paths)
         {
             super();
             this.paths = paths;
-            // this.pathQueue = pathQueue;
         }
         
 
         @Override
         protected MyStyledDocument doInBackground() {            
-            MyStyledDocument previewDoc = null;
+            MyStyledDocument previewDoc = new MyStyledDocument();
             for (Path path: paths)
             {
                 if (isCancelled()) break; // Check for cancel
-                previewDoc = consumePath(path);
+                consumePath(path, previewDoc);
             }
             return previewDoc;
         }
-
-//        @Override
-//        protected StyledDocument doInBackground() {            
-//            StyledDocument previewDoc = null;
-//            try{
-//                while(true)
-//                {
-//                    previewDoc = consumePath(pathQueue.take());
-//                }
-//            }
-//            catch (InterruptedException ex)
-//            {
-//                System.out.println(ex);
-//            }
-//
-//            if (previewDoc == null) return new DefaultStyledDocument();
-//            return previewDoc;
-//        }
 
         @Override
         protected void done() {
@@ -216,9 +183,9 @@ public class SearchMatchView extends javax.swing.JPanel implements ActionListene
                 Logger.getLogger(SearchMatchView.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        private MyStyledDocument consumePath(Path path)
+        private void consumePath(Path path, MyStyledDocument previewDoc)
         {
-            MyStyledDocument previewDoc = new MyStyledDocument();
+            
             // ArrayList<String> resultList = new ArrayList<>();
             try {
                 LineIterator lineIterator = FileUtils.lineIterator(path.toFile());
@@ -255,7 +222,6 @@ public class SearchMatchView extends javax.swing.JPanel implements ActionListene
                 System.out.println(er);
                 // return null;
             }
-            return previewDoc;
         }
 
                 
@@ -299,11 +265,7 @@ public class SearchMatchView extends javax.swing.JPanel implements ActionListene
     }
     
     ViewUpdate task;
-    public void UpdateView(Path path)
-    {
-        queue.add(path);
-    }
-    
+
     private Timer timer;
 
     public void UpdateView(Path[] paths)
@@ -327,6 +289,10 @@ public class SearchMatchView extends javax.swing.JPanel implements ActionListene
     private Path[] paths;
     @Override
     public void actionPerformed(ActionEvent ae) {
+        // Clear the results
+        jTextPane1.setText("");
+        jTextPane2.setText("");
+        
         // TODO - check to see if running, and cancel if this gets called again
         task = new ViewUpdate(paths);
         task.execute();

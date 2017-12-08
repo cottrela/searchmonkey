@@ -1028,6 +1028,7 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
         });
 
         jButton2.setText("Stop");
+        jButton2.setEnabled(false);
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);

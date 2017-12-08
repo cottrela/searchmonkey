@@ -5,12 +5,10 @@
  */
 package com.embeddediq.searchmonkey;
 
-import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.ArrayList;
-import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.Timer;
 import java.awt.Component;
@@ -25,7 +23,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
-import javafx.scene.layout.Border;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -58,9 +55,7 @@ public class SearchResultsTable extends javax.swing.JPanel implements ListSelect
         jTable1.setModel(myModel);
         jTable1.setDefaultRenderer(Object.class, new SearchMonkeyTableRenderer());
         jTable1.setAutoCreateRowSorter(true);
-        //jTable1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         jTable1.setFillsViewportHeight(true);
-        // table = jTable1;
         jTable1.getColumn(SearchResult.COLUMN_NAMES[SearchResult.FLAGS]).setCellRenderer(new IconTableRenderer(jTable1.getRowHeight()-6));
 
         jTable1.getSelectionModel().addListSelectionListener(this);
@@ -72,7 +67,7 @@ public class SearchResultsTable extends javax.swing.JPanel implements ListSelect
             return;
         }
 
-        parent.ClearContent();
+        // parent.ClearContent();
         int[] rows = jTable1.getSelectedRows();
         SearchResult[] results = new SearchResult[rows.length];
         for (int i=0; i<rows.length; i++)
