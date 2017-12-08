@@ -6,8 +6,8 @@
 package com.embeddediq.searchmonkey;
 
 import java.awt.Image;
-import java.awt.Toolkit;
-import java.net.URL;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ import javax.swing.ImageIcon;
  *
  * @author cottr
  */
-public class Searchmonkey extends javax.swing.JFrame {
+public class Searchmonkey extends javax.swing.JFrame implements ActionListener {
 
     private String[] iconList = new String[] {
         "/images/searchmonkey-16x16.png",
@@ -43,6 +43,8 @@ public class Searchmonkey extends javax.swing.JFrame {
         }
         setIconImages(imageList);
 
+        // Add an action listener to the searchEntryPanel
+        searchEntryPanel1.addActionListener(this);
         //URL url = getClass().getResource("/images/searchmonkey-300x300.png");
         //Toolkit kit = Toolkit.getDefaultToolkit();
         //setIconImage(kit.createImage(url));
@@ -53,11 +55,12 @@ public class Searchmonkey extends javax.swing.JFrame {
     private SearchEngine engine = null;
     private AtomicBoolean cancel = null;
     private SearchResultQueue queue = null;
-    public void Start(SearchEntry entry)
+    public void Start()
     {
         if (cancel == null)
         {
-            searchEntryPanel1.setParent(this);
+            // searchEntryPanel1.setParent(this);
+            SearchEntry entry = searchEntryPanel1.getSearchRequest();
             searchResultsTable1.setParent(this);
             
             queue = new SearchResultQueue(queue_sz);
@@ -281,5 +284,18 @@ public class Searchmonkey extends javax.swing.JFrame {
     private com.embeddediq.searchmonkey.SearchResultsTable searchResultsTable1;
     private com.embeddediq.searchmonkey.SearchSummary searchSummary2;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void actionPerformed(ActionEvent ae) {
+        //if (ae.getClass() == searchEntryPanel1.getClass())
+        {
+            String command = ae.getActionCommand();
+            if (command == "Start")
+            {
+                searchEntryPanel1.Start();
+            }
+                
+        }
+    }
 
 }
