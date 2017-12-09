@@ -8,13 +8,9 @@ package com.embeddediq.searchmonkey;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
@@ -24,10 +20,8 @@ import javax.swing.SwingWorker;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultCaret;
 import javax.swing.text.DefaultStyledDocument;
-import javax.swing.text.Document;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.LineIterator;
 import javax.swing.Timer;
@@ -44,16 +38,12 @@ public class SearchMatchView extends javax.swing.JPanel implements ActionListene
     public SearchMatchView() {
         initComponents();
 
-        int count = 10000;
-        
         // Disable auto-scrolling on the text window
         DefaultCaret caret = (DefaultCaret) jTextPane1.getCaret();
         caret.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
         
         doc = new MyStyledDocument();
-        // jTextPane1.getDocument();
         jTextPane1.setDocument(doc);
-        // createStyles(doc);
 
         // Create delay
         int delayMs = 250;
@@ -63,10 +53,6 @@ public class SearchMatchView extends javax.swing.JPanel implements ActionListene
     }
 
     MyStyledDocument doc;
-    //Style nameStyle;
-    //Style pathStyle;
-    //Style numberStyle;
-    //Style linkStyle;
 
     public class MyStyledDocument extends DefaultStyledDocument
     {
@@ -85,37 +71,6 @@ public class SearchMatchView extends javax.swing.JPanel implements ActionListene
             linkStyle = addStyle("linkStyle", null);
             StyleConstants.setForeground(linkStyle, Color.BLUE);
             StyleConstants.setUnderline(linkStyle, true);
-        }
-    }
-    
-    class SwingWorkerCompletionWaiter implements PropertyChangeListener
-    {
-//        private JDialog dialog;
-//
-//        public SwingWorkerCompletionWaiter(JDialog dialog) {
-//            this.dialog = dialog;
-//        }
-
-        @Override
-        public void propertyChange(PropertyChangeEvent event) {
-            
-            if ("state".equals(event.getPropertyName())
-                    && SwingWorker.StateValue.DONE == event.getNewValue()) {
-                try {
-                    //ViewUpdate task = event.getSource();
-                    StyledDocument doc2 = task.get();
-                    if (doc2 != null) {
-                        jTextPane2.setDocument(doc2);
-                    }
-                    
-                    //dialog.setVisible(false);
-                    //dialog.dispose();
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(SearchMatchView.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (ExecutionException ex) {
-                    Logger.getLogger(SearchMatchView.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
         }
     }
      
@@ -147,7 +102,6 @@ public class SearchMatchView extends javax.swing.JPanel implements ActionListene
         public boolean isTitle = false;
         public int line_nr;
         public List<MatchResult> results;
-        // public List<String> results;
         public int start; // List of start/end results
         public int end; // List of start/end results
     }
@@ -175,11 +129,10 @@ public class SearchMatchView extends javax.swing.JPanel implements ActionListene
         @Override
         protected void done() {
             if (isCancelled()) return; // Ignore cancelled
-            // TODO - handle cancellation exception too
             try {
                 MyStyledDocument doc2 = get();
                 jTextPane2.setDocument(doc2);
-            } catch (InterruptedException | ExecutionException | CancellationException ex) {
+            } catch (InterruptedException | ExecutionException ex) {
                 Logger.getLogger(SearchMatchView.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
@@ -220,7 +173,6 @@ public class SearchMatchView extends javax.swing.JPanel implements ActionListene
             catch (IOException er)
             {
                 System.out.println(er);
-                // return null;
             }
         }
 
@@ -264,7 +216,7 @@ public class SearchMatchView extends javax.swing.JPanel implements ActionListene
         }
     }
     
-    ViewUpdate task;
+    private ViewUpdate task;
 
     private Timer timer;
 
@@ -297,13 +249,6 @@ public class SearchMatchView extends javax.swing.JPanel implements ActionListene
         task = new ViewUpdate(paths);
         task.execute();
     }
-
-    
-    
-    public void UpdateView2(Path[] paths)
-    {
-    }
-
     
     /**
      * This method is called from within the constructor to initialize the form.

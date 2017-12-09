@@ -8,27 +8,22 @@ package com.embeddediq.searchmonkey;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.awt.Component;
-import java.awt.Composite;
-import java.awt.CompositeContext;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.Raster;
-import java.awt.image.WritableRaster;
 import java.io.File;
 import java.nio.file.FileSystems;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -101,12 +96,11 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
     }
     
     public class MyMouseAdapter extends MouseAdapter {
-        //PopupCalendar cal;
         JButton jButton;
         JSpinner link;
-        public MyMouseAdapter(/*PopupCalendar cal, */ JButton jButton, JSpinner link)
+        public MyMouseAdapter(JButton jButton, JSpinner link)
         {
-            //this.cal = cal;
+           //this.cal = cal;
             this.jButton = jButton;
             this.link = link;
         }
@@ -118,7 +112,7 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
         }
     }
    
-    private SearchEntry getSearchRequest() {
+    public SearchEntry getSearchRequest() {
         SearchEntry req = new SearchEntry();
         String strItem;
 
@@ -1085,24 +1079,32 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
     private void jLookInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jLookInActionPerformed
     }//GEN-LAST:event_jLookInActionPerformed
     
-    private Searchmonkey parent;
-    public void setParent(Searchmonkey parent)
+    private Collection<ActionListener> listeners = new LinkedList<>();
+    public void addActionListener(ActionListener listener)
     {
-        this.parent = parent;
+        listeners.add(listener);
     }
+    
+//    private Searchmonkey parent;
+//    public void setParent(Searchmonkey parent)
+//    {
+//        this.parent = parent;
+//    }
     
     public void Start()
     {
         // Call the parent
         jButton1.setEnabled(false);
-        SearchEntry entry = this.getSearchRequest();
-        parent.Start(entry);
+        //SearchEntry entry = this.getSearchRequest();
+        //parent.Start(entry);
+        // Implement a change listener
+        
         jButton2.setEnabled(true);
     }
     public void Stop()
     {
         // Call the parent
-        parent.Stop();
+//        parent.Stop();
         Done();
     }
     public void Done()
@@ -1112,11 +1114,21 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
     }
     
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        Start();
+        for(ActionListener listener: listeners){
+            ActionEvent ae = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "Start");
+            listener.actionPerformed(ae);
+           //  listener.stateChanged(new ChangeEvent(this));
+        } 
+        //Start();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        Stop();
+        for(ActionListener listener: listeners){
+            ActionEvent ae = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "Stop");
+            listener.actionPerformed(ae);
+           //  listener.stateChanged(new ChangeEvent(this));
+        }
+        //Stop();
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jGreaterThanToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jGreaterThanToggleActionPerformed

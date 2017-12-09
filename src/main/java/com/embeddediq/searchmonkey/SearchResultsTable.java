@@ -102,6 +102,8 @@ public class SearchResultsTable extends javax.swing.JPanel implements ListSelect
     // Call this at the start of the search
     public void start(SearchResultQueue queue, int rateMillis)
     {
+        // TODO - convert this thread to a swing worker thread model
+        
         // Clear the previous entries
         rowData.clear();
         DefaultTableModel model = (DefaultTableModel)jTable1.getModel();
@@ -207,9 +209,6 @@ public class SearchResultsTable extends javax.swing.JPanel implements ListSelect
             hidden.setToolTipText("Hidden file");
             linked = new JLabel(getScaledIcon(getClass().getResource("/images/link-icon-614x460.png"), height));
             linked.setToolTipText("Symbolic link");
-            //setBorder(Border.EMPTY);
-            //hidden.setBorder(Border.EMPTY);
-            //linked.setBorder(Border.EMPTY);
             this.setLayout(new FlowLayout());
         }
 

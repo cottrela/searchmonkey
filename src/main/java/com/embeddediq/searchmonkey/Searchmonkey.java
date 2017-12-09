@@ -140,7 +140,6 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener {
 
         jPanel1.setLayout(new java.awt.BorderLayout());
 
-        searchEntryPanel1.setParent(this);
         jPanel1.add(searchEntryPanel1, java.awt.BorderLayout.NORTH);
 
         jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
