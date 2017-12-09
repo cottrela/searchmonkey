@@ -131,12 +131,7 @@
       <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
       <SubComponents>
         <Component class="com.embeddediq.searchmonkey.SearchEntryPanel" name="searchEntryPanel1">
-          <Properties>
-            <Property name="parent" type="com.embeddediq.searchmonkey.Searchmonkey" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="this" type="code"/>
-            </Property>
-          </Properties>
-          <Constraints>
+           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
               <BorderConstraints direction="North"/>
             </Constraint>
