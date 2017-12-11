@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.Collection;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -37,7 +38,7 @@ import javax.swing.table.TableColumnModel;
  *
  * @author cottr
  */
-public class SearchResultsTable extends javax.swing.JPanel implements ListSelectionListener {
+public class SearchResultsTable extends javax.swing.JPanel {
 
     private Timer timer;
     private final List<SearchResult> rowData;
@@ -58,15 +59,16 @@ public class SearchResultsTable extends javax.swing.JPanel implements ListSelect
         jTable1.setFillsViewportHeight(true);
         jTable1.getColumn(SearchResult.COLUMN_NAMES[SearchResult.FLAGS]).setCellRenderer(new IconTableRenderer(jTable1.getRowHeight()-6));
 
-        jTable1.getSelectionModel().addListSelectionListener(this);
     }
+    
+    public void addListSelectionListener(ListSelectionListener listener)
+    {
+        jTable1.getSelectionModel().addListSelectionListener(listener);
+    }
+   
 
-    @Override
-    public void valueChanged(ListSelectionEvent lse) {
-        if (lse.getValueIsAdjusting()) {
-            return;
-        }
-
+    public SearchResult[] getSelectedRows()
+    {
         // parent.ClearContent();
         int[] rows = jTable1.getSelectedRows();
         SearchResult[] results = new SearchResult[rows.length];
@@ -74,15 +76,10 @@ public class SearchResultsTable extends javax.swing.JPanel implements ListSelect
         {
             results[i] = rowData.get(jTable1.convertRowIndexToModel(rows[i]));
         }        
-        parent.UpdateContent(results);
+        return results;
+        // parent.UpdateContent(results);
     }
 
-    private Searchmonkey parent;
-    public void setParent(Searchmonkey parent)
-    {
-        this.parent = parent;
-    }
-    
     public void resizeAllColumnWidth() {
     final TableColumnModel columnModel = jTable1.getColumnModel();
     for (int column = 0; column < jTable1.getColumnCount(); column++) {
@@ -108,6 +105,7 @@ public class SearchResultsTable extends javax.swing.JPanel implements ListSelect
         rowData.clear();
         DefaultTableModel model = (DefaultTableModel)jTable1.getModel();
         model.setRowCount(0);
+        model.fireTableDataChanged();
         
         // Start a new session
         this.queue = queue;
@@ -135,7 +133,7 @@ public class SearchResultsTable extends javax.swing.JPanel implements ListSelect
             myModel.fireTableRowsInserted(startRow, endRow - 1);
         }
     }
-    
+
     private class ResultsListener implements ActionListener
     {
         private final List<SearchResult> results;

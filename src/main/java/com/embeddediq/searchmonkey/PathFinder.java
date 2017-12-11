@@ -6,9 +6,9 @@
 package com.embeddediq.searchmonkey;
 
 import java.io.IOException;
-import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
 import static java.nio.file.FileVisitResult.CONTINUE;
+import static java.nio.file.FileVisitResult.SKIP_SUBTREE;
 import static java.nio.file.FileVisitResult.TERMINATE;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
@@ -17,7 +17,6 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 
 /**
  *
@@ -28,8 +27,9 @@ public class PathFinder extends SimpleFileVisitor<Path> {
     private final PathMatcher matcher;
     private final SearchResultQueue queue;
     private final AtomicBoolean cancel;
-    private ContentMatch contentMatch;
+    private final ContentMatch contentMatch;
 
+    /*
     public PathFinder(PathMatcher path, SearchResultQueue queue, AtomicBoolean cancel, ContentMatch match) {
         this.matcher = path;
 
@@ -58,7 +58,21 @@ public class PathFinder extends SimpleFileVisitor<Path> {
     public PathFinder(Pattern regexPath, SearchResultQueue queue, AtomicBoolean cancel, ContentMatch match) {
         this(FileSystems.getDefault().getPathMatcher("regex:" + regexPath.pattern()), queue, cancel, match);
     }
+    */
 
+    private final SearchEntry entry;
+    public PathFinder(SearchEntry entry, SearchResultQueue queue, AtomicBoolean cancel) {
+        this.entry = entry;
+
+        this.contentMatch = entry.containingText;
+        this.matcher = entry.fileName;
+
+        // Allow result queue to be passed in
+        this.queue = queue;
+        this.cancel = cancel;
+    }
+
+    
     // Compares the glob pattern against
     // the file or directory name.
     private boolean find(Path file) {
@@ -73,6 +87,22 @@ public class PathFinder extends SimpleFileVisitor<Path> {
             BasicFileAttributes attrs) {
         if (find(file))
         {
+            if (
+                    (entry.flags.ignoreSymbolicLinks && attrs.isSymbolicLink()) ||
+                    (entry.flags.ignoreHiddenFiles && file.toFile().isHidden()) ||
+                    (entry.greaterThan > 0 && (attrs.size() < entry.greaterThan)) ||
+                    (entry.lessThan > 0 && (attrs.size() > entry.lessThan)) ||
+                    ((entry.modifiedAfter != null) && (attrs.lastModifiedTime().compareTo(entry.modifiedAfter) < 0)) ||
+                    ((entry.modifiedBefore != null) && (attrs.lastModifiedTime().compareTo(entry.modifiedBefore) > 0)) ||
+                    ((entry.accessedAfter != null) && (attrs.lastAccessTime().compareTo(entry.accessedAfter) < 0)) ||
+                    ((entry.accessedBefore != null) && (attrs.lastAccessTime().compareTo(entry.accessedBefore) > 0)) ||
+                    ((entry.createdAfter != null) && (attrs.creationTime().compareTo(entry.createdAfter) < 0)) ||
+                    ((entry.createdBefore != null) && (attrs.creationTime().compareTo(entry.createdBefore) > 0))
+                )
+            {
+                return CONTINUE;
+            }
+            
             int count = -1;
             if (contentMatch != null)
             {
@@ -84,6 +114,7 @@ public class PathFinder extends SimpleFileVisitor<Path> {
                 // Collect matching files
                 SearchResult result = new SearchResult(file, attrs, count);
                 try {
+                    // Blocking call to ensure that we do never overflow..
                     queue.put(result);
                 } catch (InterruptedException ex) {
                     Logger.getLogger(PathFinder.class.getName()).log(Level.SEVERE, null, ex);
@@ -98,8 +129,22 @@ public class PathFinder extends SimpleFileVisitor<Path> {
     @Override
     public FileVisitResult preVisitDirectory(Path dir,
             BasicFileAttributes attrs) {
-        find(dir);
-        // TODO - Use exception list to skip folders
+        /*
+        if (!find(dir))
+        {
+            return SKIP_SUBTREE;
+        }
+        */
+        // Use exception list to skip entire folders
+        if (entry.ignoreFolderSet.contains(dir))
+        {
+            return SKIP_SUBTREE;
+        }
+        if (entry.flags.ignoreHiddenFolders && dir.toFile().isHidden())
+        {
+            return SKIP_SUBTREE;
+        }
+
         if (cancel.get()) return TERMINATE; // user has requested an early exit
         return CONTINUE;
     }

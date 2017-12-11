@@ -8,6 +8,7 @@ package com.embeddediq.searchmonkey;
 import java.io.*;
 import static java.lang.System.nanoTime;
 import java.nio.file.*;
+import java.util.HashSet;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
@@ -18,41 +19,35 @@ import javax.swing.SwingUtilities;
  *
  * @author cottr
  */
-public class SearchEngine implements ThreadCompleteListener {
+public class SearchEngine {
     
     private final Thread thread;
-    
-    Searchmonkey parent;
+    private final SearchRunnnable runable;
+    private final PathFinder finder;
+    private final SearchEntry entry;    
+
+    // Searchmonkey parent;
     /**
      * Create a new search instance
      * 
      * @param entry
      * @param queue
      * @param cancel
-     * @param parent
      */
-    public SearchEngine(SearchEntry entry, SearchResultQueue queue, AtomicBoolean cancel, Searchmonkey parent)
+    public SearchEngine(SearchEntry entry, SearchResultQueue queue, AtomicBoolean cancel)
     {
-        this.parent = parent;
+        //this.parent = parent;
         this.entry = entry;
-        finder = new PathFinder(entry.fileName, queue, cancel, entry.containingText);
+        finder = new PathFinder(entry, queue, cancel);
         runable = new SearchRunnnable(entry.lookIn.get(0), finder);
-        runable.setListener((ThreadCompleteListener)this);
         thread = new Thread(runable);
     }
     
-    @Override
-    public void notifyOfThreadComplete()
+    public void addThreadCompleteListener(ThreadCompleteListener listener)
     {
-        SwingUtilities.invokeLater(() -> {
-            parent.Done();
-        });
+        runable.setListener(listener);
     }
 
-    SearchRunnnable runable;
-    PathFinder finder;
-    SearchEntry entry;
-        
     public void start()
     {
         thread.start();
@@ -112,7 +107,11 @@ public class SearchEngine implements ThreadCompleteListener {
             // TODO - fix the start/end time issues
             try {
                 startTime = nanoTime();
-                Files.walkFileTree(startingDir, finder);
+                if (entry.flags.lookInSubFolders) {
+                    Files.walkFileTree(startingDir, finder);
+                } else {
+                    Files.walkFileTree(startingDir, new HashSet<>(), 0, finder);
+                }
                 endTime = nanoTime(); // We are done!
             } catch (IOException ex) {
                 Logger.getLogger(SearchEngine.class.getName()).log(Level.SEVERE, null, ex);

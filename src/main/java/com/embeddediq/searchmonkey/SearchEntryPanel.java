@@ -17,6 +17,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.file.FileSystems;
 import java.nio.file.Paths;
+import java.nio.file.attribute.FileTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -152,20 +154,22 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
         }
         
         // Get min/max size
-        int scaler = 1024^jFileSizeScaler.getSelectedIndex(); // 1024^0 = 1; 1024^1=1K, 1024^2=1M, etc
-        if (jGreaterThanToggle.isSelected()) {
-            req.lessThan = (long)((double)scaler * (double)jLessThanSpinner.getValue());
-        }
+        double scaler = Math.pow(1024,jFileSizeScaler.getSelectedIndex()); // 1024^0 = 1; 1024^1=1K, 1024^2=1M, etc
         if (jLessThanToggle.isSelected()) {
-            req.greaterThan = (long)((double)scaler * (double)jGreaterThanSpinner.getValue());
+            req.lessThan = (long)(scaler * (double)jLessThanSpinner.getValue());
+        }
+        if (jGreaterThanToggle.isSelected()) {
+            req.greaterThan = (long)(scaler * (double)jGreaterThanSpinner.getValue());
         }
 
         // Get modifed before/after date
-        if (jBeforeToggle.isSelected()) {
-            req.modifiedAfter = ((SpinnerDateModel)jAfterSpinner.getModel()).getDate();
+        if (jAfterToggle.isSelected()) {
+            Date d = ((SpinnerDateModel)jAfterSpinner.getModel()).getDate();
+            req.modifiedAfter = FileTime.from(d.toInstant());
         }
         if (jBeforeToggle.isSelected()) {
-            req.modifiedBefore = ((SpinnerDateModel)jBeforeSpinner.getModel()).getDate();
+            Date d = ((SpinnerDateModel)jBeforeSpinner.getModel()).getDate();
+            req.modifiedBefore = FileTime.from(d.toInstant());
         }
 
         // Set flags from the options tab
@@ -174,25 +178,27 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
         req.flags.ignoreHiddenFiles = jIgnoreHiddenFiles.isSelected();
         req.flags.ignoreHiddenFolders = jIgnoreHiddenFolders.isSelected();
         req.flags.ignoreHiddenFiles = jIgnoreHiddenFiles.isSelected();
-        req.flags.ignoreDotFiles = jIgnoreDotFiles.isSelected();
-        req.flags.ignoreDotFolders = jIgnoreDotFolders.isSelected();
         req.flags.ignoreSymbolicLinks = jIgnoreSymbolicLinks.isSelected();
-        req.flags.ignoreSystemFiles = jIgnoreSystemFiles.isSelected();
+        req.flags.lookInSubFolders = jSubFolders.isSelected();
 
         // Get created before/after date
-        if (jBeforeToggle1.isSelected()) {
-            req.createdAfter = ((SpinnerDateModel)jAfterSpinner1.getModel()).getDate();
+        if (jAfterToggle1.isSelected()) {
+            Date d = ((SpinnerDateModel)jAfterSpinner1.getModel()).getDate();
+            req.createdAfter = FileTime.from(d.toInstant());
         }
         if (jBeforeToggle1.isSelected()) {
-            req.createdBefore = ((SpinnerDateModel)jBeforeSpinner1.getModel()).getDate();
+            Date d = ((SpinnerDateModel)jBeforeSpinner1.getModel()).getDate();
+            req.createdBefore = FileTime.from(d.toInstant());
         }
 
         // Get accessed before/after date
-        if (jBeforeToggle2.isSelected()) {
-            req.accessedAfter = ((SpinnerDateModel)jAfterSpinner2.getModel()).getDate();
+        if (jAfterToggle2.isSelected()) {
+            Date d = ((SpinnerDateModel)jAfterSpinner2.getModel()).getDate();
+            req.accessedAfter = FileTime.from(d.toInstant());
         }
         if (jBeforeToggle2.isSelected()) {
-            req.accessedBefore = ((SpinnerDateModel)jBeforeSpinner2.getModel()).getDate();
+            Date d = ((SpinnerDateModel)jBeforeSpinner2.getModel()).getDate();
+            req.accessedBefore = FileTime.from(d.toInstant());
         }
         return req;
     }
@@ -314,9 +320,6 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
         jUseContentSearch = new javax.swing.JRadioButton();
         jUseContentRegex = new javax.swing.JRadioButton();
         jIgnoreHiddenFiles = new javax.swing.JCheckBox();
-        jIgnoreSystemFiles = new javax.swing.JCheckBox();
-        jIgnoreDotFolders = new javax.swing.JCheckBox();
-        jIgnoreDotFiles = new javax.swing.JCheckBox();
         jIgnoreHiddenFolders = new javax.swing.JCheckBox();
         jIgnoreSymbolicLinks = new javax.swing.JCheckBox();
         jPanel9 = new javax.swing.JPanel();
@@ -712,12 +715,6 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
 
         jIgnoreHiddenFiles.setText("Ignore hidden files");
 
-        jIgnoreSystemFiles.setText("Ignore system folders and files");
-
-        jIgnoreDotFolders.setText("Ignore dot folders e.g. .svn");
-
-        jIgnoreDotFiles.setText("Ignore dot files e.g. .backup");
-
         jIgnoreHiddenFolders.setText("Ignore hidden folders");
 
         jIgnoreSymbolicLinks.setText("Ignore symbolic links and shortcuts");
@@ -731,16 +728,13 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jUseFileRegex)
                     .addComponent(jUseFileGlobs)
-                    .addComponent(jIgnoreHiddenFiles)
-                    .addComponent(jIgnoreDotFiles)
-                    .addComponent(jIgnoreSystemFiles))
+                    .addComponent(jIgnoreHiddenFiles))
                 .addGap(121, 121, 121)
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jIgnoreHiddenFolders)
                     .addComponent(jUseContentRegex)
                     .addComponent(jUseContentSearch)
-                    .addComponent(jIgnoreSymbolicLinks)
-                    .addComponent(jIgnoreDotFolders))
+                    .addComponent(jIgnoreSymbolicLinks))
                 .addContainerGap(103, Short.MAX_VALUE))
         );
         jPanel8Layout.setVerticalGroup(
@@ -758,14 +752,8 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jIgnoreHiddenFiles)
                     .addComponent(jIgnoreHiddenFolders))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jIgnoreDotFolders)
-                    .addComponent(jIgnoreDotFiles))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jIgnoreSystemFiles)
-                    .addComponent(jIgnoreSymbolicLinks))
+                .addGap(23, 23, 23)
+                .addComponent(jIgnoreSymbolicLinks)
                 .addContainerGap(21, Short.MAX_VALUE))
         );
 
@@ -1095,19 +1083,9 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
     {
         // Call the parent
         jButton1.setEnabled(false);
-        //SearchEntry entry = this.getSearchRequest();
-        //parent.Start(entry);
-        // Implement a change listener
-        
         jButton2.setEnabled(true);
     }
     public void Stop()
-    {
-        // Call the parent
-//        parent.Stop();
-        Done();
-    }
-    public void Done()
     {
         jButton2.setEnabled(false);
         jButton1.setEnabled(true);
@@ -1209,12 +1187,9 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
     private javax.swing.JComboBox<String> jFileSizeScaler;
     private javax.swing.JSpinner jGreaterThanSpinner;
     private javax.swing.JToggleButton jGreaterThanToggle;
-    private javax.swing.JCheckBox jIgnoreDotFiles;
-    private javax.swing.JCheckBox jIgnoreDotFolders;
     private javax.swing.JCheckBox jIgnoreHiddenFiles;
     private javax.swing.JCheckBox jIgnoreHiddenFolders;
     private javax.swing.JCheckBox jIgnoreSymbolicLinks;
-    private javax.swing.JCheckBox jIgnoreSystemFiles;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;

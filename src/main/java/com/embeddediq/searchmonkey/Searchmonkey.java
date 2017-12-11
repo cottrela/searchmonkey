@@ -13,14 +13,17 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.ImageIcon;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 /**
  *
  * @author cottr
  */
-public class Searchmonkey extends javax.swing.JFrame implements ActionListener {
+public class Searchmonkey extends javax.swing.JFrame implements ActionListener, ListSelectionListener, ThreadCompleteListener {
 
-    private String[] iconList = new String[] {
+    private final String[] iconList = new String[] {
         "/images/searchmonkey-16x16.png",
         "/images/searchmonkey-22x22.png",
         "/images/searchmonkey-24x24.png",
@@ -42,12 +45,13 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener {
             imageList.add(new ImageIcon(getClass().getResource(fn)).getImage());
         }
         setIconImages(imageList);
-
-        // Add an action listener to the searchEntryPanel
+    }
+    
+    public void addActionListeners()
+    {
+        // Add listeners after initialised.
         searchEntryPanel1.addActionListener(this);
-        //URL url = getClass().getResource("/images/searchmonkey-300x300.png");
-        //Toolkit kit = Toolkit.getDefaultToolkit();
-        //setIconImage(kit.createImage(url));
+        searchResultsTable1.addListSelectionListener(this);
     }
     
     private final int rate = 200; // 200 ms
@@ -57,21 +61,19 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener {
     private SearchResultQueue queue = null;
     public void Start()
     {
-        if (cancel == null)
-        {
-            // searchEntryPanel1.setParent(this);
-            SearchEntry entry = searchEntryPanel1.getSearchRequest();
-            searchResultsTable1.setParent(this);
-            
-            queue = new SearchResultQueue(queue_sz);
-            cancel = new AtomicBoolean(false);
+        // Get a copy of the search settings taken from the search panel
+        SearchEntry entry = searchEntryPanel1.getSearchRequest();
 
-            // Create a new engine
-            engine = new SearchEngine(entry, queue, cancel, this);
-            engine.start();
-            searchResultsTable1.start(queue, rate);
-            searchMatchView1.setContentMatch(entry.containingText); // Update the content match
-        }
+        queue = new SearchResultQueue(queue_sz);
+        cancel = new AtomicBoolean(false);
+
+        // Create a new engine
+        engine = new SearchEngine(entry, queue, cancel);
+        engine.addThreadCompleteListener(this);
+        engine.start();
+        searchEntryPanel1.Start();
+        searchResultsTable1.start(queue, rate);
+        searchMatchView1.setContentMatch(entry.containingText); // Update the content match
     }
     
     public void Stop()
@@ -79,16 +81,14 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener {
         if (cancel != null && !cancel.get())
         {
             cancel.set(true);
-            // engine.stop(); // TODO Join thread
-            searchResultsTable1.stop();
             cancel = null;
         }
     }
     
     public void Done()
     {
-        Stop();
-        searchEntryPanel1.Done();
+        searchResultsTable1.stop();
+        searchEntryPanel1.Stop();
     }
     
     public void UpdateContent(SearchResult[] results)
@@ -99,8 +99,6 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener {
         {
             paths[i] = Paths.get(results[i].pathName, results[i].fileName); // Logger.getLogger(Searchmonkey.class.getName()).log(Level.SEVERE, null, ex);
         }
-        //ClearContent();
-        //Path path = Paths.get(result.pathName, result.fileName); // Logger.getLogger(Searchmonkey.class.getName()).log(Level.SEVERE, null, ex);
         searchMatchView1.UpdateView(paths);
     }
 
@@ -255,8 +253,11 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener {
         
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
-                new Searchmonkey().setVisible(true);
+                Searchmonkey s = new Searchmonkey();
+                s.addActionListeners();
+                s.setVisible(true);
             }
         });
     }
@@ -289,12 +290,32 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener {
         //if (ae.getClass() == searchEntryPanel1.getClass())
         {
             String command = ae.getActionCommand();
-            if (command == "Start")
+            if (command.equals("Start"))
             {
-                searchEntryPanel1.Start();
+                Start();
+            } else if (command.equals("Stop"))
+            {
+                Stop();
             }
                 
         }
+    }
+
+    @Override
+    public void valueChanged(ListSelectionEvent lse) {
+        if (lse.getValueIsAdjusting()) {
+            return;
+        }
+
+        // Update the contents
+        UpdateContent(searchResultsTable1.getSelectedRows());
+    }
+
+    @Override
+    public void notifyOfThreadComplete() {
+        SwingUtilities.invokeLater(() -> {
+            Done();
+        });
     }
 
 }

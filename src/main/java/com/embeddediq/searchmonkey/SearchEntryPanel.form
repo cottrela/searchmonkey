@@ -680,8 +680,6 @@
                           <Component id="jUseFileRegex" min="-2" max="-2" attributes="0"/>
                           <Component id="jUseFileGlobs" min="-2" max="-2" attributes="0"/>
                           <Component id="jIgnoreHiddenFiles" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="jIgnoreDotFiles" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="jIgnoreSystemFiles" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="121" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
@@ -689,7 +687,6 @@
                           <Component id="jUseContentRegex" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="jUseContentSearch" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="jIgnoreSymbolicLinks" min="-2" max="-2" attributes="0"/>
-                          <Component id="jIgnoreDotFolders" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace pref="103" max="32767" attributes="0"/>
                   </Group>
@@ -713,16 +710,8 @@
                           <Component id="jIgnoreHiddenFiles" min="-2" max="-2" attributes="0"/>
                           <Component id="jIgnoreHiddenFolders" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jIgnoreDotFolders" min="-2" max="-2" attributes="0"/>
-                          <Component id="jIgnoreDotFiles" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jIgnoreSystemFiles" min="-2" max="-2" attributes="0"/>
-                          <Component id="jIgnoreSymbolicLinks" alignment="0" min="-2" max="-2" attributes="0"/>
-                      </Group>
+                      <EmptySpace min="-2" pref="23" max="-2" attributes="0"/>
+                      <Component id="jIgnoreSymbolicLinks" min="-2" max="-2" attributes="0"/>
                       <EmptySpace pref="21" max="32767" attributes="0"/>
                   </Group>
               </Group>
@@ -766,21 +755,6 @@
             <Component class="javax.swing.JCheckBox" name="jIgnoreHiddenFiles">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Ignore hidden files"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JCheckBox" name="jIgnoreSystemFiles">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Ignore system folders and files"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JCheckBox" name="jIgnoreDotFolders">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Ignore dot folders e.g. .svn"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JCheckBox" name="jIgnoreDotFiles">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Ignore dot files e.g. .backup"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JCheckBox" name="jIgnoreHiddenFolders">
