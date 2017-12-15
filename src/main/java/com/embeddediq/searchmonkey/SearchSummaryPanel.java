@@ -9,12 +9,12 @@ package com.embeddediq.searchmonkey;
  *
  * @author cottr
  */
-public class SearchSummary extends javax.swing.JPanel {
+public class SearchSummaryPanel extends javax.swing.JPanel {
 
     /**
      * Creates new form SearchSummary
      */
-    public SearchSummary() {
+    public SearchSummaryPanel() {
         initComponents();
         ShowProgress(false);
         SetProgress("Pending");
