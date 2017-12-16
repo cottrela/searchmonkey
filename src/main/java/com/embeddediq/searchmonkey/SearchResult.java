@@ -10,6 +10,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.commons.io.FilenameUtils;
 
 /**
@@ -32,8 +34,7 @@ public class SearchResult {
             if (Files.isHidden(file)) fileFlags |= HIDDEN_FILE;
             contentType = Files.probeContentType(file);
         } catch (IOException ex) {
-            System.out.println(ex);
-            // Logger.getLogger(SearchResult.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SearchResult.class.getName()).log(Level.SEVERE, null, ex);
         }
         this.matchCount = matchCount;
     }

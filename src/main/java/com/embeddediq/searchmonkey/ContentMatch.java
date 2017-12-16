@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -46,8 +48,7 @@ public class ContentMatch {
                 count += getMatchCount(line);
             }
         } catch (IOException ex) {
-            System.err.println(ex);
-            // Logger.getLogger(SearchEngine.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ContentMatch.class.getName()).log(Level.SEVERE, null, ex);
         }
         return count;
     }

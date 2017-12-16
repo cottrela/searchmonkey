@@ -83,13 +83,11 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener, 
     
     public void Done()
     {
-//        searchResultsTable1.stop();
         searchEntryPanel1.Stop();
     }
     
     public void UpdateContent(SearchResult[] results)
     {
-        //searchMatchView1.clearContent();
         Path[] paths = new Path[results.length];
         for (int i=0; i<results.length; i++)
         {

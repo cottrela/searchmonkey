@@ -57,7 +57,7 @@ public class SearchWorker extends SwingWorker<SearchSummary, SearchResult> imple
         }
         catch (IOException ioe)
         {
-            Logger.getLogger(Searchmonkey.class.getName()).log(Level.WARNING, null, ioe);;
+            Logger.getLogger(SearchWorker.class.getName()).log(Level.WARNING, null, ioe);
         }
         summary.endTime = nanoTime(); // We are done!
         return summary;
@@ -175,8 +175,6 @@ public class SearchWorker extends SwingWorker<SearchSummary, SearchResult> imple
     
     @Override
     protected void done() {
-        // return;
-        //if (isCancelled()) return; // Ignore cancelled
         // We are done! :-)
     }
 
@@ -188,7 +186,6 @@ public class SearchWorker extends SwingWorker<SearchSummary, SearchResult> imple
     public void process(List<SearchResult> results)
     {
         table.insertRows(results);
-        // setProgress(getProgress() + results.size());
     }
 
 }

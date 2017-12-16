@@ -198,11 +198,8 @@ public class SearchResultsTable extends javax.swing.JPanel {
                                 JTable table, Object value,
                                 boolean isSelected, boolean hasFocus,
                                 int row, int column) {
-            //Component cell = super.getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, column);
-            
             JPanel panel = new JPanel();
             int flags = (int)value;
-            //this.removeAll();
             List<String> flagText = new ArrayList<>();
             if (flags == SearchResult.HIDDEN_FILE)
             {
@@ -230,7 +227,6 @@ public class SearchResultsTable extends javax.swing.JPanel {
                 panel.setForeground(table.getForeground());                
                 panel.setBackground(table.getBackground());                
             }
-//            break;
             return panel;
             
         }
