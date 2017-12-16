@@ -18,6 +18,7 @@ import java.io.File;
 import java.nio.file.FileSystems;
 import java.nio.file.Paths;
 import java.nio.file.attribute.FileTime;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -25,8 +26,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JPopupMenu;
 import javax.swing.JSpinner;
@@ -46,6 +49,8 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
      * Creates new form SearchEntryPanel
      */
     public SearchEntryPanel() {
+        prefs = Preferences.userNodeForPackage(SearchEntry.class);
+        
         initComponents();
         
         cal = new PopupCalendar();
@@ -112,13 +117,36 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
         }
     }
    
+    int maxCombo = 10;
+    private String getSelectedItem(JComboBox jCombo)
+    {
+        String val = (String)jCombo.getSelectedItem();
+        if (val.length() > 0)
+        {
+            DefaultComboBoxModel model = (DefaultComboBoxModel)jCombo.getModel();
+            int idx = model.getIndexOf(val);
+            if (idx != -1)
+            {
+                model.removeElementAt(idx);
+            }
+            jCombo.insertItemAt(val, 0);
+            idx = jCombo.getItemCount();
+            if (idx > maxCombo)
+            {
+                jCombo.removeItemAt(idx - 1);
+            }
+            jCombo.setSelectedItem(val);
+        }
+        return val;
+    }
+    
     public SearchEntry getSearchRequest() {
         SearchEntry req = new SearchEntry();
         String strItem;
 
         // Get look in folder
         req.lookIn = new ArrayList<>();
-        Object folder = jLookIn.getSelectedItem();
+        Object folder = getSelectedItem(jLookIn);
         if (folder.getClass().equals(String.class))
         {
             strItem = (String)folder;
@@ -136,14 +164,14 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
         req.lookInSubFolders = jSubFolders.isSelected();
         
         // Get filename folder
-        strItem = (String)jFileName.getSelectedItem();
+        strItem = getSelectedItem(jFileName);
         String prefix = (jUseFileRegex.isSelected() ? SearchEntry.PREFIX_REGEX : SearchEntry.PREFIX_GLOB);
         req.fileName = FileSystems.getDefault().getPathMatcher(prefix + strItem);
         
         // Get containing text
         if (jContainingText.getSelectedItem() != null)
         {
-            strItem = (String)jContainingText.getSelectedItem();
+            strItem = getSelectedItem(jContainingText);
             if (strItem.length() > 0) // Is there a content match to make?
             {
                 Pattern regex = Pattern.compile(strItem);
@@ -200,40 +228,113 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
         }
         return req;
     }
-    
-    public void Save()
-    {
-        Preferences prefs = Preferences.userNodeForPackage(SearchEntry.class);
-        String json;
         
+    private void Save(String name, JComboBox jCombo) throws SecurityException
+    {
         Gson g = new Gson();
         List<String> items = new ArrayList<>();
-        for (int i=0; i<jLookIn.getItemCount(); i++)
+        for (int i=0; i<jCombo.getItemCount(); i++)
         {
-            items.add(jLookIn.getItemAt(i));
+            items.add((String)
+                    jCombo.getItemAt(i));
         }
-        json = g.toJson(items);
-        prefs.put("LookIn", json); // Add list of look in folders
+        String json = g.toJson(items);
+        prefs.put(name, json); // Add list of look in folders        
+    }
+    private void Save(String name, JSpinner jSpinner) throws SecurityException
+    {
+        Gson g = new Gson();
+        Object val = jSpinner.getValue();
+        String json = g.toJson(val);
+        prefs.put(name, json); // Add list of look in folders        
+    }
+    private final Preferences prefs;
+    
+    private void Restore(String name, JComboBox jCombo, Object def)
+    {
+        jCombo.removeAllItems();
+        Gson g = new Gson();
+        String json = prefs.get(name, g.toJson(def));
+        List<String> items = g.fromJson(json, new TypeToken<ArrayList<String>>() {}.getType());
+        for (String item: items) {
+            jCombo.addItem(item);
+        }
+    }
+    private void Restore(String name, JSpinner jSpinner, Object def) throws SecurityException
+    {
+        Gson g = new Gson();
+        String json = prefs.get(name, g.toJson(def)); // Add list of look in folders        
+        Object val = g.fromJson(json, def.getClass());
+        jSpinner.setValue(val);
+    }
+
+    public void Save() throws SecurityException
+    {
+        Save("LookIn", jLookIn);
+        Save("FileName", jFileName);
+        Save("ContainingText", jContainingText);
         
         prefs.putBoolean("LookInSubFolders", jSubFolders.isSelected());
+        prefs.putInt("FileSizeScaler", jFileSizeScaler.getSelectedIndex());
+        prefs.putBoolean("GreaterThanToggle", jGreaterThanToggle.isSelected());
+        prefs.putDouble("GreaterThan", (Double)jGreaterThanSpinner.getValue());
+        prefs.putBoolean("LessThanToggle", jLessThanToggle.isSelected());
+        prefs.putDouble("LessThan", (Double)jLessThanSpinner.getValue());
+        prefs.putBoolean("AfterToggle", jAfterToggle.isSelected());
+        Save("AfterSpinner", jAfterSpinner);
+        //prefs.put("AfterSpinner", ((Date)jAfterSpinner.getValue()).toString());
+        prefs.putBoolean("BeforeToggle", jBeforeToggle.isSelected());
+        Save("BeforeSpinner", jBeforeSpinner);
+        //prefs.put("BeforeSpinner", ((Date)jBeforeSpinner.getValue()).toString());
+        // Search options
+        prefs.putBoolean("IgnoreHiddenFiles", jIgnoreHiddenFiles.isSelected());
+        prefs.putBoolean("IgnoreHiddenFolders", jIgnoreHiddenFolders.isSelected());
+        prefs.putBoolean("IgnoreSymbolicLinks", jIgnoreSymbolicLinks.isSelected());
+        prefs.putBoolean("UseContentRegex", jUseContentRegex.isSelected());
+        prefs.putBoolean("UseFileRegex", jUseFileRegex.isSelected());
+        // Adanced search settings
+        prefs.putBoolean("AfterToggle1", jAfterToggle1.isSelected());
+        Save("AfterSpinner1", jAfterSpinner1);
+        prefs.putBoolean("BeforeToggle1", jBeforeToggle1.isSelected());
+        Save("BeforeSpinner1", jBeforeSpinner1);
+        prefs.putBoolean("AfterToggle2", jAfterToggle2.isSelected());
+        Save("AfterSpinner2", jAfterSpinner2);
+        prefs.putBoolean("BeforeToggle2", jBeforeToggle2.isSelected());
+        Save("BeforeSpinner2", jBeforeSpinner2);
     }
-    
     public void Restore()
     {
-        Preferences prefs = Preferences.userNodeForPackage(SearchEntry.class);
-        String json;
-        
-        Gson g = new Gson();
-        json = prefs.get("LookIn", "['Hello', 'World']"); // Add list of look in folders
-        List<String> items;
-        // items = g.fromJson(json, new ArrayList<String>(){}.getClass());
-        items = g.fromJson(json, new TypeToken<ArrayList<String>>() {}.getType());
-        
-        jLookIn.removeAllItems(); // Clear the list
-        for (String item: items)
-        {
-            jLookIn.addItem(item);
-        }
+        Date date = new Date();
+
+        String home = System.getProperty("user.desktop");
+        Restore("LookIn", jLookIn, new String[] {home});
+        Restore("FileName", jFileName, new String[] {"*.txt", "*.[c|h]"});
+        Restore("ContainingText", jContainingText, new String[] {});
+        jSubFolders.setSelected(prefs.getBoolean("LookInSubFolders", true));
+        jFileSizeScaler.setSelectedIndex(prefs.getInt("FileSizeScaler", 1)); // Select KBytes by default
+        jGreaterThanToggle.setSelected(prefs.getBoolean("GreaterThanToggle", false));
+        jGreaterThanSpinner.setValue(prefs.getDouble("GreaterThan", 0.0));
+        jLessThanToggle.setSelected(prefs.getBoolean("LessThanToggle", false));
+        jLessThanSpinner.setValue(prefs.getDouble("LessThan", 0.0));
+        jAfterToggle.setSelected(prefs.getBoolean("AfterToggle", false));
+        Restore("AfterSpinner", jAfterSpinner, date);
+        jBeforeToggle.setSelected(prefs.getBoolean("BeforeToggle", false));
+        Restore("BeforeSpinner", jBeforeSpinner, date);
+        // Search options
+        jIgnoreHiddenFiles.setSelected(prefs.getBoolean("IgnoreHiddenFiles", false));
+        jIgnoreHiddenFolders.setSelected(prefs.getBoolean("IgnoreHiddenFolders", false));
+        jIgnoreSymbolicLinks.setSelected(prefs.getBoolean("IgnoreSymbolicLinks", false));
+        jUseContentRegex.setSelected(prefs.getBoolean("UseContentRegex", false));
+        jUseFileRegex.setSelected(prefs.getBoolean("UseFileRegex", false));
+        // Adanced search settings
+        jAfterToggle1.setSelected(prefs.getBoolean("AfterToggle1", false));
+        Restore("AfterSpinner1", jAfterSpinner1, date);
+        jBeforeToggle1.setSelected(prefs.getBoolean("BeforeToggle1", false));
+        Restore("BeforeSpinner1", jBeforeSpinner1, date);
+        jAfterToggle2.setSelected(prefs.getBoolean("AfterToggle2", false));
+        Restore("AfterSpinner2", jAfterSpinner2, date);
+        jBeforeToggle2.setSelected(prefs.getBoolean("BeforeToggle2", false));
+        Restore("BeforeSpinner2", jBeforeSpinner2, date);
     }
     
     /**

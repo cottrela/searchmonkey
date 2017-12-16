@@ -41,14 +41,15 @@ public class ContentMatch {
     public int CheckContent(Path path)
     {
         int count = 0;
-        try (FileReader fileReader = new FileReader(path.toFile())) {
+        try{
+            FileReader fileReader = new FileReader(path.toFile());
             BufferedReader bufferedReader = new BufferedReader(fileReader);
             String line;
             while ((line = bufferedReader.readLine()) != null) {
                 count += getMatchCount(line);
             }
-        } catch (IOException ex) {
-            Logger.getLogger(ContentMatch.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException er) {
+            // Logger.getLogger(ContentMatch.class.getName()).log(Level.SEVERE, null, er);
         }
         return count;
     }

@@ -5,6 +5,7 @@
  */
 package com.embeddediq.searchmonkey;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import static java.lang.System.nanoTime;
 import java.nio.file.FileVisitResult;
@@ -74,7 +75,7 @@ public class SearchWorker extends SwingWorker<SearchSummary, SearchResult> imple
     // method on each file.
     @Override
     public FileVisitResult visitFile(Path file,
-            BasicFileAttributes attrs) throws IOException {
+            BasicFileAttributes attrs) throws IOException, FileNotFoundException {
         summary.totalFiles ++;
         if (isMatch(file))
         {
