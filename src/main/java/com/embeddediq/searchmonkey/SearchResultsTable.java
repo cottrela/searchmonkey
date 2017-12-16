@@ -38,7 +38,6 @@ import javax.swing.table.TableColumnModel;
  */
 public class SearchResultsTable extends javax.swing.JPanel {
 
-    private Timer timer;
     private final List<SearchResult> rowData;
     private final MyTableModel myModel;
     
@@ -107,66 +106,6 @@ public class SearchResultsTable extends javax.swing.JPanel {
     }
 }
 
-    // Call this at the start of the search
-    public void start(SearchResultQueue queue, int rateMillis)
-    {
-        // TODO - convert this thread to a swing worker thread model
-        
-        // Clear the previous entries
-        rowData.clear();
-        DefaultTableModel model = (DefaultTableModel)jTable1.getModel();
-        model.setRowCount(0);
-        model.fireTableDataChanged();
-        
-        // Start a new session
-        this.queue = queue;
-        timer = new Timer(rateMillis, new ResultsListener(queue, rowData));
-        timer.start();
-    }
-    
-    private SearchResultQueue queue;
-
-    // Call this when the search is complete (or has been cancelled)
-    public void stop()
-    {
-        timer.stop();
-        actionCompleted();
-    }
-
-    public void actionCompleted()
-    {
-        int sz = queue.size();
-        if (sz > 0)
-        {
-            int startRow = myModel.getRowCount();
-            int endRow = startRow + sz;
-            queue.drainTo(rowData);
-            myModel.fireTableRowsInserted(startRow, endRow - 1);
-        }
-    }
-
-    private class ResultsListener implements ActionListener
-    {
-        private final List<SearchResult> results;
-        private final SearchResultQueue queue;
-        public ResultsListener(SearchResultQueue queue, List<SearchResult> results)
-        {
-            this.queue = queue;
-            this.results = results;
-        }
-        
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            int sz = queue.size();
-            if (sz > 0)
-            {
-                int startRow = myModel.getRowCount();
-                int endRow = startRow + sz;
-                queue.drainTo(results);
-                myModel.fireTableRowsInserted(startRow, endRow - 1);
-            }
-        }
-    }
     
     private class MyTableModel extends DefaultTableModel 
     {
