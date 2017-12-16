@@ -78,11 +78,37 @@ public class SearchMatchView extends javax.swing.JPanel implements ActionListene
 
     public void setContentMatch(ContentMatch match) {
         this.match = match;
+        this.jTextArea1.setText("");
     }
     public ContentMatch getContentMatch() {
         return this.match;
     }
 
+    public void UpdateSummary(SearchSummary ss)
+    {
+        jTextArea1.append(String.format("Search complete.\n\nFound %d file match%s\n", ss.matchFileCount, ss.matchFileCount != 1 ? "es" : ""));
+        // jTextArea1.append(String.Format("Search complete.\n\nFound %d match%s\n", ss.matchFileCount, ss.matchFileCount != 1 ? "es" : "" ));
+        
+        
+        jTextArea1.append(String.format("The matched files totaled %d bytes (min %d and max %d).\n", ss.totalMatchBytes, ss.minMatchBytes, ss.maxMatchBytes));
+        jTextArea1.append(String.format("There was a total of %d hits (min %d and max %d).\n", ss.totalContentMatch, ss.minContentMatch, ss.maxContentMatch));
+
+        if (ss.skippedFolders > 1)
+            jTextArea1.append(String.format("There were %d folders skipped during the search.\n", ss.skippedFolders));
+        else if (ss.skippedFolders == 1)
+            jTextArea1.append(String.format("There was just one folder skipped during the search.\n"));
+        else {
+            jTextArea1.append(String.format("There was one folder skipped during the search.\n"));
+        }
+        if (ss.skippedFiles > 1)
+            jTextArea1.append(String.format("There were %d files skipped during the search.\n", ss.skippedFiles));
+        else if (ss.skippedFiles == 1)
+            jTextArea1.append(String.format("There was just one file skipped during the search.\n"));
+        else {
+            jTextArea1.append(String.format("There was one file skipped during the search.\n"));
+        }        
+    }
+            
     public class MatchResult2 {
         public MatchResult2(String title)
         {

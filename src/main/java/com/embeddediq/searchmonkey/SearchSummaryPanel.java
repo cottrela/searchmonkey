@@ -18,7 +18,7 @@ public class SearchSummaryPanel extends javax.swing.JPanel {
         initComponents();
         ShowProgress(false);
         SetProgress("Pending");
-        SetStaus("Ready");
+        SetStatus("Ready");
         SetSearched("");
         SetSelected("");
     }
@@ -49,7 +49,7 @@ public class SearchSummaryPanel extends javax.swing.JPanel {
         jProgressBar1.setString(String.format("%d%%", val));
         jProgressBar1.setValue(val);
     }
-    public void SetStaus(String msg)
+    public void SetStatus(String msg)
     {
         jStatus.setText(msg);
         //ShowProgress(false);

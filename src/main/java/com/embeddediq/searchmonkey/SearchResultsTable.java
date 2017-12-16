@@ -23,12 +23,10 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
-import java.util.Collection;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
@@ -42,7 +40,6 @@ public class SearchResultsTable extends javax.swing.JPanel {
 
     private Timer timer;
     private final List<SearchResult> rowData;
-    // private final JTable table;
     private final MyTableModel myModel;
     
     /**
@@ -61,6 +58,22 @@ public class SearchResultsTable extends javax.swing.JPanel {
 
     }
     
+    // Use with SearchWorker
+    public void clearTable()
+    {
+        rowData.clear();
+        myModel.setRowCount(0);
+        myModel.fireTableDataChanged();
+    }
+    public void insertRows(List<SearchResult> results)
+    {
+        int s = myModel.getRowCount();
+        int e = s + results.size() - 1;
+        rowData.addAll(results);
+        myModel.fireTableRowsInserted(s, e);
+    }
+    // Use with SearchWorker
+    
     public void addListSelectionListener(ListSelectionListener listener)
     {
         jTable1.getSelectionModel().addListSelectionListener(listener);
@@ -69,7 +82,6 @@ public class SearchResultsTable extends javax.swing.JPanel {
 
     public SearchResult[] getSelectedRows()
     {
-        // parent.ClearContent();
         int[] rows = jTable1.getSelectedRows();
         SearchResult[] results = new SearchResult[rows.length];
         for (int i=0; i<rows.length; i++)
@@ -77,7 +89,6 @@ public class SearchResultsTable extends javax.swing.JPanel {
             results[i] = rowData.get(jTable1.convertRowIndexToModel(rows[i]));
         }        
         return results;
-        // parent.UpdateContent(results);
     }
 
     public void resizeAllColumnWidth() {
@@ -383,7 +394,7 @@ public class SearchResultsTable extends javax.swing.JPanel {
             return this;
         }
     }
-
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

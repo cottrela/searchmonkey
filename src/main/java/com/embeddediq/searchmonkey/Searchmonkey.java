@@ -8,12 +8,18 @@ package com.embeddediq.searchmonkey;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker.StateValue;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -21,7 +27,7 @@ import javax.swing.event.ListSelectionListener;
  *
  * @author cottr
  */
-public class Searchmonkey extends javax.swing.JFrame implements ActionListener, ListSelectionListener, ThreadCompleteListener {
+public class Searchmonkey extends javax.swing.JFrame implements ActionListener, ListSelectionListener, ThreadCompleteListener, PropertyChangeListener {
 
     private final String[] iconList = new String[] {
         "/images/searchmonkey-16x16.png",
@@ -59,35 +65,49 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener, 
     private SearchEngine engine = null;
     private AtomicBoolean cancel = null;
     private SearchResultQueue queue = null;
+    SearchWorker searchTask;
     public void Start()
     {
         // Get a copy of the search settings taken from the search panel
         SearchEntry entry = searchEntryPanel1.getSearchRequest();
 
-        queue = new SearchResultQueue(queue_sz);
-        cancel = new AtomicBoolean(false);
-
-        // Create a new engine
-        engine = new SearchEngine(entry, queue, cancel);
-        engine.addThreadCompleteListener(this);
-        engine.start();
+        // SearchEntry entry, SearchResultsTable table
         searchEntryPanel1.Start();
-        searchResultsTable1.start(queue, rate);
+        searchResultsTable1.clearTable();
+        searchTask = new SearchWorker(entry, searchResultsTable1);
+        searchTask.addPropertyChangeListener(this);
         searchMatchView1.setContentMatch(entry.containingText); // Update the content match
+        searchTask.execute();
+
+        
+//        queue = new SearchResultQueue(queue_sz);
+//        cancel = new AtomicBoolean(false);
+//
+//        // Create a new engine
+//        engine = new SearchEngine(entry, queue, cancel);
+//        engine.addThreadCompleteListener(this);
+//        engine.start();
+//        searchEntryPanel1.Start();
+//        searchResultsTable1.start(queue, rate);
+//        searchMatchView1.setContentMatch(entry.containingText); // Update the content match
     }
     
     public void Stop()
     {
-        if (cancel != null && !cancel.get())
+        if (searchTask != null && !searchTask.isCancelled())
         {
-            cancel.set(true);
-            cancel = null;
+            searchTask.cancel(true);
         }
+//        if (cancel != null && !cancel.get())
+//        {
+//            cancel.set(true);
+//            cancel = null;
+//        }
     }
     
     public void Done()
     {
-        searchResultsTable1.stop();
+//        searchResultsTable1.stop();
         searchEntryPanel1.Stop();
     }
     
@@ -116,7 +136,7 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener, 
         jSplitPane1 = new javax.swing.JSplitPane();
         searchResultsTable1 = new com.embeddediq.searchmonkey.SearchResultsTable();
         searchMatchView1 = new com.embeddediq.searchmonkey.SearchMatchView();
-        searchSummary2 = new com.embeddediq.searchmonkey.SearchSummary();
+        searchSummary2 = new com.embeddediq.searchmonkey.SearchSummaryPanel();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         openMenuItem = new javax.swing.JMenuItem();
@@ -282,7 +302,7 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener, 
     private com.embeddediq.searchmonkey.SearchEntryPanel searchEntryPanel1;
     private com.embeddediq.searchmonkey.SearchMatchView searchMatchView1;
     private com.embeddediq.searchmonkey.SearchResultsTable searchResultsTable1;
-    private com.embeddediq.searchmonkey.SearchSummary searchSummary2;
+    private com.embeddediq.searchmonkey.SearchSummaryPanel searchSummary2;
     // End of variables declaration//GEN-END:variables
 
     @Override
@@ -316,6 +336,44 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener, 
         SwingUtilities.invokeLater(() -> {
             Done();
         });
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent pce) {
+        String pn = pce.getPropertyName();
+        if (pn.equals("state"))
+        {
+            StateValue sv = (StateValue)pce.getNewValue();
+            if (sv.equals(StateValue.STARTED))
+            {
+                searchSummary2.ShowProgress(true);
+                searchSummary2.SetProgress("Searching");
+                searchSummary2.SetSearched("");
+            }
+            else if (sv.equals(StateValue.DONE))
+            {
+                searchSummary2.ShowProgress(false);
+                if (searchTask.isCancelled()) {
+                    searchSummary2.SetStatus("Cancelled!");
+                } else {
+                    try {
+                        SearchSummary ss = searchTask.get();
+                        searchSummary2.SetStatus("Done");
+                        searchSummary2.SetSearched(String.format("Found: %d match%s (%d seconds)", ss.matchFileCount, ss.matchFileCount != 1 ? "es" : "", (ss.endTime - ss.startTime)/1000000000));
+                        searchMatchView1.UpdateSummary(ss);
+                        // textarea1.
+                    } catch (InterruptedException | ExecutionException ex) {
+                        Logger.getLogger(Searchmonkey.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                Done();
+            }
+        }
+        else if (pn.equals("match"))
+        {
+            int val = (Integer)pce.getNewValue();
+            searchSummary2.SetSearched(String.format("Found: %d match%s", val, val != 1 ? "es" : ""));
+        }
     }
 
 }
