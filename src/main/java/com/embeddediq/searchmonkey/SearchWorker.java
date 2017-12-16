@@ -109,7 +109,7 @@ public class SearchWorker extends SwingWorker<SearchSummary, SearchResult> imple
                 publish(result);
                 int lastResult = summary.matchFileCount;
                 summary.matchFileCount ++;
-                firePropertyChange("match", lastResult, summary.matchFileCount);
+                firePropertyChange("match", lastResult, summary);
                 
                 // Update stats for the file
                 summary.totalMatchBytes += attrs.size();

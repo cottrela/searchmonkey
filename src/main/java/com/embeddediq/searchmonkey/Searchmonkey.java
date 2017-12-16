@@ -283,6 +283,10 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener, 
     private com.embeddediq.searchmonkey.SearchSummaryPanel searchSummary2;
     // End of variables declaration//GEN-END:variables
 
+    /**
+     * This callback occurs when user clicks start/stop on the entry panel
+     * @param ae
+     */
     @Override
     public void actionPerformed(ActionEvent ae) {
         //if (ae.getClass() == searchEntryPanel1.getClass())
@@ -299,6 +303,10 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener, 
         }
     }
 
+    /**
+     * This callback occurs when user clicks on one (or more) rows on the results table
+     * @param lse
+     */
     @Override
     public void valueChanged(ListSelectionEvent lse) {
         if (lse.getValueIsAdjusting()) {
@@ -309,13 +317,10 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener, 
         UpdateContent(searchResultsTable1.getSelectedRows());
     }
 
-    @Override
-    public void notifyOfThreadComplete() {
-        SwingUtilities.invokeLater(() -> {
-            Done();
-        });
-    }
-
+    /**
+     * This callback occurs when the search starts, stops or has a progress update
+     * @param pce
+     */
     @Override
     public void propertyChange(PropertyChangeEvent pce) {
         String pn = pce.getPropertyName();
@@ -339,7 +344,6 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener, 
                         searchSummary2.SetStatus("Done");
                         searchSummary2.SetSearched(String.format("Found: %d match%s (%d seconds)", ss.matchFileCount, ss.matchFileCount != 1 ? "es" : "", (ss.endTime - ss.startTime)/1000000000));
                         searchMatchView1.UpdateSummary(ss);
-                        // textarea1.
                     } catch (InterruptedException | ExecutionException ex) {
                         Logger.getLogger(Searchmonkey.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -349,8 +353,9 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener, 
         }
         else if (pn.equals("match"))
         {
-            int val = (Integer)pce.getNewValue();
-            searchSummary2.SetSearched(String.format("Found: %d match%s", val, val != 1 ? "es" : ""));
+            SearchSummary ss = (SearchSummary)pce.getNewValue();
+            searchSummary2.SetSearched(String.format("Found: %d match%s",  ss.matchFileCount,  ss.matchFileCount != 1 ? "es" : ""));
+            searchMatchView1.UpdateSummary(ss);
         }
     }
 
