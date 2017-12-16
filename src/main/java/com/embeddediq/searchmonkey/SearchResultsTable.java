@@ -23,11 +23,13 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import javax.swing.DefaultListCellRenderer.UIResource;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
@@ -146,7 +148,7 @@ public class SearchResultsTable extends javax.swing.JPanel {
         */
     }
     
-    class IconTableRenderer extends JPanel implements TableCellRenderer
+    class IconTableRenderer extends DefaultTableCellRenderer // JPanel implements UIResource
     {
 
         private final JLabel hidden;
@@ -196,17 +198,20 @@ public class SearchResultsTable extends javax.swing.JPanel {
                                 JTable table, Object value,
                                 boolean isSelected, boolean hasFocus,
                                 int row, int column) {
+            //Component cell = super.getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, column);
+            
+            JPanel panel = new JPanel();
             int flags = (int)value;
-            this.removeAll();
+            //this.removeAll();
             List<String> flagText = new ArrayList<>();
             if (flags == SearchResult.HIDDEN_FILE)
             {
-                this.add(hidden);
+                panel.add(hidden);
                 //setIcon(hidden);
                 flagText.add("Hidden file");
             }
             if (flags == SearchResult.SYMBOLIC_LINK){
-                this.add(linked);
+                panel.add(linked);
                 // setIcon(linked);
                 flagText.add("Symbolic link");
             }
@@ -216,9 +221,17 @@ public class SearchResultsTable extends javax.swing.JPanel {
             {
                 txtToolTip = "Normal file";
             }
-            this.setToolTipText(txtToolTip);
+            panel.setToolTipText(txtToolTip);
+            if (isSelected)
+            {
+                panel.setForeground(table.getSelectionForeground());                
+                panel.setBackground(table.getSelectionBackground());                
+            } else {
+                panel.setForeground(table.getForeground());                
+                panel.setBackground(table.getBackground());                
+            }
 //            break;
-            return this;
+            return panel;
             
         }
     }

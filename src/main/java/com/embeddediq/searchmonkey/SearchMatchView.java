@@ -84,12 +84,18 @@ public class SearchMatchView extends javax.swing.JPanel implements ActionListene
         return this.match;
     }
 
-    public void UpdateSummary(SearchSummary ss)
+    public void UpdateSummary(SearchSummary ss, boolean interim)
     {
-        jTextArea1.append(String.format("Search complete.\n\nFound %d file match%s\n", ss.matchFileCount, ss.matchFileCount != 1 ? "es" : ""));
-        // jTextArea1.append(String.Format("Search complete.\n\nFound %d match%s\n", ss.matchFileCount, ss.matchFileCount != 1 ? "es" : "" ));
+        jTextArea1.setText(""); // Clear before entering
+        if (interim)
+        {
+            jTextArea1.append(String.format("Search in progress complete.\n\n"));
+        } else {
+            jTextArea1.append(String.format("Search completed in %d seconds.\n\n", (ss.endTime - ss.startTime)/1000000000));
+        }
         
         
+        jTextArea1.append(String.format("Found %d file match%s\n", ss.matchFileCount, ss.matchFileCount != 1 ? "es" : ""));
         jTextArea1.append(String.format("The matched files totaled %d bytes (min %d and max %d).\n", ss.totalMatchBytes, ss.minMatchBytes, ss.maxMatchBytes));
         jTextArea1.append(String.format("There was a total of %d hits (min %d and max %d).\n", ss.totalContentMatch, ss.minContentMatch, ss.maxContentMatch));
 
@@ -252,10 +258,8 @@ public class SearchMatchView extends javax.swing.JPanel implements ActionListene
         {
             try {
                 task.cancel(true);
-                //task.get();
             } catch (CancellationException ex) {
                 Logger.getLogger(SearchMatchView.class.getName()).log(Level.SEVERE, null, ex);
-                // return;
             }
             task = null; // Close down the previous task
         }
@@ -271,7 +275,7 @@ public class SearchMatchView extends javax.swing.JPanel implements ActionListene
         jTextPane1.setText("");
         jTextPane2.setText("");
         
-        // TODO - check to see if running, and cancel if this gets called again
+        // After a short delay, update the hits
         task = new ViewUpdate(paths);
         task.execute();
     }

@@ -14,11 +14,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
-import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker.StateValue;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -27,7 +25,7 @@ import javax.swing.event.ListSelectionListener;
  *
  * @author cottr
  */
-public class Searchmonkey extends javax.swing.JFrame implements ActionListener, ListSelectionListener, ThreadCompleteListener, PropertyChangeListener {
+public class Searchmonkey extends javax.swing.JFrame implements ActionListener, ListSelectionListener, PropertyChangeListener {
 
     private final String[] iconList = new String[] {
         "/images/searchmonkey-16x16.png",
@@ -343,7 +341,7 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener, 
                         SearchSummary ss = searchTask.get();
                         searchSummary2.SetStatus("Done");
                         searchSummary2.SetSearched(String.format("Found: %d match%s (%d seconds)", ss.matchFileCount, ss.matchFileCount != 1 ? "es" : "", (ss.endTime - ss.startTime)/1000000000));
-                        searchMatchView1.UpdateSummary(ss);
+                        searchMatchView1.UpdateSummary(ss, false);
                     } catch (InterruptedException | ExecutionException ex) {
                         Logger.getLogger(Searchmonkey.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -355,7 +353,7 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener, 
         {
             SearchSummary ss = (SearchSummary)pce.getNewValue();
             searchSummary2.SetSearched(String.format("Found: %d match%s",  ss.matchFileCount,  ss.matchFileCount != 1 ? "es" : ""));
-            searchMatchView1.UpdateSummary(ss);
+            searchMatchView1.UpdateSummary(ss, true);
         }
     }
 

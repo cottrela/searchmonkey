@@ -18,6 +18,8 @@ public class SearchSummary {
     public long totalContentMatch;
     public long minContentMatch = -1;
     public long maxContentMatch = -1;
+    public int totalFiles; // Number of files checked    
+    public int totalFolders; // Number of folders checked
     public int skippedFolders; // Due to IOException
     public int skippedFiles; // Due to IOException
     public long totalMatchBytes; // Size of files that matched (in bytes)

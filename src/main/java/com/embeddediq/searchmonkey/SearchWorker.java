@@ -75,6 +75,7 @@ public class SearchWorker extends SwingWorker<SearchSummary, SearchResult> imple
     @Override
     public FileVisitResult visitFile(Path file,
             BasicFileAttributes attrs) throws IOException {
+        summary.totalFiles ++;
         if (isMatch(file))
         {
             if (
@@ -97,9 +98,12 @@ public class SearchWorker extends SwingWorker<SearchSummary, SearchResult> imple
             if (contentMatch != null)
             {
                 count = contentMatch.CheckContent(file);
-                if (summary.minContentMatch < 0 || count < summary.minContentMatch) summary.minContentMatch = count;
-                if (summary.maxContentMatch < 0 || count > summary.maxContentMatch) summary.maxContentMatch = count;
-                summary.totalContentMatch += count;
+                if (count > 0)
+                {
+                    if (summary.minContentMatch < 0 || count < summary.minContentMatch) summary.minContentMatch = count;
+                    if (summary.maxContentMatch < 0 || count > summary.maxContentMatch) summary.maxContentMatch = count;
+                    summary.totalContentMatch += count;
+                }
             }
 
             if ((contentMatch == null) || (count > 0))
@@ -132,6 +136,7 @@ public class SearchWorker extends SwingWorker<SearchSummary, SearchResult> imple
     @Override
     public FileVisitResult preVisitDirectory(Path dir,
             BasicFileAttributes attrs) throws IOException {
+        summary.totalFolders ++;
         // Use exception list to skip entire folders
         if (entry.ignoreFolderSet.contains(dir))
         {
