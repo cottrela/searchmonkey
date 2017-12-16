@@ -1079,6 +1079,8 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
     
     public void Start()
     {
+        Save();
+        
         // Call the parent
         jButton1.setEnabled(false);
         jButton2.setEnabled(true);

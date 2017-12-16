@@ -13,6 +13,7 @@ import java.beans.PropertyChangeListener;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -58,11 +59,14 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener, 
         searchResultsTable1.addListSelectionListener(this);
     }
     
+    List<SearchEntry> history = new ArrayList<>();
     SearchWorker searchTask;
     public void Start()
     {
         // Get a copy of the search settings taken from the search panel
         SearchEntry entry = searchEntryPanel1.getSearchRequest();
+        history.add(entry);
+        searchEntryPanel1.Save();
 
         // SearchEntry entry, SearchResultsTable table
         searchEntryPanel1.Start();
@@ -310,7 +314,9 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener, 
         }
 
         // Update the contents
-        UpdateContent(searchResultsTable1.getSelectedRows());
+        SearchResult []rows = searchResultsTable1.getSelectedRows();
+        searchSummary2.SetSelected(String.format("Selected: %d match%s", rows.length, rows.length != 1 ? "es" : ""));
+        UpdateContent(rows);
     }
 
     /**
