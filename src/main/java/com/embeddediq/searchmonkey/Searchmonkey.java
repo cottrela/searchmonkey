@@ -60,11 +60,6 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener, 
         searchResultsTable1.addListSelectionListener(this);
     }
     
-    private final int rate = 200; // 200 ms
-    private final int queue_sz = 200; // 200 deep
-    private SearchEngine engine = null;
-    private AtomicBoolean cancel = null;
-    private SearchResultQueue queue = null;
     SearchWorker searchTask;
     public void Start()
     {
@@ -78,18 +73,6 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener, 
         searchTask.addPropertyChangeListener(this);
         searchMatchView1.setContentMatch(entry.containingText); // Update the content match
         searchTask.execute();
-
-        
-//        queue = new SearchResultQueue(queue_sz);
-//        cancel = new AtomicBoolean(false);
-//
-//        // Create a new engine
-//        engine = new SearchEngine(entry, queue, cancel);
-//        engine.addThreadCompleteListener(this);
-//        engine.start();
-//        searchEntryPanel1.Start();
-//        searchResultsTable1.start(queue, rate);
-//        searchMatchView1.setContentMatch(entry.containingText); // Update the content match
     }
     
     public void Stop()
@@ -98,11 +81,6 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener, 
         {
             searchTask.cancel(true);
         }
-//        if (cancel != null && !cancel.get())
-//        {
-//            cancel.set(true);
-//            cancel = null;
-//        }
     }
     
     public void Done()
@@ -117,7 +95,7 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener, 
         Path[] paths = new Path[results.length];
         for (int i=0; i<results.length; i++)
         {
-            paths[i] = Paths.get(results[i].pathName, results[i].fileName); // Logger.getLogger(Searchmonkey.class.getName()).log(Level.SEVERE, null, ex);
+            paths[i] = Paths.get(results[i].pathName, results[i].fileName);
         }
         searchMatchView1.UpdateView(paths);
     }
