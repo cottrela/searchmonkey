@@ -84,34 +84,56 @@ public class SearchMatchView extends javax.swing.JPanel implements ActionListene
         return this.match;
     }
 
+    private int getFileOrder(long fsize)
+    {
+        int order = 0;
+        while (fsize > 1024)
+        {
+            order ++;
+            fsize /= 1024;
+        }
+        return order - 1;
+    }
+
+    
+    private static final String[] FSIZE = new String[] {
+        "Bytes",
+        "KBytes",
+        "MBytes",
+        "GBytes",
+        "TBytes",
+        "PBytes",
+    };
     public void UpdateSummary(SearchSummary ss, boolean interim)
     {
         jTextArea1.setText(""); // Clear before entering
         if (interim)
         {
-            jTextArea1.append(String.format("Search in progress complete.\n\n"));
+            jTextArea1.append(String.format("Search in progress...\n\n"));
         } else {
             jTextArea1.append(String.format("Search completed in %d seconds.\n\n", (ss.endTime - ss.startTime)/1000000000));
         }
         
         
-        jTextArea1.append(String.format("Found %d file match%s\n", ss.matchFileCount, ss.matchFileCount != 1 ? "es" : ""));
-        jTextArea1.append(String.format("The matched files totaled %d bytes (min %d and max %d).\n", ss.totalMatchBytes, ss.minMatchBytes, ss.maxMatchBytes));
-        jTextArea1.append(String.format("There was a total of %d hits (min %d and max %d).\n", ss.totalContentMatch, ss.minContentMatch, ss.maxContentMatch));
-
-        if (ss.skippedFolders > 1)
-            jTextArea1.append(String.format("There were %d folders skipped during the search.\n", ss.skippedFolders));
-        else if (ss.skippedFolders == 1)
-            jTextArea1.append(String.format("There was just one folder skipped during the search.\n"));
-        else {
-            jTextArea1.append(String.format("There was one folder skipped during the search.\n"));
+        jTextArea1.append(String.format("Matched: %d file%s\n", ss.matchFileCount, ss.matchFileCount != 1 ? "s" : ""));
+        if (ss.totalMatchBytes > 0)
+        {
+            int order = getFileOrder(ss.totalMatchBytes);
+            double divider = Math.pow(1024, order);
+            
+            jTextArea1.append(String.format("Size on disk: %.1f %s\n", ((double)ss.totalMatchBytes / divider), FSIZE[order]));
         }
-        if (ss.skippedFiles > 1)
-            jTextArea1.append(String.format("There were %d files skipped during the search.\n", ss.skippedFiles));
-        else if (ss.skippedFiles == 1)
-            jTextArea1.append(String.format("There was just one file skipped during the search.\n"));
-        else {
-            jTextArea1.append(String.format("There was one file skipped during the search.\n"));
+        if (ss.totalContentMatch > 0)
+        {
+            jTextArea1.append(String.format("Content found: %d hit%s\n", ss.totalContentMatch, ss.totalContentMatch != 1 ? "s" : ""));
+        }
+        if (ss.skippedFolders > 0)
+        {
+            jTextArea1.append(String.format("Skipped: %d folder%s\n", ss.skippedFolders, ss.skippedFolders != 1 ? "s" : ""));
+        }
+        if (ss.skippedFiles > 0)
+        {
+            jTextArea1.append(String.format("Skipped: %d file%s\n", ss.skippedFiles, ss.skippedFiles != 1 ? "s" : ""));
         }        
     }
             

@@ -18,7 +18,6 @@ import java.io.File;
 import java.nio.file.FileSystems;
 import java.nio.file.Paths;
 import java.nio.file.attribute.FileTime;
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -303,6 +302,7 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
     public void Restore()
     {
         Date date = new Date();
+        boolean enabled;
 
         String home = System.getProperty("user.desktop");
         Restore("LookIn", jLookIn, new String[] {home});
@@ -310,14 +310,22 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
         Restore("ContainingText", jContainingText, new String[] {});
         jSubFolders.setSelected(prefs.getBoolean("LookInSubFolders", true));
         jFileSizeScaler.setSelectedIndex(prefs.getInt("FileSizeScaler", 1)); // Select KBytes by default
-        jGreaterThanToggle.setSelected(prefs.getBoolean("GreaterThanToggle", false));
+        enabled = prefs.getBoolean("GreaterThanToggle", false);
+        jGreaterThanToggle.setSelected(enabled);
         jGreaterThanSpinner.setValue(prefs.getDouble("GreaterThan", 0.0));
-        jLessThanToggle.setSelected(prefs.getBoolean("LessThanToggle", false));
+        jGreaterThanSpinner.setEnabled(enabled);
+        enabled = prefs.getBoolean("LessThanToggle", false);
+        jLessThanToggle.setSelected(enabled);
         jLessThanSpinner.setValue(prefs.getDouble("LessThan", 0.0));
-        jAfterToggle.setSelected(prefs.getBoolean("AfterToggle", false));
+        jLessThanSpinner.setEnabled(enabled);
+        enabled = prefs.getBoolean("AfterToggle", false);
+        jAfterToggle.setSelected(enabled);
         Restore("AfterSpinner", jAfterSpinner, date);
-        jBeforeToggle.setSelected(prefs.getBoolean("BeforeToggle", false));
+        jAfterSpinner.setEnabled(enabled);
+        enabled = prefs.getBoolean("BeforeToggle", false);
+        jBeforeToggle.setSelected(enabled);
         Restore("BeforeSpinner", jBeforeSpinner, date);
+        jBeforeSpinner.setEnabled(enabled);
         // Search options
         jIgnoreHiddenFiles.setSelected(prefs.getBoolean("IgnoreHiddenFiles", false));
         jIgnoreHiddenFolders.setSelected(prefs.getBoolean("IgnoreHiddenFolders", false));
@@ -325,14 +333,22 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
         jUseContentRegex.setSelected(prefs.getBoolean("UseContentRegex", false));
         jUseFileRegex.setSelected(prefs.getBoolean("UseFileRegex", false));
         // Adanced search settings
-        jAfterToggle1.setSelected(prefs.getBoolean("AfterToggle1", false));
+        enabled = prefs.getBoolean("AfterToggle1", false);
+        jAfterToggle1.setSelected(enabled);
         Restore("AfterSpinner1", jAfterSpinner1, date);
+        jAfterSpinner1.setEnabled(enabled);
+        enabled = prefs.getBoolean("BeforeToggle1", false);
         jBeforeToggle1.setSelected(prefs.getBoolean("BeforeToggle1", false));
         Restore("BeforeSpinner1", jBeforeSpinner1, date);
-        jAfterToggle2.setSelected(prefs.getBoolean("AfterToggle2", false));
+        jBeforeSpinner1.setEnabled(enabled);
+        enabled = prefs.getBoolean("AfterToggle2", false);
+        jAfterToggle2.setSelected(enabled);
         Restore("AfterSpinner2", jAfterSpinner2, date);
-        jBeforeToggle2.setSelected(prefs.getBoolean("BeforeToggle2", false));
+        jAfterSpinner2.setEnabled(enabled);
+        enabled = prefs.getBoolean("BeforeToggle2", false);
+        jBeforeToggle2.setSelected(enabled);
         Restore("BeforeSpinner2", jBeforeSpinner2, date);
+        jBeforeSpinner2.setEnabled(enabled);
     }
     
     /**

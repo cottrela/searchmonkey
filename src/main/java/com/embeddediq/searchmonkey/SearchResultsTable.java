@@ -6,29 +6,36 @@
 package com.embeddediq.searchmonkey;
 
 import com.google.gson.Gson;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.ArrayList;
 import javax.swing.JTable;
-import javax.swing.Timer;
 import java.awt.Component;
+import java.awt.Desktop;
 import java.awt.FlowLayout;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.RenderingHints;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.nio.file.attribute.FileTime;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
-import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.prefs.Preferences;
-import javax.swing.DefaultListCellRenderer.UIResource;
+import java.util.stream.IntStream;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.event.ListSelectionListener;
@@ -42,7 +49,7 @@ import javax.swing.table.TableColumnModel;
  *
  * @author cottr
  */
-public class SearchResultsTable extends javax.swing.JPanel {
+public class SearchResultsTable extends javax.swing.JPanel implements ItemListener {
 
     private final List<SearchResult> rowData;
     private final MyTableModel myModel;
@@ -87,6 +94,23 @@ public class SearchResultsTable extends javax.swing.JPanel {
 
         for (int i = 0; i < column.length; i++) {
             columnModel.addColumn(column[i]);
+        }
+        
+        Set<Integer> cols = new HashSet<>();
+        for (int i: indices) {
+            cols.add(i);
+        }
+        // Add an entry for each column
+        jColumnMenu.removeAll();
+        for (int i=0; i<SearchResult.COLUMN_NAMES.length; i++)
+        {
+            String column2 = SearchResult.COLUMN_NAMES[i];
+            JCheckBoxMenuItem item = new JCheckBoxMenuItem();
+            item.setName(column2);
+            item.setText(column2);
+            item.setSelected(cols.contains(i));
+            item.addItemListener(this);
+            jColumnMenu.add(item);
         }
     }
     private void restoreColumnWidth(String name, Object def)
@@ -135,7 +159,7 @@ public class SearchResultsTable extends javax.swing.JPanel {
     public void Restore()
     {
         restoreColumnWidth("ColumnWidth", SearchResult.COLUMN_WIDTH);
-        restoreColumnOrder("ColumnOrder", new int[] {0,1,2,3,4,5,6,7,8});
+        restoreColumnOrder("ColumnOrder", IntStream.range(0, SearchResult.COLUMN_WIDTH.length).toArray());
         jTable1.doLayout();
     }
         
@@ -188,7 +212,6 @@ public class SearchResultsTable extends javax.swing.JPanel {
     }
 }
 
-    
     private class MyTableModel extends DefaultTableModel 
     {
         @Override
@@ -212,7 +235,7 @@ public class SearchResultsTable extends javax.swing.JPanel {
         }
         @Override
         public Object getValueAt(int row, int col) {
-            SearchResult val = rowData.get(row);
+            SearchResult val = rowData.get(jTable1.convertRowIndexToModel(row));
             return val.get(col);
         }
         @Override
@@ -324,7 +347,19 @@ public class SearchResultsTable extends javax.swing.JPanel {
         Icon linked;
         
         private final String[] MAG_NAMES = new String[] {"Bytes", "KBytes", "MBytes", "GBytes", "TBytes"};
-
+    
+        private int getFileOrder(long fsize)
+        {
+            int order = 0;
+            while (fsize > 1024)
+            {
+                order ++;
+                fsize /= 1024;
+            }
+            if (order > 1) order --;
+            return order;
+        }
+        
         /**
          *
          * @param table
@@ -348,14 +383,12 @@ public class SearchResultsTable extends javax.swing.JPanel {
             int idx = table.convertColumnIndexToModel(column);
             switch (idx) {
                 case SearchResult.SIZE: // Handle Size
-                    int mag = 0; // Bytes
-                    double val = (double)((long)value);
-                    while (val > 1024)
-                    {
-                        mag ++; // KB, MB, GB, TB, etc
-                        val /= 1024;
+                    int order = getFileOrder((long)value);
+                    if (order > 0) {
+                        txtVal = String.format("%.1f %s", ((double)((long)value) / Math.pow(1024, order)), MAG_NAMES[order]);
+                    } else {
+                        txtVal = String.format("%d %s", (long)value, MAG_NAMES[order]);
                     }
-                    txtVal = String.format("%.1f %s", val, MAG_NAMES[mag]);
                     break;
                 case SearchResult.CREATED: // Handle Date
                 case SearchResult.ACCESSED:
@@ -432,8 +465,67 @@ public class SearchResultsTable extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPopupMenu1 = new javax.swing.JPopupMenu();
+        jOpen = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JPopupMenu.Separator();
+        jEdit = new javax.swing.JMenuItem();
+        jBrowse = new javax.swing.JMenuItem();
+        jSeparator2 = new javax.swing.JPopupMenu.Separator();
+        jColumnMenu = new javax.swing.JMenu();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
+
+        jPopupMenu1.setLabel("Hello");
+        jPopupMenu1.addPopupMenuListener(new javax.swing.event.PopupMenuListener() {
+            public void popupMenuCanceled(javax.swing.event.PopupMenuEvent evt) {
+            }
+            public void popupMenuWillBecomeInvisible(javax.swing.event.PopupMenuEvent evt) {
+            }
+            public void popupMenuWillBecomeVisible(javax.swing.event.PopupMenuEvent evt) {
+                jPopupMenu1PopupMenuWillBecomeVisible(evt);
+            }
+        });
+
+        jOpen.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jOpen.setMnemonic('O');
+        jOpen.setText("Open file");
+        jOpen.setToolTipText("Open selected file or files using the applicaiton associated with this file type");
+        jOpen.setEnabled(false);
+        jOpen.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jOpenActionPerformed(evt);
+            }
+        });
+        jPopupMenu1.add(jOpen);
+        jPopupMenu1.add(jSeparator1);
+
+        jEdit.setMnemonic('E');
+        jEdit.setText("Edit file");
+        jEdit.setToolTipText("Edit select file or files using the default editor");
+        jEdit.setEnabled(false);
+        jEdit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jEditActionPerformed(evt);
+            }
+        });
+        jPopupMenu1.add(jEdit);
+
+        jBrowse.setMnemonic('B');
+        jBrowse.setText("Browse folder");
+        jBrowse.setToolTipText("Open file navigator to browse the folder containing this file");
+        jBrowse.setEnabled(false);
+        jBrowse.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBrowseActionPerformed(evt);
+            }
+        });
+        jPopupMenu1.add(jBrowse);
+        jPopupMenu1.add(jSeparator2);
+
+        jColumnMenu.setMnemonic('C');
+        jColumnMenu.setText("Show/Hide Columns");
+        jColumnMenu.setToolTipText("Show or hide columns in this table");
+        jPopupMenu1.add(jColumnMenu);
 
         setLayout(new java.awt.BorderLayout());
 
@@ -450,14 +542,152 @@ public class SearchResultsTable extends javax.swing.JPanel {
             }
         ));
         jTable1.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+        jTable1.setComponentPopupMenu(jPopupMenu1);
         jTable1.setFillsViewportHeight(true);
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jTable1MousePressed(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTable1);
 
         add(jScrollPane1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
+    @Override
+    public void itemStateChanged(ItemEvent ie) {
+        JCheckBoxMenuItem item = (JCheckBoxMenuItem)ie.getItem();
+        String menuName = item.getName();
+        if (ie.getStateChange() == ItemEvent.SELECTED)
+        {
+            TableColumnModel tcm = jTable1.getColumnModel();
+            int idx;
+            for (idx=0; idx<SearchResult.COLUMN_NAMES.length; idx++) {
+                if (SearchResult.COLUMN_NAMES[idx].equals(menuName)) break;
+            }
+            //int idx2 = tcm.getColumn(idx);
+            TableColumn col = new TableColumn(idx, SearchResult.COLUMN_WIDTH[idx]);
+            //TableColumn col = tcm.getColumn(idx);
+            jTable1.addColumn(col);
+            jTable1.moveColumn(jTable1.getColumnCount() - 1, idx);
+        } else {
+            TableColumn col = jTable1.getColumn(menuName);
+            jTable1.removeColumn(col);
+            
+        }
+    }
+
+    boolean colsVisible[] = new boolean[9];
+    private void jPopupMenu1PopupMenuWillBecomeVisible(javax.swing.event.PopupMenuEvent evt) {//GEN-FIRST:event_jPopupMenu1PopupMenuWillBecomeVisible
+        boolean enable = true;
+        int count = jTable1.getSelectedRowCount();
+        if (count > 0)
+        {
+            jOpen.setEnabled(enable);
+            jEdit.setEnabled(enable);
+            if (count > 1) {
+                jOpen.setText(String.format("Open %d files", count));
+                jEdit.setText(String.format("Edit %d files", count));
+            }
+        }
+        
+        count = getUniqueFolders().length;
+        if (count > 0)
+        {
+            jBrowse.setEnabled(enable);
+            if (count > 1) {
+                jBrowse.setText(String.format("Browse %d folders", count));
+            }
+        }
+    }//GEN-LAST:event_jPopupMenu1PopupMenuWillBecomeVisible
+
+    String[] getUniqueFolders()
+    {
+        Set<String> folders = new HashSet<>();
+        int[] rows = this.jTable1.getSelectedRows();
+        for (int row: rows)
+        {
+            SearchResult result = rowData.get(jTable1.convertRowIndexToModel(row));
+            folders.add(result.pathName);
+        }
+        return (String[]) folders.toArray(new String[folders.size()]);
+    }
+    
+    private void jOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jOpenActionPerformed
+        int[] rows = this.jTable1.getSelectedRows();
+        for (int row: rows) {
+            Open(row);
+        }
+    }//GEN-LAST:event_jOpenActionPerformed
+
+    private void Open(int row)
+    {
+        SearchResult result = rowData.get(jTable1.convertRowIndexToModel(row));
+        File file = new File(result.pathName, result.fileName);
+        try {
+            Desktop.getDesktop().open(file);
+        } catch (IOException ex) {
+            Logger.getLogger(SearchResultsTable.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void Edit(int row)
+    {
+        SearchResult result = rowData.get(jTable1.convertRowIndexToModel(row));
+        File file = new File(result.pathName, result.fileName);
+        try {
+            Desktop.getDesktop().edit(file);
+        } catch (IOException ex) {
+            Logger.getLogger(SearchResultsTable.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void Browse(String folder)
+    {
+        File file = new File(folder);
+        try {
+            Desktop.getDesktop().open(file);
+        } catch (IOException ex) {
+            Logger.getLogger(SearchResultsTable.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void jTable1MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MousePressed
+        if (evt.getClickCount() > 1) {
+            // Double click handler]
+            Point point = evt.getPoint();
+            int row = jTable1.rowAtPoint(point);
+            if (row != -1)
+            {
+                Open(row);
+            }
+        }
+    }//GEN-LAST:event_jTable1MousePressed
+
+    private void jBrowseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBrowseActionPerformed
+        String[] folders = getUniqueFolders();
+        // int[] rows = this.jTable1.getSelectedRows();
+        for (String folder: folders) {
+            Browse(folder);
+        }
+    }//GEN-LAST:event_jBrowseActionPerformed
+
+    private void jEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jEditActionPerformed
+        int[] rows = this.jTable1.getSelectedRows();
+        for (int row: rows) {
+            Edit(row);
+        }
+    }//GEN-LAST:event_jEditActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem jBrowse;
+    private javax.swing.JMenu jColumnMenu;
+    private javax.swing.JMenuItem jEdit;
+    private javax.swing.JMenuItem jOpen;
+    private javax.swing.JPopupMenu jPopupMenu1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JPopupMenu.Separator jSeparator1;
+    private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables
 
