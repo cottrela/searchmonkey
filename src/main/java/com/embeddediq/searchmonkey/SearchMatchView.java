@@ -92,7 +92,8 @@ public class SearchMatchView extends javax.swing.JPanel implements ActionListene
             order ++;
             fsize /= 1024;
         }
-        return order - 1;
+        if (order > 1) order --;
+        return order;
     }
 
     
