@@ -282,10 +282,8 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
         prefs.putDouble("LessThan", (Double)jLessThanSpinner.getValue());
         prefs.putBoolean("AfterToggle", jAfterToggle.isSelected());
         Save("AfterSpinner", jAfterSpinner);
-        //prefs.put("AfterSpinner", ((Date)jAfterSpinner.getValue()).toString());
         prefs.putBoolean("BeforeToggle", jBeforeToggle.isSelected());
         Save("BeforeSpinner", jBeforeSpinner);
-        //prefs.put("BeforeSpinner", ((Date)jBeforeSpinner.getValue()).toString());
         // Search options
         prefs.putBoolean("IgnoreHiddenFiles", jIgnoreHiddenFiles.isSelected());
         prefs.putBoolean("IgnoreHiddenFolders", jIgnoreHiddenFolders.isSelected());

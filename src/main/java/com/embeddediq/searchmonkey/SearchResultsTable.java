@@ -5,6 +5,7 @@
  */
 package com.embeddediq.searchmonkey;
 
+import com.google.gson.Gson;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -23,6 +24,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.Enumeration;
+import java.util.prefs.Preferences;
 import javax.swing.DefaultListCellRenderer.UIResource;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -32,6 +35,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
 /**
@@ -42,11 +46,13 @@ public class SearchResultsTable extends javax.swing.JPanel {
 
     private final List<SearchResult> rowData;
     private final MyTableModel myModel;
+    private final Preferences prefs;
     
     /**
      * Creates new form SearchResults
      */
     public SearchResultsTable() {
+        prefs = Preferences.userNodeForPackage(SearchEntry.class);
         initComponents();
 
         rowData = new ArrayList<>();
@@ -57,8 +63,82 @@ public class SearchResultsTable extends javax.swing.JPanel {
         jTable1.setFillsViewportHeight(true);
         jTable1.getColumn(SearchResult.COLUMN_NAMES[SearchResult.FLAGS]).setCellRenderer(new IconTableRenderer(jTable1.getRowHeight()-6));
 
+        Restore();
     }
     
+    private void restoreColumnOrder(String name, Object def)
+    {
+        Gson g = new Gson();
+        
+        String strdef = prefs.get(name, g.toJson(def));
+        int[] indices = g.fromJson(strdef, int[].class);
+        
+        TableColumnModel columnModel = jTable1.getColumnModel();
+        
+        TableColumn column[] = new TableColumn[indices.length];
+
+        for (int i = 0; i < column.length; i++) {
+            column[i] = columnModel.getColumn(indices[i]);
+        }
+
+        while (columnModel.getColumnCount() > 0) {
+            columnModel.removeColumn(columnModel.getColumn(0));
+        }
+
+        for (int i = 0; i < column.length; i++) {
+            columnModel.addColumn(column[i]);
+        }
+    }
+    private void restoreColumnWidth(String name, Object def)
+    {
+        Gson g = new Gson();
+        
+        String strdef = prefs.get(name, g.toJson(def));
+        int[] indices = g.fromJson(strdef, int[].class);
+        
+        for (int i=0; i<SearchResult.COLUMN_NAMES.length; i++)
+        {
+            jTable1.getColumn(SearchResult.COLUMN_NAMES[i]).setPreferredWidth(indices[i]);
+        }
+    }
+
+    private void storeColumnWidth(String name)
+    {
+        Gson g = new Gson();
+        int[] indices = new int[SearchResult.COLUMN_NAMES.length];
+        for (int i=0; i<SearchResult.COLUMN_NAMES.length; i++)
+        {
+            indices[i] = jTable1.getColumn(SearchResult.COLUMN_NAMES[i]).getWidth();
+        }
+        prefs.put(name, g.toJson(indices));
+    }
+    private void storeColumnOrder(String name)
+    {
+        // Read back the current column ordering
+        TableColumnModel columnModel = jTable1.getColumnModel();
+        int column[] = new int[columnModel.getColumnCount()];
+        for (int i = 0; i < column.length; i++) {
+            column[i] = columnModel.getColumn(i).getModelIndex();
+        }
+        
+        // Store the current column order
+        Gson g = new Gson();
+        prefs.put(name, g.toJson(column));
+    }
+
+    public void Save()
+    {
+        storeColumnWidth("ColumnWidth");
+        storeColumnOrder("ColumnOrder");
+    }
+    
+    public void Restore()
+    {
+        restoreColumnWidth("ColumnWidth", SearchResult.COLUMN_WIDTH);
+        restoreColumnOrder("ColumnOrder", new int[] {0,1,2,3,4,5,6,7,8});
+        jTable1.doLayout();
+    }
+        
     // Use with SearchWorker
     public void clearTable()
     {

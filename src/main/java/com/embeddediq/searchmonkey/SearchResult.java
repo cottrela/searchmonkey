@@ -95,41 +95,53 @@ public class SearchResult {
      */
     public final static String[] COLUMN_NAMES = new String[] {
         "File", // 0
-        "Count", // 1
-        "Extension", // 2
-        "Folder", // 3
-        "File size", // 4
-        "Last modified", // 5
+        "Folder", // 1
+        "File size", // 2
+        "Count", // 3
+        "Last modified", // 4
+        "Created", // 5
         "Last accessed", // 6
-        "Created", // 7
-        "Flags", // 8
+        "Flags", // 7
+        "Extension", // 8
         "Content Type", // 9
     };
 
     public final static Class[] COLUMN_CLASSES = new Class[]  {
         String.class,
-        Integer.class,
-        String.class,
         String.class,
         Integer.class,
+        Integer.class,
         FileTime.class,
         FileTime.class,
         FileTime.class,
         Integer.class,
+        String.class,
         String.class,
     };
 
+    public final static Integer[] COLUMN_WIDTH = new Integer[]  {
+        200, /* Filename */
+        400, /* Folder */
+        100, /* File Size */
+        50, /* Count */
+        100, /* Modified */
+        100, /* Created */
+        100, /* Accessed */
+        50, /* Flags */
+        80, /* Extension */
+        200, /* Content Type */
+    };
 
     // Forced enumeration of the column names
     public final static int FILENAME = 0;
-    public final static int COUNT = 1;
-    public final static int EXTENSION = 2;
-    public final static int FOLDER = 3;
-    public final static int SIZE = 4;
-    public final static int MODIFIED = 5;
+    public final static int FOLDER = 1;
+    public final static int SIZE = 2;
+    public final static int COUNT = 3;
+    public final static int MODIFIED = 4;
+    public final static int CREATED = 5;
     public final static int ACCESSED = 6;
-    public final static int CREATED = 7;
-    public final static int FLAGS = 8;
+    public final static int FLAGS = 7;
+    public final static int EXTENSION = 8;
     public final static int CONTENT_TYPE = 9;
 
 }
