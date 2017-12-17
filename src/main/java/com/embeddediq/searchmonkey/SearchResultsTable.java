@@ -69,6 +69,12 @@ public class SearchResultsTable extends javax.swing.JPanel implements ItemListen
         jTable1.setAutoCreateRowSorter(true);
         jTable1.setFillsViewportHeight(true);
         jTable1.getColumn(SearchResult.COLUMN_NAMES[SearchResult.FLAGS]).setCellRenderer(new IconTableRenderer(jTable1.getRowHeight()-6));
+        
+        // Check to see if the Desktop().edit function is supported
+        this.jOpen.setVisible(Desktop.getDesktop().isSupported(Desktop.Action.OPEN));
+        this.jEdit.setVisible(Desktop.getDesktop().isSupported(Desktop.Action.EDIT));
+        this.jBrowse.setVisible(Desktop.getDesktop().isSupported(Desktop.Action.BROWSE));
+        
 
         Restore();
     }
