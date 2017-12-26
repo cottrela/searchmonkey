@@ -39,6 +39,7 @@ public class SearchEntry {
         public boolean ignoreHiddenFolders;
         public boolean ignoreSymbolicLinks;
         public boolean lookInSubFolders;
+        public boolean caseInsensitive;
     }
     
     // List of PREFIX based on glob type

@@ -139,11 +139,8 @@ public class SearchWorker extends SwingWorker<SearchSummary, SearchResult> imple
             BasicFileAttributes attrs) throws IOException {
         summary.totalFolders ++;
         // Use exception list to skip entire folders
-        if (entry.ignoreFolderSet.contains(dir))
-        {
-            return SKIP_SUBTREE;
-        }
-        if (entry.flags.ignoreHiddenFolders && dir.toFile().isHidden())
+        if (entry.ignoreFolderSet.contains(dir) || 
+                (entry.flags.ignoreHiddenFolders && dir.toFile().isHidden()))
         {
             return SKIP_SUBTREE;
         }

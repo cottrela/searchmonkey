@@ -6,22 +6,24 @@
 package com.embeddediq.searchmonkey;
 
 import java.awt.Color;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.MatchResult;
+import javax.swing.JComponent;
+import javax.swing.JTextArea;
+import javax.swing.JTextPane;
+import javax.swing.JViewport;
 import javax.swing.SwingWorker;
-import javax.swing.SwingWorker.StateValue;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultCaret;
 import javax.swing.text.DefaultStyledDocument;
@@ -30,6 +32,7 @@ import javax.swing.text.StyleConstants;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.LineIterator;
 import javax.swing.Timer;
+import javax.swing.text.JTextComponent;
 
 /**
  *
@@ -344,6 +347,9 @@ public class SearchMatchView extends javax.swing.JPanel implements ActionListene
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPopupMenu1 = new javax.swing.JPopupMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuItem2 = new javax.swing.JMenuItem();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
@@ -351,63 +357,101 @@ public class SearchMatchView extends javax.swing.JPanel implements ActionListene
         jTextPane1 = new javax.swing.JTextPane();
         jScrollPane4 = new javax.swing.JScrollPane();
         jTextPane2 = new javax.swing.JTextPane();
-        jPanel2 = new javax.swing.JPanel();
-        jPanel3 = new javax.swing.JPanel();
+
+        jPopupMenu1.addPopupMenuListener(new javax.swing.event.PopupMenuListener() {
+            public void popupMenuCanceled(javax.swing.event.PopupMenuEvent evt) {
+            }
+            public void popupMenuWillBecomeInvisible(javax.swing.event.PopupMenuEvent evt) {
+            }
+            public void popupMenuWillBecomeVisible(javax.swing.event.PopupMenuEvent evt) {
+                jPopupMenu1PopupMenuWillBecomeVisible(evt);
+            }
+        });
+
+        jMenuItem1.setText("Copy");
+        jMenuItem1.setToolTipText("");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        jPopupMenu1.add(jMenuItem1);
+
+        jMenuItem2.setText("Select all");
+        jMenuItem2.setToolTipText("");
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem2ActionPerformed(evt);
+            }
+        });
+        jPopupMenu1.add(jMenuItem2);
 
         setLayout(new java.awt.BorderLayout());
 
         jTextArea1.setEditable(false);
         jTextArea1.setColumns(20);
         jTextArea1.setRows(5);
+        jTextArea1.setComponentPopupMenu(jPopupMenu1);
         jScrollPane1.setViewportView(jTextArea1);
 
         jTabbedPane1.addTab("Summary", jScrollPane1);
 
         jTextPane1.setEditable(false);
         jTextPane1.setToolTipText("");
+        jTextPane1.setComponentPopupMenu(jPopupMenu1);
         jScrollPane3.setViewportView(jTextPane1);
 
         jTabbedPane1.addTab("Hits", jScrollPane3);
 
         jTextPane2.setEditable(false);
         jTextPane2.setToolTipText("");
+        jTextPane2.setComponentPopupMenu(jPopupMenu1);
         jScrollPane4.setViewportView(jTextPane2);
 
         jTabbedPane1.addTab("Preview", jScrollPane4);
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 523, Short.MAX_VALUE)
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 375, Short.MAX_VALUE)
-        );
-
-        jTabbedPane1.addTab("Thumbnails", jPanel2);
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 523, Short.MAX_VALUE)
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 375, Short.MAX_VALUE)
-        );
-
-        jTabbedPane1.addTab("Reports", jPanel3);
-
         add(jTabbedPane1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
+    private JTextComponent GetSelectedTextBox()
+    {
+        JComponent parent = (JComponent)this.jTabbedPane1.getSelectedComponent();
+        JComponent item = (JComponent)parent.getComponent(0);
+        return (JTextComponent)item.getComponent(0);        
+    }
+    
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        JTextComponent x = GetSelectedTextBox();
+        String txt = x.getSelectedText();
+        if (txt.length() != 0)
+        {
+            StringSelection selection = new StringSelection(txt);
+
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            clipboard.setContents(selection, selection);
+        }
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+        JTextComponent x = GetSelectedTextBox();
+        x.selectAll();
+    }//GEN-LAST:event_jMenuItem2ActionPerformed
+
+    private void jPopupMenu1PopupMenuWillBecomeVisible(javax.swing.event.PopupMenuEvent evt) {//GEN-FIRST:event_jPopupMenu1PopupMenuWillBecomeVisible
+        JTextComponent x = GetSelectedTextBox();
+        boolean enabled = x.getText().length() != 0;
+        this.jMenuItem2.setEnabled(enabled);
+        int s1 = x.getSelectionStart();
+        int s2 = x.getSelectionEnd();
+        enabled &= s2 > s1;
+        this.jMenuItem1.setEnabled(enabled);
+    }//GEN-LAST:event_jPopupMenu1PopupMenuWillBecomeVisible
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JPopupMenu jPopupMenu1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;

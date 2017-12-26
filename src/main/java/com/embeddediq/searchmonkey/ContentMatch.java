@@ -11,12 +11,9 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 /**
  *
@@ -28,10 +25,11 @@ public class ContentMatch {
     {
         regexMatch = regex;
     }
+    /*
     public ContentMatch(String pattern) throws PatternSyntaxException
     {
         regexMatch = Pattern.compile(pattern);
-    }
+    }*/
 
     /**
      * Simple file reader with basic matching

@@ -55,9 +55,10 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener, 
             imageList.add(new ImageIcon(getClass().getResource(fn)).getImage());
         }
         setIconImages(imageList);
-        //timer = new Timer(delay, this);
-        //timer.setRepeats(false);
-        //timer.setCoalesce(true);
+        
+        // TODO future stuff
+        this.menuBar.setVisible(false);
+        
     }
     
     public void addActionListeners()
