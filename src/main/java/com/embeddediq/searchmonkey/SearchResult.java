@@ -144,5 +144,21 @@ public class SearchResult {
     public final static int EXTENSION = 8;
     public final static int CONTENT_TYPE = 9;
 
+    public Object[] toArray()
+    {
+        Object[] def = new Object[] {
+            this.fileName,
+            this.pathName,
+            this.fileSize,
+            this.matchCount,
+            this.lastModified,
+            this.creationTime,
+            this.lastAccessTime,
+            this.fileFlags,
+            this.fileExtension,
+            this.contentType,
+        };
+        return def;
+    }
 }
 

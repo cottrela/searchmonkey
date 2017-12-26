@@ -19,6 +19,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.SwingWorker.StateValue;
+//import javax.swing.Timer;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -28,6 +29,8 @@ import javax.swing.event.ListSelectionListener;
  */
 public class Searchmonkey extends javax.swing.JFrame implements ActionListener, ListSelectionListener, PropertyChangeListener {
 
+    //private final int delay = 250; // Timer delay before updating the contents
+    
     private final String[] iconList = new String[] {
         "/images/searchmonkey-16x16.png",
         "/images/searchmonkey-22x22.png",
@@ -37,6 +40,8 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener, 
         "/images/searchmonkey-96x96.png",
         "/images/searchmonkey-300x300.png",
     };
+    
+   
     /**
      * Creates new form NewMDIApplication
      */
@@ -50,6 +55,9 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener, 
             imageList.add(new ImageIcon(getClass().getResource(fn)).getImage());
         }
         setIconImages(imageList);
+        //timer = new Timer(delay, this);
+        //timer.setRepeats(false);
+        //timer.setCoalesce(true);
     }
     
     public void addActionListeners()
@@ -236,13 +244,7 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener, 
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Searchmonkey.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Searchmonkey.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Searchmonkey.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(Searchmonkey.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
@@ -289,8 +291,17 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener, 
      */
     @Override
     public void actionPerformed(ActionEvent ae) {
-        //if (ae.getClass() == searchEntryPanel1.getClass())
+        Class c = ae.getSource().getClass();
+        //if (c.equals(Timer.class))
+        //{
+//            // Update the contents
+//            SearchResult []rows = searchResultsTable1.getSelectedRows();
+//            UpdateContent(rows);            
+//        }
+        //else 
+        if (c.equals(SearchEntryPanel.class))
         {
+            
             String command = ae.getActionCommand();
             if (command.equals("Start"))
             {
@@ -303,6 +314,8 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener, 
         }
     }
 
+    //Timer timer;
+    
     /**
      * This callback occurs when user clicks on one (or more) rows on the results table
      * @param lse
@@ -316,6 +329,7 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener, 
         // Update the contents
         SearchResult []rows = searchResultsTable1.getSelectedRows();
         searchSummary2.SetSelected(String.format("Selected: %d match%s", rows.length, rows.length != 1 ? "es" : ""));
+        // timer.start();
         UpdateContent(rows);
     }
 

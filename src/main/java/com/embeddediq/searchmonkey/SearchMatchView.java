@@ -8,15 +8,20 @@ package com.embeddediq.searchmonkey;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.MatchResult;
 import javax.swing.SwingWorker;
+import javax.swing.SwingWorker.StateValue;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultCaret;
 import javax.swing.text.DefaultStyledDocument;
@@ -50,9 +55,29 @@ public class SearchMatchView extends javax.swing.JPanel implements ActionListene
         timer = new Timer(delayMs, this);
         timer.setInitialDelay(delayMs);
         timer.setRepeats(false);
+        timer.setCoalesce(true);
     }
 
     MyStyledDocument doc;
+
+    /*
+    @Override
+    public void propertyChange(PropertyChangeEvent pce) {
+        if (pce.getPropertyName().equals("state"))
+        {
+            StateValue sv = (StateValue)pce.getNewValue();
+            if (sv.equals(StateValue.DONE))
+            {
+                task = null; // This must be cleared before we can we start the task
+                if (busy.get() == 2)
+                {
+                    timer.restart();
+                }
+                busy.set(0);
+            }
+        }
+    }
+    */
 
     public class MyStyledDocument extends DefaultStyledDocument
     {
@@ -193,8 +218,6 @@ public class SearchMatchView extends javax.swing.JPanel implements ActionListene
         }
         private void consumePath(Path path, MyStyledDocument previewDoc)
         {
-            
-            // ArrayList<String> resultList = new ArrayList<>();
             try {
                 LineIterator lineIterator = FileUtils.lineIterator(path.toFile());
                 try
@@ -227,7 +250,7 @@ public class SearchMatchView extends javax.swing.JPanel implements ActionListene
             }
             catch (IOException er)
             {
-                System.out.println(er);
+                Logger.getLogger(SearchMatchView.class.getName()).log(Level.SEVERE, null, er);
             }
         }
 
@@ -265,8 +288,7 @@ public class SearchMatchView extends javax.swing.JPanel implements ActionListene
                     }
                 }
             } catch (BadLocationException ex) {
-                System.out.println(ex);
-                // Logger.getLogger(SearchMatchView.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(SearchMatchView.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
@@ -277,30 +299,40 @@ public class SearchMatchView extends javax.swing.JPanel implements ActionListene
 
     public void UpdateView(Path[] paths)
     {
-        if (task != null && !task.isDone())
+        //if (busy.get() == 1)
+        if (task != null && !task.isCancelled())
         {
             try {
                 task.cancel(true);
             } catch (CancellationException ex) {
                 Logger.getLogger(SearchMatchView.class.getName()).log(Level.SEVERE, null, ex);
             }
-            task = null; // Close down the previous task
-        }
-        // start (or restart) timer
-        this.paths = paths;
-        timer.restart();
+            task = null;
+            // busy.set(2); // Cancelled, awaiting closure
+        }//  else if (busy.get() == 0) {
+            // start (or restart) timer
+            this.paths = paths;
+            timer.restart();
+        //}
     }
+
+    // AtomicInteger busy = new AtomicInteger(0);
 
     private Path[] paths;
     @Override
     public void actionPerformed(ActionEvent ae) {
-        // Clear the results
-        jTextPane1.setText("");
-        jTextPane2.setText("");
-        
-        // After a short delay, update the hits
-        task = new ViewUpdate(paths);
-        task.execute();
+        // if (busy.get() == 0)
+        {
+            // Clear the results
+            jTextPane1.setText("");
+            jTextPane2.setText("");
+
+            // After a short delay, update the hits
+            task = new ViewUpdate(paths);
+            //task.addPropertyChangeListener(this);
+            task.execute();
+            // busy.set(1);
+        }
     }
     
     /**
