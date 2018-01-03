@@ -1252,8 +1252,10 @@ create_window1 (void)
   gtk_widget_show (resultsScroll);
   gtk_paned_pack1 (GTK_PANED (resultsHPane), resultsScroll, TRUE, TRUE);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (resultsScroll), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-
   treeview1 = gtk_tree_view_new ();
+/* be careful, it's deprecated under GTK3 ! */
+gtk_tree_view_set_rules_hint        (treeview1, TRUE);
+/* end modif */
   gtk_widget_show (treeview1);
   gtk_container_add (GTK_CONTAINER (resultsScroll), treeview1);
   gtk_widget_set_size_request (treeview1, -1, 250);
@@ -1284,6 +1286,9 @@ create_window1 (void)
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow15), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
   treeview2 = gtk_tree_view_new ();
+/* be careful, it's deprecated under GTK3 ! */
+gtk_tree_view_set_rules_hint        (treeview2,TRUE);
+/* end modif */
   gtk_widget_show (treeview2);
   gtk_container_add (GTK_CONTAINER (scrolledwindow15), treeview2);
 
