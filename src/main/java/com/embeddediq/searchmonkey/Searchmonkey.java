@@ -57,7 +57,7 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener, 
         setIconImages(imageList);
         
         // TODO future stuff
-        this.menuBar.setVisible(false);
+        //this.menuBar.setVisible(false);
         
     }
     

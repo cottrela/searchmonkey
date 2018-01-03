@@ -19,18 +19,15 @@ package com.embeddediq.searchmonkey;
 import java.awt.Color;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
+import javax.swing.JButton;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.Style;
-import javax.swing.text.StyleConstants;
 
 /**
  *
@@ -67,6 +64,21 @@ public class RegexHelper extends javax.swing.JPanel implements DocumentListener 
         // Add listener
         jTextField1.getDocument().addDocumentListener(this);
         // jTextPane2.getDocument().addDocumentListener(this);
+    }
+    
+    public JButton getAcceptButton()
+    {
+        return this.jButton1;
+    }
+    
+    public String getRegex()
+    {
+        return jTextField1.getText();
+    }
+    
+    public void setRegex(String val)
+    {
+        jTextField1.setText(val);
     }
     
     private Style as;

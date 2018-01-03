@@ -39,6 +39,7 @@ import javax.swing.JSpinner;
 import javax.swing.KeyStroke;
 import javax.swing.SpinnerDateModel;
 import javax.swing.SwingUtilities;
+import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.apache.commons.lang.SystemUtils;
@@ -733,6 +734,11 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
         jButton5.setBorderPainted(false);
         jButton5.setContentAreaFilled(false);
         jButton5.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
@@ -1315,26 +1321,53 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
     }//GEN-LAST:event_jButton9ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        
         JFrame parent = (JFrame)SwingUtilities.getWindowAncestor(this);
         int flags = 0;
+        // this.jIgnoreHiddenFiles.isSelected();
+        this.jIgnoreHiddenFolders.isSelected();
+        this.jIgnoreSymbolicLinks.isSelected();
+        this.jSubFolders.isSelected();
+        this.jUseFileGlobs.isSelected();
         if (this.jIgnoreCase.isSelected()) flags |= Pattern.CASE_INSENSITIVE;
         if (this.jUseContentSearch.isSelected()) flags |= Pattern.LITERAL;
-        RegexHelper panel = new RegexHelper(flags);
         JDialog frame = new JDialog(parent, "Regex builder", true);
+        frame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        RegexHelper panel = new RegexHelper(flags);
+        panel.setRegex((String)jFileName.getEditor().getItem());
+        panel.getAcceptButton().addActionListener((ActionEvent ae) -> {
+            jFileName.getEditor().setItem(panel.getRegex());
+            jFileName.setSelectedItem(panel.getRegex());
+            frame.dispose();
+        });
         frame.getContentPane().add(panel);
         frame.pack();
 
         // Center on parent
-        //Point p = parent.getLocationOnScreen();
-        frame.setLocationRelativeTo(parent);
-        // frame.setl
-        //JRect b = (JButton)evt.getSource();
-        //b.getBounds().getCenterX();
-        //b.getBounds().getCenterY();
-        
+        frame.setLocationRelativeTo(parent);        
         frame.setVisible(true);
     }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        JFrame parent = (JFrame)SwingUtilities.getWindowAncestor(this);
+        int flags = 0;
+        if (this.jIgnoreCase.isSelected()) flags |= Pattern.CASE_INSENSITIVE;
+        if (this.jUseContentSearch.isSelected()) flags |= Pattern.LITERAL;
+        JDialog frame = new JDialog(parent, "Regex builder", true);
+        frame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        RegexHelper panel = new RegexHelper(flags);
+        panel.setRegex((String)jContainingText.getEditor().getItem());
+        panel.getAcceptButton().addActionListener((ActionEvent ae) -> {
+            jContainingText.getEditor().setItem(panel.getRegex());
+            jContainingText.setSelectedItem(panel.getRegex());
+            frame.dispose();   
+        });
+        frame.getContentPane().add(panel);
+        frame.pack();
+
+        // Center on parent
+        frame.setLocationRelativeTo(parent);        
+        frame.setVisible(true);
+    }//GEN-LAST:event_jButton5ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup ContentSearchType;
