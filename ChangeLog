@@ -1,0 +1,10 @@
+To see the latest changes, check out the release notes.
+There is a document for every release of searchmonkey, or see:
+  http://searchmonkey.sourceforge.net/index.php/Searchmonkey_Installation#Release_Notes
+for the full list.
+
+For code checked out using subversion, get a live change log with:
+ $ svn log . 
+from within the check out directory, or to see the online log use:
+ $ svn log https://svn.sourceforge.net/svnroot/searchmonkey/trunk
+to see trunk changes to date. 

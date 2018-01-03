@@ -1,0 +1,29 @@
+searchMonkey
+============
+
+For full installation instructions see:
+http://searchmonkey.sf.net/index.php/Searchmonkey_Installation
+
+
+For most systems simply run:
+ $ ./configure
+ $ make
+If there are no errors reported by configure/make, as super user:
+ # make install
+
+If you are using a Gnome based distro e.g. Fedora or Suse.
+ # make install-gnome
+will create a launcher icon.
+
+To uninstall, as super user:
+ # make uninstall
+The source code can then be removed completely, if required.
+
+Enjoy!
+Adam
+
+Hosted by Sourceforge:
+http:/www.sf.net/projects/searchmonkey
+
+Homepage:
+http:/searchmonkey.sf.net

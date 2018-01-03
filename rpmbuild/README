@@ -1,0 +1,21 @@
+Instructions for building a source/binary RPM (on FC5).
+
+Update the spec file to match the current version and release.
+Copy the appropriate spec file to /usr/src/$(DISTRO)/SPECS
+In the source code folder run:
+ $ ./configure
+ $ make
+ $ make dist-gzip
+
+Copy the newly created gzip file to /usr/src/redhat/SOURCE
+
+To create a source/binary RPM run (as root):
+
+ # rpmbuild -ba /usr/src/redhat/SPECS/searchmonkey-$(VERSION)-1.spec
+
+Fingers crossed, the RPMS/i386 and SRPMS folder should now contain distributable RPM files!
+
+Enjoy!
+Adam
+
+p.s. Note that searchmonkey.desktop is an application launcher. Copy it to /usr/share/applications for GNOME systems.

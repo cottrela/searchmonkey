@@ -1,0 +1,12 @@
+# List of source files containing translatable strings.
+
+src/main.c
+src/interface.c
+src/callbacks.c
+src/support.c
+src/search.c
+src/savestate.c
+src/regexwizard.c
+src/systemio.c
+src/misc.c
+src/lgpl.h

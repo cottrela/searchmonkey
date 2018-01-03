@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Name=searchmonkey
+Comment=Find text files quickly using regular expressions
+Exec=searchmonkey
+Icon=searchmonkey.png
+StartupNotify=true
+Terminal=false
+Type=Application
+Categories=Application;System;GTK
