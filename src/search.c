@@ -1039,13 +1039,15 @@ void getFileType(searchData *mSearchData, textMatch *newMatch)
  */
 void getModified(searchData *mSearchData, textMatch *newMatch)
 {
-  struct stat buf;
+  struct stat buf; /* these are C-specific structures in stat and time libs */
   gint stringSize;
   gchar *tmpString;
+  char buffer[80];
   textMatch *textMatch = GET_LAST_PTR(mSearchData->textMatchArray);
   
   lstat(textMatch->pFullName, &buf); /* Replaces the buggy GLIB equivalent */
-  tmpString = g_strdup_printf ("%s", asctime (localtime ( &(buf.st_mtime) )));
+  strftime(buffer, 80, "%Ec", localtime(&(buf.st_mtime)));
+  tmpString = g_strdup_printf ("%s",buffer);
   stringSize = g_strlen(tmpString);
   if (tmpString[stringSize - 1] == '\n') {
     tmpString[stringSize - 1] = '\0';
