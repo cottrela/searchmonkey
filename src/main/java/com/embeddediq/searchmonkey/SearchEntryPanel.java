@@ -31,11 +31,14 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JPopupMenu;
 import javax.swing.JSpinner;
 import javax.swing.KeyStroke;
 import javax.swing.SpinnerDateModel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.apache.commons.lang.SystemUtils;
@@ -765,6 +768,11 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
         jButton4.setBorderPainted(false);
         jButton4.setContentAreaFilled(false);
         jButton4.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
@@ -1305,6 +1313,28 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
             jLookIn.getModel().setSelectedItem(fname.getPath());
         }
     }//GEN-LAST:event_jButton9ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        
+        JFrame parent = (JFrame)SwingUtilities.getWindowAncestor(this);
+        int flags = 0;
+        if (this.jIgnoreCase.isSelected()) flags |= Pattern.CASE_INSENSITIVE;
+        if (this.jUseContentSearch.isSelected()) flags |= Pattern.LITERAL;
+        RegexHelper panel = new RegexHelper(flags);
+        JDialog frame = new JDialog(parent, "Regex builder", true);
+        frame.getContentPane().add(panel);
+        frame.pack();
+
+        // Center on parent
+        //Point p = parent.getLocationOnScreen();
+        frame.setLocationRelativeTo(parent);
+        // frame.setl
+        //JRect b = (JButton)evt.getSource();
+        //b.getBounds().getCenterX();
+        //b.getBounds().getCenterY();
+        
+        frame.setVisible(true);
+    }//GEN-LAST:event_jButton4ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup ContentSearchType;

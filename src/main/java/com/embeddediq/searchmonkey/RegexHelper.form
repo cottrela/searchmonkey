@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Form version="1.8" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
+  <AuxValues>
+    <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_generateFQN" type="java.lang.Boolean" value="true"/>
+    <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_i18nAutoMode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_layoutCodeTarget" type="java.lang.Integer" value="1"/>
+    <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
+  </AuxValues>
+
+  <Layout>
+    <DimensionLayout dim="0">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Group type="102" attributes="0">
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="jScrollPane3" alignment="0" pref="0" max="32767" attributes="0"/>
+                  <Component id="jScrollPane1" alignment="0" pref="0" max="32767" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="0" pref="108" max="32767" attributes="0"/>
+                  </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <Component id="jTextField1" max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jButton1" min="-2" max="-2" attributes="0"/>
+                  </Group>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+          </Group>
+      </Group>
+    </DimensionLayout>
+    <DimensionLayout dim="1">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Group type="102" alignment="1" attributes="0">
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="jTextField1" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jButton1" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="jScrollPane3" min="-2" pref="111" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="jScrollPane1" pref="150" max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+          </Group>
+      </Group>
+    </DimensionLayout>
+  </Layout>
+  <SubComponents>
+    <Container class="javax.swing.JScrollPane" name="jScrollPane1">
+      <AuxValues>
+        <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+      </AuxValues>
+
+      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+      <SubComponents>
+        <Component class="javax.swing.JTextPane" name="jTextPane1">
+          <Properties>
+            <Property name="editable" type="boolean" value="false"/>
+            <Property name="text" type="java.lang.String" value="Construct&#x9;Matches   Characters x&#x9;The character x \u005c\u005c&#x9;The backslash character \u005c0n&#x9;The character with octal value 0n (0 &lt;= n &lt;= 7) \u005c0nn&#x9;The character with octal value 0nn (0 &lt;= n &lt;= 7) \u005c0mnn&#x9;The character with octal value 0mnn (0 &lt;= m &lt;= 3, 0 &lt;= n &lt;= 7) \u005cxhh&#x9;The character with hexadecimal value 0xhh \u005cuhhhh&#x9;The character with hexadecimal value 0xhhhh \u005cx{h...h}&#x9;The character with hexadecimal value 0xh...h (Character.MIN_CODE_POINT  &lt;= 0xh...h &lt;=  Character.MAX_CODE_POINT) \u005ct&#x9;The tab character (&apos;\u005cu0009&apos;) \u005cn&#x9;The newline (line feed) character (&apos;\u005cu000A&apos;) \u005cr&#x9;The carriage-return character (&apos;\u005cu000D&apos;) \u005cf&#x9;The form-feed character (&apos;\u005cu000C&apos;) \u005ca&#x9;The alert (bell) character (&apos;\u005cu0007&apos;) \u005ce&#x9;The escape character (&apos;\u005cu001B&apos;) \u005ccx&#x9;The control character corresponding to x   Character classes [abc]&#x9;a, b, or c (simple class) [^abc]&#x9;Any character except a, b, or c (negation) [a-zA-Z]&#x9;a through z or A through Z, inclusive (range) [a-d[m-p]]&#x9;a through d, or m through p: [a-dm-p] (union) [a-z&amp;&amp;[def]]&#x9;d, e, or f (intersection) [a-z&amp;&amp;[^bc]]&#x9;a through z, except for b and c: [ad-z] (subtraction) [a-z&amp;&amp;[^m-p]]&#x9;a through z, and not m through p: [a-lq-z](subtraction)   Predefined character classes .&#x9;Any character (may or may not match line terminators) \u005cd&#x9;A digit: [0-9] \u005cD&#x9;A non-digit: [^0-9] \u005cs&#x9;A whitespace character: [ \u005ct\u005cn\u005cx0B\u005cf\u005cr] \u005cS&#x9;A non-whitespace character: [^\u005cs] \u005cw&#x9;A word character: [a-zA-Z_0-9] \u005cW&#x9;A non-word character: [^\u005cw]   POSIX character classes (US-ASCII only) \u005cp{Lower}&#x9;A lower-case alphabetic character: [a-z] \u005cp{Upper}&#x9;An upper-case alphabetic character:[A-Z] \u005cp{ASCII}&#x9;All ASCII:[\u005cx00-\u005cx7F] \u005cp{Alpha}&#x9;An alphabetic character:[\u005cp{Lower}\u005cp{Upper}] \u005cp{Digit}&#x9;A decimal digit: [0-9] \u005cp{Alnum}&#x9;An alphanumeric character:[\u005cp{Alpha}\u005cp{Digit}] \u005cp{Punct}&#x9;Punctuation: One of !&quot;#$%&amp;&apos;()*+,-./:;&lt;=&gt;?@[\u005c]^_`{|}~ \u005cp{Graph}&#x9;A visible character: [\u005cp{Alnum}\u005cp{Punct}] \u005cp{Print}&#x9;A printable character: [\u005cp{Graph}\u005cx20] \u005cp{Blank}&#x9;A space or a tab: [ \u005ct] \u005cp{Cntrl}&#x9;A control character: [\u005cx00-\u005cx1F\u005cx7F] \u005cp{XDigit}&#x9;A hexadecimal digit: [0-9a-fA-F] \u005cp{Space}&#x9;A whitespace character: [ \u005ct\u005cn\u005cx0B\u005cf\u005cr]   java.lang.Character classes (simple java character type) \u005cp{javaLowerCase}&#x9;Equivalent to java.lang.Character.isLowerCase() \u005cp{javaUpperCase}&#x9;Equivalent to java.lang.Character.isUpperCase() \u005cp{javaWhitespace}&#x9;Equivalent to java.lang.Character.isWhitespace() \u005cp{javaMirrored}&#x9;Equivalent to java.lang.Character.isMirrored()   Classes for Unicode scripts, blocks, categories and binary properties \u005cp{IsLatin}&#x9;A Latin script character (script) \u005cp{InGreek}&#x9;A character in the Greek block (block) \u005cp{Lu}&#x9;An uppercase letter (category) \u005cp{IsAlphabetic}&#x9;An alphabetic character (binary property) \u005cp{Sc}&#x9;A currency symbol \u005cP{InGreek}&#x9;Any character except one in the Greek block (negation) [\u005cp{L}&amp;&amp;[^\u005cp{Lu}]] &#x9;Any letter except an uppercase letter (subtraction)   Boundary matchers ^&#x9;The beginning of a line $&#x9;The end of a line \u005cb&#x9;A word boundary \u005cB&#x9;A non-word boundary \u005cA&#x9;The beginning of the input \u005cG&#x9;The end of the previous match \u005cZ&#x9;The end of the input but for the final terminator, if any \u005cz&#x9;The end of the input   Greedy quantifiers X?&#x9;X, once or not at all X*&#x9;X, zero or more times X+&#x9;X, one or more times X{n}&#x9;X, exactly n times X{n,}&#x9;X, at least n times X{n,m}&#x9;X, at least n but not more than m times   Reluctant quantifiers X??&#x9;X, once or not at all X*?&#x9;X, zero or more times X+?&#x9;X, one or more times X{n}?&#x9;X, exactly n times X{n,}?&#x9;X, at least n times X{n,m}?&#x9;X, at least n but not more than m times   Possessive quantifiers X?+&#x9;X, once or not at all X*+&#x9;X, zero or more times X++&#x9;X, one or more times X{n}+&#x9;X, exactly n times X{n,}+&#x9;X, at least n times X{n,m}+&#x9;X, at least n but not more than m times   Logical operators XY&#x9;X followed by Y X|Y&#x9;Either X or Y (X)&#x9;X, as a capturing group   Back references \u005cn&#x9;Whatever the nth capturing group matched \u005ck&lt;name&gt;&#x9;Whatever the named-capturing group &quot;name&quot; matched   Quotation \u005c&#x9;Nothing, but quotes the following character \u005cQ&#x9;Nothing, but quotes all characters until \u005cE \u005cE&#x9;Nothing, but ends quoting started by \u005cQ   Special constructs (named-capturing and non-capturing) (?&lt;name&gt;X)&#x9;X, as a named-capturing group (?:X)&#x9;X, as a non-capturing group (?idmsuxU-idmsuxU) &#x9;Nothing, but turns match flags i d m s u x U on - off (?idmsux-idmsux:X)  &#x9;X, as a non-capturing group with the given flags i d m s u x on - off (?=X)&#x9;X, via zero-width positive lookahead (?!X)&#x9;X, via zero-width negative lookahead (?&lt;=X)&#x9;X, via zero-width positive lookbehind (?&lt;!X)&#x9;X, via zero-width negative lookbehind (?&gt;X)&#x9;X, as an independent, non-capturing group" containsInvalidXMLChars="true"/>
+          </Properties>
+        </Component>
+      </SubComponents>
+    </Container>
+    <Component class="javax.swing.JLabel" name="jLabel1">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Summary of Regular Expression Constructs:"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel2">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Regular-expression:"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="jTextField1">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Regex Search"/>
+      </Properties>
+      <Events>
+        <EventHandler event="inputMethodTextChanged" listener="java.awt.event.InputMethodListener" parameters="java.awt.event.InputMethodEvent" handler="jTextField1InputMethodTextChanged"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel3">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Test content:"/>
+      </Properties>
+    </Component>
+    <Container class="javax.swing.JScrollPane" name="jScrollPane3">
+      <AuxValues>
+        <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+      </AuxValues>
+
+      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+      <SubComponents>
+        <Component class="javax.swing.JTextPane" name="jTextPane2">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec orci laoreet mauris venenatis malesuada. Sed vel pretium ex. Aliquam quis metus tristique, cursus augue eu, molestie erat. Praesent eu purus erat. Vestibulum placerat arcu at mi feugiat vulputate. Aenean faucibus libero a lectus iaculis semper. Integer eget ante non eros feugiat volutpat at a tellus. Nulla in sollicitudin tellus, nec tempus odio. Donec sagittis velit sed posuere varius. Duis magna leo, vulputate nec sapien non, efficitur euismod odio. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Suspendisse congue justo quis sapien dignissim, vel pellentesque est gravida."/>
+          </Properties>
+        </Component>
+      </SubComponents>
+    </Container>
+    <Component class="javax.swing.JButton" name="jButton1">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="OK"/>
+      </Properties>
+    </Component>
+  </SubComponents>
+</Form>

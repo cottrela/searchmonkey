@@ -82,25 +82,6 @@ public class SearchMatchView extends javax.swing.JPanel implements ActionListene
     }
     */
 
-    public class MyStyledDocument extends DefaultStyledDocument
-    {
-        public Style nameStyle;
-        public Style pathStyle;
-        public Style numberStyle;
-        public Style linkStyle;
-        public MyStyledDocument()
-        {
-            nameStyle = addStyle("nameStyle", null);
-            pathStyle = addStyle("pathStyle", null);
-            StyleConstants.setForeground(pathStyle, Color.GREEN);
-            StyleConstants.setItalic(pathStyle, true);
-            numberStyle = addStyle("numberStyle", null);
-            StyleConstants.setBold(numberStyle, true);
-            linkStyle = addStyle("linkStyle", null);
-            StyleConstants.setForeground(linkStyle, Color.BLUE);
-            StyleConstants.setUnderline(linkStyle, true);
-        }
-    }
      
     private ContentMatch match;
 
