@@ -56,6 +56,9 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener, 
         }
         setIconImages(imageList);
         
+        // Stop the toolbar from being floatable
+        jToolBar1.setFloatable(false);
+
         // TODO future stuff
         //this.menuBar.setVisible(false);
         
@@ -84,6 +87,8 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener, 
         searchTask.addPropertyChangeListener(this);
         searchMatchView1.setContentMatch(entry.containingText); // Update the content match
         searchTask.execute();
+        jButton1.setEnabled(false);
+        jButton2.setEnabled(true);
     }
     
     public void Stop()
@@ -97,6 +102,8 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener, 
     public void Done()
     {
         searchEntryPanel1.Stop();
+        jButton1.setEnabled(true);
+        jButton2.setEnabled(false);
     }
     
     public void UpdateContent(SearchResult[] results)
@@ -124,6 +131,9 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener, 
         searchResultsTable1 = new com.embeddediq.searchmonkey.SearchResultsTable();
         searchMatchView1 = new com.embeddediq.searchmonkey.SearchMatchView();
         searchSummary2 = new com.embeddediq.searchmonkey.SearchSummaryPanel();
+        jToolBar1 = new javax.swing.JToolBar();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         openMenuItem = new javax.swing.JMenuItem();
@@ -144,7 +154,6 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener, 
         setMinimumSize(new java.awt.Dimension(500, 500));
 
         jPanel1.setLayout(new java.awt.BorderLayout());
-
         jPanel1.add(searchEntryPanel1, java.awt.BorderLayout.NORTH);
 
         jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
@@ -157,6 +166,38 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener, 
         jPanel1.add(searchSummary2, java.awt.BorderLayout.SOUTH);
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
+
+        jToolBar1.setRollover(true);
+
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/icons/system-search.png"))); // NOI18N
+        jButton1.setToolTipText("Start search");
+        jButton1.setFocusable(false);
+        jButton1.setHideActionText(true);
+        jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(jButton1);
+
+        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/icons/process-stop.png"))); // NOI18N
+        jButton2.setToolTipText("Cancel search");
+        jButton2.setEnabled(false);
+        jButton2.setFocusable(false);
+        jButton2.setHideActionText(true);
+        jButton2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton2.setLabel("");
+        jButton2.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(jButton2);
+
+        getContentPane().add(jToolBar1, java.awt.BorderLayout.PAGE_START);
 
         fileMenu.setMnemonic('f');
         fileMenu.setText("File");
@@ -227,6 +268,14 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener, 
         System.exit(0);
     }//GEN-LAST:event_exitMenuItemActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        Start();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        Stop();
+    }//GEN-LAST:event_jButton2ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -273,8 +322,11 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener, 
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JMenu fileMenu;
     private javax.swing.JMenu helpMenu;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JSplitPane jSplitPane1;
+    private javax.swing.JToolBar jToolBar1;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenuItem openMenuItem;
     private javax.swing.JMenuItem pasteMenuItem;

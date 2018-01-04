@@ -14,6 +14,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowStateListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.file.FileSystems;
@@ -1332,11 +1334,12 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
         if (this.jUseContentSearch.isSelected()) flags |= Pattern.LITERAL;
         JDialog frame = new JDialog(parent, "Regex builder", true);
         frame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        RegexHelper panel = new RegexHelper(flags);
+        RegexHelper panel = new RegexHelper(flags, "Filename");
         panel.setRegex((String)jFileName.getEditor().getItem());
         panel.getAcceptButton().addActionListener((ActionEvent ae) -> {
             jFileName.getEditor().setItem(panel.getRegex());
             jFileName.setSelectedItem(panel.getRegex());
+            panel.Save();
             frame.dispose();
         });
         frame.getContentPane().add(panel);
@@ -1344,6 +1347,12 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
 
         // Center on parent
         frame.setLocationRelativeTo(parent);        
+        frame.addWindowStateListener((WindowEvent we) -> {
+            if (we.equals(WindowEvent.WINDOW_CLOSING))
+            {
+                panel.Save();
+            }
+        });
         frame.setVisible(true);
     }//GEN-LAST:event_jButton4ActionPerformed
 
@@ -1354,11 +1363,12 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
         if (this.jUseContentSearch.isSelected()) flags |= Pattern.LITERAL;
         JDialog frame = new JDialog(parent, "Regex builder", true);
         frame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        RegexHelper panel = new RegexHelper(flags);
+        RegexHelper panel = new RegexHelper(flags, "Contains");
         panel.setRegex((String)jContainingText.getEditor().getItem());
         panel.getAcceptButton().addActionListener((ActionEvent ae) -> {
             jContainingText.getEditor().setItem(panel.getRegex());
             jContainingText.setSelectedItem(panel.getRegex());
+            panel.Save();
             frame.dispose();   
         });
         frame.getContentPane().add(panel);
@@ -1366,7 +1376,13 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
 
         // Center on parent
         frame.setLocationRelativeTo(parent);        
-        frame.setVisible(true);
+        frame.addWindowStateListener((WindowEvent we) -> {
+            if (we.equals(WindowEvent.WINDOW_CLOSING))
+            {
+                panel.Save();
+            }
+        });
+        frame.setVisible(true);                
     }//GEN-LAST:event_jButton5ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -16,14 +16,24 @@
  */
 package com.embeddediq.searchmonkey;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import java.awt.Color;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JPopupMenu;
+import javax.swing.JSpinner;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
@@ -37,9 +47,15 @@ public class RegexHelper extends javax.swing.JPanel implements DocumentListener 
 
     /**
      * Creates new form RegexHelper
+     * @param flags
+     * @param name
      */
-    public RegexHelper(int flags) {
+    public RegexHelper(int flags, String name) {
         initComponents();
+        prefs = Preferences.userNodeForPackage(SearchEntry.class);
+        wizardName = name;
+        
+        Restore(); // Load back previous example content
         //Scanner in = new Scanner(new )
         
         this.flags = flags;
@@ -64,7 +80,34 @@ public class RegexHelper extends javax.swing.JPanel implements DocumentListener 
         // Add listener
         jTextField1.getDocument().addDocumentListener(this);
         // jTextPane2.getDocument().addDocumentListener(this);
+        
+        MouseListener popupListener = (MouseListener) new PopupListener2();
+        this.jTextPane2.addMouseListener(popupListener);
     }
+    
+    private final String def1 = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec orci laoreet mauris venenatis malesuada. Sed vel pretium ex. Aliquam quis metus tristique, cursus augue eu, molestie erat. Praesent eu purus erat. Vestibulum placerat arcu at mi feugiat vulputate. Aenean faucibus libero a lectus iaculis semper. Integer eget ante non eros feugiat volutpat at a tellus. Nulla in sollicitudin tellus, nec tempus odio. Donec sagittis velit sed posuere varius. Duis magna leo, vulputate nec sapien non, efficitur euismod odio. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Suspendisse congue justo quis sapien dignissim, vel pellentesque est gravida.";
+    private String wizardName;
+    
+    private void Restore() // Load back previous example content
+    {
+        Gson g = new Gson();
+        String json = prefs.get(wizardName, g.toJson(def1));
+        String item = g.fromJson(json, String.class);
+        jTextPane2.setText(item);
+    }
+    private void RestoreDefaults() // Load back previous example content
+    {
+        jTextPane2.setText(def1);
+    }
+    
+    public void Save()
+    {
+        Gson g = new Gson();
+        Object val = jTextPane2.getText();
+        String json = g.toJson(val);
+        prefs.put(wizardName, json); // Add list of look in folders        
+    }
+    private final Preferences prefs;
     
     public JButton getAcceptButton()
     {
@@ -126,6 +169,7 @@ public class RegexHelper extends javax.swing.JPanel implements DocumentListener 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPopupMenu1 = new javax.swing.JPopupMenu();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextPane1 = new javax.swing.JTextPane();
         jLabel1 = new javax.swing.JLabel();
@@ -155,7 +199,8 @@ public class RegexHelper extends javax.swing.JPanel implements DocumentListener 
 
         jLabel3.setText("Test content:");
 
-        jTextPane2.setText("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec orci laoreet mauris venenatis malesuada. Sed vel pretium ex. Aliquam quis metus tristique, cursus augue eu, molestie erat. Praesent eu purus erat. Vestibulum placerat arcu at mi feugiat vulputate. Aenean faucibus libero a lectus iaculis semper. Integer eget ante non eros feugiat volutpat at a tellus. Nulla in sollicitudin tellus, nec tempus odio. Donec sagittis velit sed posuere varius. Duis magna leo, vulputate nec sapien non, efficitur euismod odio. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Suspendisse congue justo quis sapien dignissim, vel pellentesque est gravida.");
+        jTextPane2.setToolTipText("Enter text here to test the expression");
+        jTextPane2.setInheritsPopupMenu(true);
         jScrollPane3.setViewportView(jTextPane2);
 
         jButton1.setText("OK");
@@ -213,6 +258,7 @@ public class RegexHelper extends javax.swing.JPanel implements DocumentListener 
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JPopupMenu jPopupMenu1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTextField jTextField1;
@@ -236,5 +282,28 @@ public class RegexHelper extends javax.swing.JPanel implements DocumentListener 
     public void changedUpdate(DocumentEvent de) {
         // TODO - add a short delay
         UpdateRegex();
+    }
+
+    class PopupListener2 implements MouseAdaptor
+    {
+    
+        private void showPopup(MouseEvent e)
+        {
+            if (e.isPopupTrigger()) {
+                jPopupMenu1.show(e.getComponent(),
+                           e.getX(), e.getY());
+            }
+        }
+
+        public void mousePressed(MouseEvent me) {
+            showPopup(me);
+        }
+
+        public void mouseReleased(MouseEvent me) {
+            // if (me.getButton() == MouseEvent.BUTTON2)
+            {
+                showPopup(me);
+            }
+        }
     }
 }
