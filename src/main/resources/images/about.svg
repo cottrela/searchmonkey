@@ -359,8 +359,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="2"
-     inkscape:cx="-58.69372"
-     inkscape:cy="52.773771"
+     inkscape:cx="0.9791665"
+     inkscape:cy="-51.450886"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:grid-bbox="false"
@@ -368,8 +368,8 @@
      inkscape:grid-points="false"
      inkscape:window-width="1034"
      inkscape:window-height="890"
-     inkscape:window-x="2215"
-     inkscape:window-y="424"
+     inkscape:window-x="1582"
+     inkscape:window-y="555"
      fill="#729fcf"
      showguides="true"
      inkscape:guide-bbox="true"
@@ -409,7 +409,7 @@
         <dc:date>18/05/2006</dc:date>
       </cc:Work>
       <cc:License
-         rdf:about="http://creativecommons.org/licenses/publicdomain/">
+         rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
         <cc:permits
            rdf:resource="http://creativecommons.org/ns#Reproduction" />
         <cc:permits
@@ -433,14 +433,14 @@
        rx="1.0249125"
        ry="0.91371214"
        inkscape:export-filename="E:\repos\Adam\SM\trunk\src\main\resources\images\about.png"
-       inkscape:export-xdpi="399.64758"
-       inkscape:export-ydpi="399.64758" />
+       inkscape:export-xdpi="281.92999"
+       inkscape:export-ydpi="281.92999" />
     <g
        id="g4297"
        transform="matrix(2.1585219,0,0,2.1585219,-55.287952,-14.018145)"
        inkscape:export-filename="E:\repos\Adam\SM\trunk\src\main\resources\images\about.png"
-       inkscape:export-xdpi="399.64758"
-       inkscape:export-ydpi="399.64758">
+       inkscape:export-xdpi="281.92999"
+       inkscape:export-ydpi="281.92999">
       <g
          id="g4273">
         <circle
@@ -595,8 +595,8 @@
        id="text4289"
        sodipodi:linespacing="125%"
        inkscape:export-filename="E:\repos\Adam\SM\trunk\src\main\resources\images\about.png"
-       inkscape:export-xdpi="399.64758"
-       inkscape:export-ydpi="399.64758"><tspan
+       inkscape:export-xdpi="281.92999"
+       inkscape:export-ydpi="281.92999"><tspan
          sodipodi:role="line"
          id="tspan4291"
          x="-86.615295"
