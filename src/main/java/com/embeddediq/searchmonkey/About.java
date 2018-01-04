@@ -16,6 +16,15 @@
  */
 package com.embeddediq.searchmonkey;
 
+import java.awt.Color;
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JButton;
+
 /**
  *
  * @author adam
@@ -27,6 +36,15 @@ public class About extends javax.swing.JPanel {
      */
     public About() {
         initComponents();
+
+        //Color b = this.getBackground();
+        //Color x = new Color(b.getRed(), b.getGreen(), b.getBlue(), 25);
+        this.jTextPane1.setOpaque(false);
+        jTextPane1.setBackground(new Color(0,0,0,0));
+        //this.jTextPane1.setBackground(x);
+        this.jScrollPane2.getViewport().setOpaque(false);
+        this.jScrollPane2.setOpaque(false);
+        //this.jScrollPane2.setBackground(x);
     }
 
     /**
@@ -46,11 +64,18 @@ public class About extends javax.swing.JPanel {
         jTextPane2 = new javax.swing.JTextPane();
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/about.png"))); // NOI18N
-        jLabel1.setToolTipText("");
+        jLabel1.setToolTipText("http://searchmonkey.embeddediq.com");
+        jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel1MouseClicked(evt);
+            }
+        });
 
         jScrollPane2.setBorder(null);
+        jScrollPane2.setViewportBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
 
         jTextPane1.setEditable(false);
+        jTextPane1.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         jTextPane1.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jTextPane1.setText("Searchmonkey is a lightweight but powerful tool for finding files and their content. Searchmonkey was written by adam@embededdiq.com.  http://searchmonnkey.embeddediq.com");
         jTextPane1.setToolTipText("");
@@ -59,6 +84,11 @@ public class About extends javax.swing.JPanel {
 
         jButton1.setText("Close");
         jButton1.setAlignmentX(0.5F);
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jTextPane2.setEditable(false);
         jTextPane2.setFont(new java.awt.Font("Tahoma", 2, 12)); // NOI18N
@@ -93,6 +123,25 @@ public class About extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void jLabel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseClicked
+        if (Desktop.isDesktopSupported()) {
+            try {
+                Desktop.getDesktop().browse(new URI("http://searchmonkey.embeddediq.com"));
+            } catch (URISyntaxException | IOException ex) {
+                Logger.getLogger(About.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_jLabel1MouseClicked
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        this.getParent().getParent().setVisible(false);
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    public JButton getButton()
+    {
+       return jButton1;
+
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;

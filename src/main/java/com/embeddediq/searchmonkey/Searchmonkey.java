@@ -18,6 +18,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.SwingWorker.StateValue;
 //import javax.swing.Timer;
 import javax.swing.event.ListSelectionEvent;
@@ -255,6 +257,11 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener, 
 
         aboutMenuItem.setMnemonic('a');
         aboutMenuItem.setText("About");
+        aboutMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                aboutMenuItemActionPerformed(evt);
+            }
+        });
         helpMenu.add(aboutMenuItem);
 
         menuBar.add(helpMenu);
@@ -267,6 +274,19 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener, 
     private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuItemActionPerformed
         System.exit(0);
     }//GEN-LAST:event_exitMenuItemActionPerformed
+
+    private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
+        JDialog dlg = new JDialog((JFrame)this, "About Searchmonkey", true);
+        About panel = new About();
+        dlg.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        panel.getButton().addActionListener((ActionEvent evt1) -> {
+            dlg.dispose();
+        });
+        dlg.setContentPane(panel);
+        dlg.pack();
+        dlg.setLocationRelativeTo(this);
+        dlg.setVisible(true);
+    }//GEN-LAST:event_aboutMenuItemActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         Start();
