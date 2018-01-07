@@ -840,6 +840,11 @@ void copyFile(GtkWidget *widget)
  * In addition to calling GTK library, the resulting text, if valid
  * is converted to UTF-8 from its native format (usually UTF-8 also)
  * to remove illegal charactors
+ * Luc A. 29 dec 2017 : this function is called from search.c module by the function 
+ * phaseTwoSearch()
+ * perhaps I can add here a parser/decoder for doc-x and ODT files ?
+ * in current lINUX distros, we dont' have to use g_str_escape() so I commented the code
+ *
  */
 gboolean g_file_get_contents2 (const gchar *filename,
                                gchar **contents,
@@ -850,16 +855,20 @@ gboolean g_file_get_contents2 (const gchar *filename,
   gchar *retContents;
   
   retVal = g_file_get_contents(filename, contents, length, error);
-
+  // printf("++++ je suis dans g_file_contents2() ****\n");
+  return retVal;
   /* Remove unknown ASCII */
+/* bugged : remove all accented chars in modern Linux, so i've commented, but leaved the code for documentation
+Luc A., 29 dec 2017
   if (retVal) {
     retContents = g_strescape(*contents, "\"\\\t\n\b\f\r");
+printf("contenu nettoyé:%s\n",retContents);
     g_free(*contents);
     *contents = retContents;
     *length = g_strlen(retContents);
   }
 
-  return retVal;
+  return retVal;*/
 
 #ifdef NOTYET
 /*
@@ -888,7 +897,7 @@ gboolean g_file_get_contents2 (const gchar *filename,
       *length = bytes_written;
     }
   }
-
+printf("*** notyet ****\n");
   return retVal;
 #endif /* NOTYET */
 }

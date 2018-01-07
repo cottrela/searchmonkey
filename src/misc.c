@@ -389,8 +389,8 @@ gchar *getDate(const gchar *curDate)
     gtk_calendar_get_date(calendar, &year, &month, &day);
     gtk_widget_destroy(calendarDialog);
 
-    result = (gchar *)g_malloc(sizeof(gchar) * 24);/* improved from 12 to 24 */
-    g_date_strftime(result, 23, "%d %b %Y", g_date_new_dmy(day, month +1, year)); /* modified from 11 to 23 - year with 4 digits */
+    result = (gchar *)g_malloc(sizeof(gchar) * 24);/* improved from 12 to 24 - Luc A., 27 déc 2017 */
+    g_date_strftime(result, 23, "%d %b %Y", g_date_new_dmy(day, month +1, year));/* modifiyed from 11 to 23 - year with 4 digits  Luc A., 27 déc 2017 */
   } else {
     gtk_widget_destroy(calendarDialog);
   }

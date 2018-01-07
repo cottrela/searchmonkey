@@ -11,6 +11,57 @@
 extern GtkWidget *mainWindowApp; /* Holds pointer to the main searchmonkey GUI. Declared in main.c */
 
 /*
+/* keycodes in order to set a sort of 'switch' command with a gchar
+/*
+/* added by Luc A. - 1 janv 2018 - idea here : answer #22 URL = https://stackoverflow.com/questions/4014827/best-way-to-switch-on-a-string-in-c
+ please note that FORMAT_OTHERS must be equal to MAX_FORMAT_LIST !!!!
+*/
+#define FORMAT_OTHERS 47
+#define FORMAT_TXT 1
+#define FORMAT_OFFICE_TEXT 2
+#define FORMAT_OFFICE_SHEET 3
+#define FORMAT_OFFICE_BASE 4
+#define FORMAT_OFFICE_PRESENT 5
+#define FORMAT_IMAGE 6
+#define FORMAT_VIDEO 7
+#define FORMAT_MUSIC 8
+#define FORMAT_ARCHIVE 9
+#define FORMAT_ISO 10
+#define FORMAT_PDF 11
+#define FORMAT_SVG 12
+#define FORMAT_ODG 13
+#define FORMAT_CSV 14
+#define FORMAT_ZIP 15
+#define FORMAT_WAV 16
+#define FORMAT_MP3 17
+#define FORMAT_MP4 18
+#define FORMAT_AVI 19
+#define FORMAT_MKV 20
+#define FORMAT_OTF 21
+#define FORMAT_TTF 22
+#define FORMAT_BZ2 23
+#define FORMAT_PPT 24
+#define FORMAT_DEB 25
+#define FORMAT_GZ 26
+#define FORMAT_RPM 27
+#define FORMAT_SH 28
+#define FORMAT_C 29
+#define FORMAT_XML 30
+#define FORMAT_HTML 31
+#define FORMAT_JAR 32
+#define FORMAT_JAVA 33
+#define FORMAT_H 34
+#define FORMAT_RAR 35
+#define FORMAT_TIFF 36
+#define FORMAT_DNG 37
+#define FORMAT_GIF 38
+#define FORMAT_ODP 39
+#define FORMAT_JS 40
+#define FORMAT_CSS 41
+#define FORMAT_TGZ 42
+#define FORMAT_XPM 43
+#define MAX_FORMAT_LIST 47
+/*
  * Global/miscillaneous constants
  */
 #define MAX_FILENAME_STRING 512 /* String maximum for things like the statusbar, and other fixed length buffers - minimise usage */
@@ -48,6 +99,11 @@ extern GtkWidget *mainWindowApp; /* Holds pointer to the main searchmonkey GUI. 
  * TODO: Convert macro to function
  */
 #define STATUSBAR_CONTEXT_ID(x) (gtk_statusbar_get_context_id(x, MASTER_STATUSBAR_DATA)) /* Helper macro to get the status bar context id */
+
+/* luc A. - 1 janv 2018 -> structure to switch with gchars */
+typedef struct { gchar *key; gchar *icon_file_name ; gint val; } t_symstruct;
+
+
 typedef struct
 {
   gchar constantString[MAX_FILENAME_STRING + 1]; /* Constant for use with fixed info status messages */
@@ -132,7 +188,8 @@ typedef struct { /* Control structure for search keeps copy of all user settings
   gboolean cancelSearch; /* If TRUE stops the current search ASAP */
 } searchControl;
 enum  { /* Enumeration for all of the file name results table columns */
-  FILENAME_COLUMN = 0,
+  ICON_COLUMN = 0, /* luc A - 1 janv 2018 */
+  FILENAME_COLUMN,
   LOCATION_COLUMN,
   SIZE_COLUMN,
   TYPE_COLUMN,

@@ -154,10 +154,12 @@ void updateRegExWizard(GtkWidget *widget)
   GtkComboBox *type[3];
   GtkEntry *entry[3];
   GtkComboBox *repeat[3];
-  GString *tmpGStr = NULL;
+  GString *tmpGStr = NULL;/* contains the resulting regular expression */
   gchar *tmpStr;
   gint iType, iRepeat;
   gchar *pEntry;
+  gboolean fexistStartRegex = FALSE ; /* added by Luc A. - 31 dec 2017 */
+  gboolean fexistMidRegex = FALSE ; /* added by Luc A. - 31 dec 2017 */
 
   /* Make sure that GTK is up and running */
   g_assert(output != NULL);
@@ -182,6 +184,7 @@ void updateRegExWizard(GtkWidget *widget)
   tmpStr = makeInterimRegex (type[0], entry[0], repeat[0], REGWIZ_START_TYPE);
   if (tmpStr != NULL) {
     g_string_append(tmpGStr, tmpStr);
+    fexistStartRegex = TRUE; /* added by Luc A. - 31 dec 2017 */
     g_free(tmpStr);
   }
 
@@ -203,7 +206,11 @@ void updateRegExWizard(GtkWidget *widget)
 			  -1);
       tmpStr = makeInterimRegex2 (widget, iType, pEntry, iRepeat, -1);
       if (tmpStr != NULL) {
+        /* we add the | symbol only if the is an existing start Regex OR a previous added mid regex */
+        if ((fexistStartRegex) | (fexistMidRegex)) /* added by Luc A. - 31 dec 2017 */
+              g_string_append(tmpGStr, "|");
 	g_string_append(tmpGStr, tmpStr);
+        fexistMidRegex = TRUE;
 	g_free(tmpStr);
       }
       g_free(pEntry);
@@ -213,6 +220,8 @@ void updateRegExWizard(GtkWidget *widget)
   /* Grab end regex */
   tmpStr = makeInterimRegex (type[2], entry[2], repeat[2], REGWIZ_END_TYPE);
   if (tmpStr != NULL) {
+    if ((fexistStartRegex) | (fexistMidRegex)) /* added by Luc A. - 31 dec 2017 */
+              g_string_append(tmpGStr, "|");
     g_string_append(tmpGStr, tmpStr);
     g_free(tmpStr);
   }

@@ -1,0 +1,57 @@
+Release : 0.8.2
+
+1. Bugs
+-------------
+1.1 Fixed
+---------
+- crashes when user clicks on files' list : FIXED
+- bad preview of text files with accented chars : FIXED
+- can't find files containing accented phrases : FIXED
+- expression Wizard : any click on [OK] validate Regex but also calls web browser : FIXED
+- coding of complex regex expressions don't work whith multiples conditions because the special char | was forgotten : FIXED
+- "Edition' menu from main menu bar is partially inactive (Edit and Open folder subumenus)  : don't launch any operation. FIXED
+
+1.2 Knwon
+---------
+- sometime, even if the option 'show line contents' activated, Searchmonkey show ONLY one line : TODO (seems linked to somewhat with wizard , if the wizard is activated, even for nothing, BEFORE research, the display is correct !)
+- option "limit content hits" remain grayed everytime : TODO
+- option 'simple search syntax' isn't activatable : TODO
+- when the size of text preview is too large, the "blue" highlighting is misplaced - this bug is known by Adam : TODO
+
+
+2. Improvements
+---------------
+2.1 Done
+--------
+- added french translation : DONE
+- polished various parts of the GUI : TODO/in PROGRESS
+- added files' icons to list view : DONE
+
+2.2 Todo
+--------
+- remove all deprecated symbols and function inside Gtk : in progress
+- add support to parse doc-x files : TODO
+- add support to parse ODT files : TODO
+- fix RTF file parsing : TODO
+- add PDF file parsing : TODO
+- modifiy main window title acording to user's research : TODO
+- add vocal assistance with espeak : TODO ???
+- add support to indexed research with locate : TODO ???
+- change name for "test regular expression" dialog (c'est un 'bac à sable') : TODO ????
+- allow Searchmonkey to be launched with arguments, like this : searchmonkey %d %f : TODO
+- allow Searchmonkey to be launched via "actions" in Thunar and PCManFM : TODO
+
+3. Modification installation scripts
+-------------------------------------
+3.1 DONE
+--------
+- modified script according to new release reference : DONE
+- modified script to install new language files(translations) : DONE
+- added various new icons : DONE
+- new "About Searchmonkey" image : DONE
+
+3.2 TODO by the USER
+---------------------
+PLease, when compiling under some Linux Distros, remember to change rights of "configure" and "makeinstalldirs" files in source installation folder to "executable".
+
+

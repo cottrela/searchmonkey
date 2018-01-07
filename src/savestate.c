@@ -512,7 +512,7 @@ void unrealize_menubar (GtkWidget *widget)
 
 void initTreeView_aux(GtkTreeView *treeview, GtkListStore *store, GtkTreeModel *sortedModel)
 {
-  GtkCellRenderer *renderer, *folderRenderer;
+  GtkCellRenderer *icon_renderer, *renderer, *folderRenderer;/* luc a. - 1 janv 2018 */
   GtkTreeViewColumn *column;
   GtkTreeSelection *select;
 
@@ -523,12 +523,21 @@ void initTreeView_aux(GtkTreeView *treeview, GtkListStore *store, GtkTreeModel *
   /* Create cell renderers */
   renderer = gtk_cell_renderer_text_new ();
   folderRenderer = gtk_cell_renderer_text_new ();
+  icon_renderer = gtk_cell_renderer_pixbuf_new();/* Luc A - 1 janv 2018 */
   g_object_set(folderRenderer,
                "ellipsize", PANGO_ELLIPSIZE_MIDDLE,
                "ellipsize-set", TRUE,
                NULL);
 
   /* Add columns to the list */
+
+  /* icon view - Luc A - 1 janv 2018 */
+  column = gtk_tree_view_column_new_with_attributes ("",
+                                                     icon_renderer,
+                                                     "pixbuf", ICON_COLUMN,
+                                                     NULL);
+  gtk_tree_view_append_column (treeview, column);
+  /* end Luc A */
   column = gtk_tree_view_column_new_with_attributes (_("Name"),
                                                      renderer,
                                                      "text", FILENAME_COLUMN,
@@ -605,6 +614,7 @@ void initTreeView(GtkWidget *widget)
 
 /* Attach new list store object to treeview widget */
   store = gtk_list_store_new (N_COLUMNS,       /* Total number of columns */
+                              GDK_TYPE_PIXBUF, /* added Luc A. - 1 janv 2018 */
                               G_TYPE_STRING,   /* File name               */
                               G_TYPE_STRING,   /* Location                */
                               G_TYPE_STRING,   /* File size               */
@@ -1440,8 +1450,12 @@ void tree_selection_changed_cb (GtkTreeSelection *selection, gpointer data)
 
   g_assert(tmpStr != NULL);
   g_assert(selection != NULL);
-  
+  /* moi pour test */
+if ( gtk_tree_selection_count_selected_rows(selection)== 1)
+{
+// printf("//// salut je suis dans savstat ////\n");
   if (gtk_tree_selection_get_selected (selection, &model, &iter)) {
+// printf("//// passé test selection /////\n");
     g_assert(model != NULL);
     if (getResultsViewHorizontal(GTK_WIDGET(gtk_tree_selection_get_tree_view(selection)))) {
       textBox = lookup_widget(GTK_WIDGET(gtk_tree_selection_get_tree_view(selection)), "textview1");
@@ -1559,20 +1573,21 @@ void tree_selection_changed_cb (GtkTreeSelection *selection, gpointer data)
       g_free (fullFileName);
       g_free (size);
       g_free (mdate);
-    } else { /* Print warning out just to fill the space */
-      gtk_tree_model_get (model, &iter, FULL_FILENAME_COLUMN, &fullFileName, 
+    } 
+     else 
+       { /* Print warning out just to fill the space */
+         gtk_tree_model_get (model, &iter, FULL_FILENAME_COLUMN, &fullFileName, 
                                         SIZE_COLUMN, &size,
                                         MODIFIED_COLUMN, &mdate,
-                                        MATCH_INDEX_COLUMN, &matchIndex, -1);
-      
-      tmpString2 = g_strconcat(fullFileName, " (", size, " ", mdate, ")\n", NULL);
-      gtk_text_buffer_insert (buffer, &txtIter, tmpString2, -1);
-      g_free(tmpString2);
-      
-      gtk_text_buffer_insert_with_tags_by_name (buffer, &txtIter, tmpStr, -1, "no_context", NULL);
-    }
+                                        MATCH_INDEX_COLUMN, &matchIndex, -1);      
+         tmpString2 = g_strconcat(fullFileName, " (", size, " ", mdate, ")\n", NULL);
+         gtk_text_buffer_insert (buffer, &txtIter, tmpString2, -1);
+         g_free(tmpString2);      
+         gtk_text_buffer_insert_with_tags_by_name (buffer, &txtIter, tmpStr, -1, "no_context", NULL);
+       }/* elseif */
   }
-}
+}/* endif test rajouté par moi */
+}/* end of function */
 
 
 /*

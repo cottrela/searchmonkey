@@ -20,6 +20,133 @@
 /*mutexes for searchdata and searchControl->cancelSearch */
 GStaticMutex mutex_Data = G_STATIC_MUTEX_INIT; /* Global mutex used by savestate.c too */
 GStaticMutex mutex_Control = G_STATIC_MUTEX_INIT; /* Global mutex used by savestate.c too*/
+
+/* it's very easy to improve the quality by changing the field icon_file_name */
+static t_symstruct lookuptable[] = {
+    { "txt-type", "icon-text-generic.png", FORMAT_TXT }, 
+    { "odt-type", "icon-odt.png", FORMAT_OFFICE_TEXT }, 
+    { "docx-type","icon-doc.png", FORMAT_OFFICE_TEXT }, 
+    { "rtf-type", "icon-word-processor.png", FORMAT_OFFICE_TEXT },
+    { "doc-type", "icon-doc.png", FORMAT_OFFICE_TEXT }, /* 5 */
+    { "abw-type", "icon-word-processor.png", FORMAT_OFFICE_TEXT },
+    { "ods-type", "icon-ods.png", FORMAT_OFFICE_SHEET }, 
+    { "xlsx-type", "icon-xls.png", FORMAT_OFFICE_SHEET }, 
+    { "xls-type", "icon-xls.png", FORMAT_OFFICE_SHEET },
+    { "odb-type", "icon-odb.png", FORMAT_OFFICE_BASE },/* 10*/ 
+    { "png-type", "icon-image.png", FORMAT_IMAGE },  
+    { "jpg-type", "icon-image.png", FORMAT_IMAGE }, 
+    { "jpeg-type", "icon-image.png", FORMAT_IMAGE }, 
+    { "xcf-type", "icon-image.png", FORMAT_IMAGE },
+    { "pdf-type", "icon-pdf.png", FORMAT_PDF },/* 15 */
+    { "svg-type", "icon-drawing.png", FORMAT_SVG },
+    { "odg-type", "icon-odg.png", FORMAT_ODG },
+    { "csv-type", "icon-spreadsheet.png", FORMAT_CSV },
+    { "zip-type", "icon-archive.png", FORMAT_ZIP },
+    { "wav-type", "icon-audio.png", FORMAT_WAV },/* 20*/
+    { "mp3-type", "icon-audio.png", FORMAT_MP3 },
+    { "mp4-type", "icon-video.png", FORMAT_MP4 },
+    { "avi-type", "icon-video.png", FORMAT_AVI },
+    { "mkv-type", "icon-video.png", FORMAT_MKV },
+    { "otf-type", "icon-font.png", FORMAT_OTF },/* 25 */
+    { "ttf-type", "icon-font.png", FORMAT_TTF },
+    { "bz2-type", "icon-archive.png", FORMAT_BZ2 },
+    { "ppt-type", "icon-ppt.png", FORMAT_PPT },
+    { "deb-type", "icon-archive.png", FORMAT_DEB },
+    { "gz-type", "icon-archive.png", FORMAT_GZ },/* 30 */
+    { "rpm-type", "icon-archive.png", FORMAT_RPM },
+    { "sh-type", "icon-java.png", FORMAT_SH },
+    { "c-type", "icon-c.png", FORMAT_C },
+    { "xml-type", "icon-htm.png", FORMAT_XML },
+    { "htm-type", "icon-htm.png", FORMAT_HTML },/* 35 */
+    { "jar-type", "icon-java.png", FORMAT_JAR },
+    { "java-type", "icon-java.png", FORMAT_JAVA },
+    { "h-type", "icon-h.png", FORMAT_H },
+    { "rar-type", "icon-archive.png", FORMAT_RAR },
+    { "tif-type", "icon-image.png", FORMAT_TIFF }, /* 40*/
+    { "dng-type", "icon-image.png", FORMAT_DNG },
+    { "gif-type", "icon-image.png", FORMAT_GIF },
+    { "odp-type", "icon-odp.png", FORMAT_ODP },
+    { "js-type", "icon-java.png", FORMAT_JS },
+    { "css-type", "icon-htm.png", FORMAT_CSS },/* 45 */
+    { "tgz-type", "icon-archive.png", FORMAT_TGZ },
+    { "xpm-type", "icon-image.png", FORMAT_XPM },
+    { "unknown-type", "icon-unknown.png", FORMAT_OTHERS }
+};
+// please update in search.h the #define MAX_FORMAT_LIST according to the size of this table - Luc A 1 janv 2018
+#define NKEYS ( sizeof (lookuptable)/ sizeof(t_symstruct) )
+
+/*
+/* function to convert a gchar extension type file in gint to switch 
+/* Luc A - 1 janv 2018 from URL = https://stackoverflow.com/questions/4014827/best-way-to-switch-on-a-string-in-c #22 post
+// please update in search.h the #define MAX_FORMAT_LIST according to the size of this table - Luc A 1 janv 2018
+*/
+gint keyfromstring(gchar *key2)
+{
+ gint i, i_comp;
+
+ for(i=0;i<MAX_FORMAT_LIST;i++)
+  {
+    i_comp = g_ascii_strncasecmp (lookuptable[i].key,
+                                 key2,
+                                3);
+    if(i_comp==0)
+      {
+       // printf("trouvé matching contenu tableau %s format :%s \n",lookuptable[i].key, key2);
+       return i;
+      }
+  }
+ return FORMAT_OTHERS;
+}
+
+/* 
+/* a function to select the good icon name, given a numeric code in entry
+/ Luc A - 1 janv 2018
+/
+*/
+gchar *get_icon_name(gint code)
+{
+ gchar tmpStr = NULL;
+
+ return tmpStr;
+}
+
+/****************************************************
+ function to get an icon from installation folder
+
+entry : the 'pFileType' of the file, from newMatch->pFileType
+We must remove the 5 last chars, which can be -type or ~type
+
+Luc A. - Janv 2018
+*****************************************************/
+GdkPixbuf *get_icon_for_display(gchar *stype)
+{
+  GdkPixbuf     *icon = NULL; /* Luc A - 1 janv 2018 */
+  GError        *error = NULL;
+  gchar *str_lowcase = NULL;
+  gchar *str_icon_file = NULL;
+  gint i;
+
+  /* we muust insure that stype is in low case, and we remove the 5 last chars */
+
+ //  str_lowcase = g_ascii_strdown (stype, -1);
+   i = keyfromstring(stype);/* the g_ascii_strn() function is case independant */
+ //  g_free(str_lowcase);
+   str_icon_file = g_strconcat(PACKAGE_DATA_DIR, "/pixmaps/", PACKAGE, "/", 
+                               lookuptable[i].icon_file_name, NULL);
+   icon = gdk_pixbuf_new_from_file(str_icon_file, &error);// warning : change path in final work !!!!
+  
+   if (error)
+    {
+      g_warning ("Could not load icon: %s\n", error->message);
+      g_error_free(error);
+      error = NULL;
+    }
+  g_free(str_icon_file);
+  /* luc A. */
+ return icon;
+}
+
+
 /*
  * Internal Helper: Converts the date/modified criteria into internal data format
  */
@@ -1039,15 +1166,18 @@ void getFileType(searchData *mSearchData, textMatch *newMatch)
  */
 void getModified(searchData *mSearchData, textMatch *newMatch)
 {
-  struct stat buf; /* these are C-specific structures in stat and time libs */
+  struct stat buf; /* ce sont des structures propres au C dans les libs Stat et time */
   gint stringSize;
   gchar *tmpString;
-  char buffer[80];
+  char buffer[80];/* added by Luc A., 27/12/2017 */
   textMatch *textMatch = GET_LAST_PTR(mSearchData->textMatchArray);
   
   lstat(textMatch->pFullName, &buf); /* Replaces the buggy GLIB equivalent */
+  /* added by Luc A., 27 dec 2017 */
   strftime(buffer, 80, "%Ec", localtime(&(buf.st_mtime)));
   tmpString = g_strdup_printf ("%s",buffer);
+  /* end addition by Luc A., 27/12/2017 */
+ // tmpString = g_strdup_printf ("%s", asctime (localtime ( &(buf.st_mtime) )));/* st_mtime vient de la struture de type 'tm' de stat.h et time.h = original version by Adam C.*/
   stringSize = g_strlen(tmpString);
   if (tmpString[stringSize - 1] == '\n') {
     tmpString[stringSize - 1] = '\0';
@@ -1154,15 +1284,18 @@ gboolean statMatchPhase(const gchar *tmpFullFileName, searchControl *mSearchCont
  */
 void displayMatch(searchControl *mSearchControl, searchData *mSearchData)
 {
+  GdkPixbuf    *pixbuf;
   textMatch *newMatch  = GET_LAST_PTR(mSearchData->textMatchArray);
   gchar *tmpStr = g_strdup_printf ("%d", newMatch->matchCount);
-  
+
+  pixbuf = get_icon_for_display(newMatch->pFileType);
   gdk_threads_enter ();
   g_assert(mSearchData->store != NULL);
   g_assert(mSearchData->iter != NULL);
 //  g_assert(VALID_ITER (mSearchData->iter, GTK_LIST_STORE(mSearchData->store)));
   gtk_list_store_append (mSearchData->store, mSearchData->iter);
   gtk_list_store_set (mSearchData->store, mSearchData->iter,
+                      ICON_COLUMN, GDK_PIXBUF(pixbuf ),/* Luc A, 1 janv 2018 */
                       FULL_FILENAME_COLUMN, newMatch->pFullName,
                       FILENAME_COLUMN, newMatch->pFileName,
                       LOCATION_COLUMN, newMatch->pLocation,
@@ -1177,6 +1310,8 @@ void displayMatch(searchControl *mSearchControl, searchData *mSearchData)
                       -1);
   gdk_threads_leave ();
   g_free(tmpStr);
+  if (pixbuf!=NULL)
+      g_object_unref(G_OBJECT(pixbuf));/* once loaded, the GdjPixbuf mus be derefenced, cf : https://en.wikibooks.org/wiki/GTK%2B_By_Example/Tree_View/Tree_Models#Retrieving_Row_Data */
   return;
 }
 
@@ -1188,7 +1323,7 @@ void displayMatch(searchControl *mSearchControl, searchData *mSearchData)
 void displayQuickMatch(searchControl *mSearchControl, searchData *mSearchData)
 {
   const gchar *tmpStr = g_object_get_data(G_OBJECT(mainWindowApp), "notApplicable");
-
+  GdkPixbuf    *pixbuf;
   textMatch *newMatch = g_malloc(sizeof(textMatch));
   g_ptr_array_add(mSearchData->textMatchArray, newMatch);
   newMatch->pFullName = GET_LAST_PTR(mSearchData->fullNameArray);
@@ -1200,12 +1335,14 @@ void displayQuickMatch(searchControl *mSearchControl, searchData *mSearchData)
   getFileSize(mSearchData, newMatch);
   getLength(mSearchData, newMatch);
   
+  pixbuf = get_icon_for_display(newMatch->pFileType);
   gdk_threads_enter ();
   g_assert(mSearchData->store != NULL);
   g_assert(mSearchData->iter != NULL);
 //  g_assert(VALID_ITER (mSearchData->iter, GTK_LIST_STORE(mSearchData->store)));
   gtk_list_store_append (mSearchData->store, mSearchData->iter);
   gtk_list_store_set (mSearchData->store, mSearchData->iter,
+                      ICON_COLUMN, GDK_PIXBUF(pixbuf),/* Luc A, 1 janv 2018 */
                       FULL_FILENAME_COLUMN, newMatch->pFullName,
                       FILENAME_COLUMN, newMatch->pFileName,
                       LOCATION_COLUMN, newMatch->pLocation,
@@ -1216,6 +1353,8 @@ void displayQuickMatch(searchControl *mSearchControl, searchData *mSearchData)
                       TYPE_COLUMN, newMatch->pFileType,
                       MATCHES_COUNT_STRING_COLUMN, tmpStr,
                       -1);
+  if (pixbuf!=NULL) 
+      g_object_unref(G_OBJECT(pixbuf));
   gdk_threads_leave ();
   return;
 }

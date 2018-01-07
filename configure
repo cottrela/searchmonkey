@@ -1621,7 +1621,7 @@ fi
 
 # Define the identity of the package.
  PACKAGE=searchmonkey
- VERSION=0.8.1
+ VERSION=0.8.2
 
 
 cat >>confdefs.h <<_ACEOF
@@ -5333,7 +5333,7 @@ cat >>confdefs.h <<_ACEOF
 _ACEOF
 
 
-ALL_LINGUAS="en_GB en_UK en_US"
+ALL_LINGUAS="en_GB en_UK en_US fr_FR fr"
 # On IRIX 5.3, sys/types and inttypes.h are conflicting.
 
 

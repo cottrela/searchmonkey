@@ -405,7 +405,7 @@ on_about1_activate                     (GtkMenuItem     *menuitem,
   
   /* Set searchmonkey version text and font size */
   tmpWidget = lookup_widget(aboutDialog, "aboutVersion");
-  tmpString = g_strdup_printf(_("searchmonkey %s"), VERSION);
+  tmpString = g_strdup_printf(_("searchmonkey %s"), VERSION);/* defined in "configure" line 1644 - luc A 3 janv 2018 */
   gtk_label_set_text(GTK_LABEL(tmpWidget), tmpString);
   g_free(tmpString);
   list = pango_attr_list_new(); /* Create list with 1 reference */
@@ -459,7 +459,7 @@ on_containingText_changed              (GtkComboBox     *combobox,
     } else {
       gtk_toggle_button_set_active(checkBox, TRUE);
     }
-    free(test);
+    g_free(test);
   }
 }
 
@@ -553,32 +553,69 @@ on_treeview1_button_press_event        (GtkWidget       *widget,
   GtkTreeView *treeview = GTK_TREE_VIEW(widget);
   GtkTreePath *path;
   GtkTreeViewDropPosition *pos;
-  GtkTreeSelection *selection = gtk_tree_view_get_selection (treeview);
-  
-  /* Capture right button click */
-  if ((event->button == 3) && (event->type == GDK_BUTTON_PRESS)) {
-    if (gtk_tree_view_get_path_at_pos (treeview,
-                                           event->x, event->y,
-                                           &path, NULL, NULL, NULL)) {
-      gtk_tree_selection_select_path (selection, path);
-      gtk_tree_path_free(path);
-      do_popup_menu(widget, event);
-    }
-    
-    return TRUE;
-    /* or double click detect */
-  } else if ((event->button == 1) && (event->type == GDK_2BUTTON_PRESS)) {
-    gchar *fullFileName = getFullFileName(treeview, FULL_FILENAME_COLUMN);
-    
-    if (fullFileName != NULL) {
-      SMsyscall(fullFileName, TEXTEDITOR_LIST);
-      g_free(fullFileName);
-    }
-    return TRUE;
-  }
-  
 
-  return FALSE;
+
+  GtkTreeSelection *selection = gtk_tree_view_get_selection (treeview);
+
+  if (gtk_tree_selection_count_selected_rows(selection)<1)
+    {
+     printf("*** Warning, no selection ! ***\n");
+     // return FALSE;/* added by Luc A., 28 dec 2017 */
+    }
+  /* Capture right button click */
+  if ((event->button == 3) && (event->type == GDK_BUTTON_PRESS)) 
+   {
+    if (gtk_tree_view_get_path_at_pos (treeview,
+                                       event->x, event->y,
+                                       &path, NULL, NULL, NULL)) 
+     {
+       gtk_tree_selection_unselect_all(selection); /* added by Luc A., 28 dec 2017 */
+       gtk_tree_selection_select_path (selection, path);
+       if (path!=NULL) 
+         {
+          gtk_tree_path_free(path);
+         }/* if path!=NULL */
+       do_popup_menu(widget, event);
+     }/* if test path at pos OK */   
+    return TRUE;
+   }/* endif right-click */ 
+/* capture double-click */
+ if ((event->button == 1) && (event->type == GDK_2BUTTON_PRESS)) 
+   {
+    gchar *fullFileName = getFullFileName(treeview, FULL_FILENAME_COLUMN);
+    if (fullFileName != NULL) 
+      {
+        SMsyscall(fullFileName, TEXTEDITOR_LIST);
+        g_free(fullFileName);
+      }
+    return TRUE;
+    }/* endif double-click */
+
+/* capture simple-left-click, i.e. select a row */
+ if ((event->button == 1) && (event->type == GDK_BUTTON_PRESS)) 
+   {
+     if (gtk_tree_view_get_path_at_pos (treeview,event->x, event->y,
+                                    &path, NULL, NULL, NULL)) 
+      {
+// printf("** je considère que c'est un simple-clic **\n");
+             // printf("* Je suis avant le select path * \n");
+             gtk_tree_selection_unselect_all(selection); /* ajout */
+             // printf("* passé un-select * \n");
+            if (gtk_tree_selection_count_selected_rows(selection)==1)
+             {
+               gtk_tree_selection_select_path (selection, path);
+               // printf("* Je suis après le select path *\n");
+               if (path!=NULL) 
+                {
+		 // printf("* avant libère mémoire *\n");
+                 gtk_tree_path_free(path);
+                 // printf("* après libère mémoire *\n");
+                }    
+              return TRUE;/* pb ici si met FALSE interdit sélections */
+             }
+      }
+   }/* endif left-click */
+ return FALSE;
 }
 
 
@@ -587,7 +624,7 @@ on_treeview1_popup_menu                (GtkWidget       *widget,
                                         gpointer         user_data)
 {
   do_popup_menu(widget, NULL);
-  return TRUE;
+  return FALSE;
 }
 
 
@@ -707,12 +744,12 @@ on_expWizard_response                  (GtkDialog       *dialog,
                                         gpointer         user_data)
 {
     gint typeRegex = (gint)g_object_get_data(G_OBJECT(dialog), "regexType");
-    GtkEntry *output = GTK_ENTRY(lookup_widget(GTK_WIDGET(dialog), "resultExp"));
+    GtkEntry *output = GTK_ENTRY(lookup_widget(GTK_WIDGET(dialog), "resultExp"));/* resulExp = name of GtkEntry for the final RegEx formula */
     gchar *finalRegex;
-    GtkComboBox *retCombo;
+    GtkComboBox *retCombo;/* contains a pointer on main Window, for GtkCombo for files OR GtkCombo for containing text */
     
     if (typeRegex == FILE_REGEX_TYPE) {
-        retCombo = GTK_COMBO_BOX(lookup_widget(mainWindowApp, "fileName"));
+        retCombo = GTK_COMBO_BOX(lookup_widget(mainWindowApp, "fileName"));/* filename = GtkWidget, field of the combo in main window */
     } else if (typeRegex == CONTEXT_REGEX_TYPE) {
         retCombo = GTK_COMBO_BOX(lookup_widget(mainWindowApp, "containingText"));
     } else {
@@ -722,15 +759,16 @@ on_expWizard_response                  (GtkDialog       *dialog,
     }
     
     switch (response_id) {
-        case GTK_RESPONSE_OK:
-            finalRegex = (gchar *)gtk_entry_get_text(output);
-            if (*finalRegex != '\0') {
-                addUniqueRow(GTK_WIDGET(retCombo), finalRegex);
-            }
-            /* Do not break here! We want the widget to be destroyed! */
         case GTK_RESPONSE_HELP:
             SMsyscall(_("http://searchmonkey.sourceforge.net/index.php/Regular_expression_builder"), BROWSER_LIST);
             break;
+        case GTK_RESPONSE_OK:
+            finalRegex = (gchar *)gtk_entry_get_text(output);/* read text in Wizard dialog, resulting formula */
+            if (*finalRegex != '\0') {
+                addUniqueRow(GTK_WIDGET(retCombo), finalRegex);/* modify combobox in main window */
+            }
+            /* Do not break here! We want the widget to be destroyed! */
+
         default:
             if (typeRegex == FILE_REGEX_TYPE) {
                 fileRegexWizard = NULL;
@@ -954,7 +992,7 @@ on_deleteSelectedContents_clicked      (GtkButton       *button,
   updateRegExWizard(GTK_WIDGET(button));
 }
 
-
+/* Regex Wizard : middle part of the expression */
 void
 on_midTreeView_realize                 (GtkWidget       *widget,
                                         gpointer         user_data)
@@ -962,7 +1000,7 @@ on_midTreeView_realize                 (GtkWidget       *widget,
     GtkTreeViewColumn *column;
     GtkCellRenderer *renderer = gtk_cell_renderer_text_new ();
 
-    GtkListStore *store = gtk_list_store_new (REGEX_N_COLUMNS,
+    GtkListStore *store = gtk_list_store_new (REGEX_N_COLUMNS,/* number of total columns in Regex wizard- 1 janv 2018 Luc A*/                                            
                                               G_TYPE_STRING,
                                               G_TYPE_STRING,
                                               G_TYPE_STRING,
@@ -973,17 +1011,17 @@ on_midTreeView_realize                 (GtkWidget       *widget,
     g_object_unref (G_OBJECT (store));
 
     /* Create columns */
-    column = gtk_tree_view_column_new_with_attributes ("_(Type)", renderer,
+    column = gtk_tree_view_column_new_with_attributes (_("_(Type)"), renderer,
                                                        "text", REGEX_TYPE_COLUMN,
                                                        NULL);
     gtk_tree_view_append_column (GTK_TREE_VIEW (widget), column);
 
-    column = gtk_tree_view_column_new_with_attributes ("_(Entry)", renderer,
+    column = gtk_tree_view_column_new_with_attributes (_("_(Entry)"), renderer,
                                                        "text", REGEX_ENTRY_COLUMN,
                                                        NULL);
     gtk_tree_view_append_column (GTK_TREE_VIEW (widget), column);
 
-    column = gtk_tree_view_column_new_with_attributes ("_(Repeat)", renderer,
+    column = gtk_tree_view_column_new_with_attributes (_("_(Repeat)"), renderer,
                                                        "text", REGEX_REPEAT_COLUMN,
                                                        NULL);
     gtk_tree_view_append_column (GTK_TREE_VIEW (widget), column);
@@ -1399,20 +1437,55 @@ on_autosize_columns_activate           (GtkMenuItem     *menuitem,
   realizeTreeviewColumns (GTK_WIDGET(mainWindowApp), keyString, "history", "treeview", autoColumnWidth);  
 }
 
+/* surprise : menu empty at last 2017
+ so I've made the job - :-) Luc A. - 4 janv 2018
+*/
+
 
 void
 on_edit_file1_activate                 (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
+ GtkTreeView *treeView;
+ gchar *fullFileName;
+  
+  if (getResultsViewHorizontal(GTK_WIDGET(menuitem))) {
+    treeView = GTK_TREE_VIEW(lookup_widget(GTK_WIDGET(menuitem), "treeview1"));
+  } else {
+    treeView = GTK_TREE_VIEW(lookup_widget(GTK_WIDGET(menuitem), "treeview2"));
+  }
+  fullFileName = getFullFileName(treeView, FULL_FILENAME_COLUMN);
+
+  if (fullFileName != NULL) {
+    SMsyscall(fullFileName, TEXTEDITOR_LIST);
+    g_free(fullFileName);
+  }
 
 }
+
+/* surprise : menu empty at last 2017
+ so I've made the job - :-) Luc A. - 4 janv 2018
+*/
 
 
 void
 on_open_folder1_activate               (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
+ GtkTreeView *treeView;
+  gchar *location;
+  
+  if (getResultsViewHorizontal(GTK_WIDGET(menuitem))) {
+    treeView = GTK_TREE_VIEW(lookup_widget(GTK_WIDGET(menuitem), "treeview1"));
+  } else {
+    treeView = GTK_TREE_VIEW(lookup_widget(GTK_WIDGET(menuitem), "treeview2"));
+  }
+  location = getFullFileName(treeView, LOCATION_COLUMN);
 
+  if (location != NULL) {
+    SMsyscall(location, FILEEXPLORER_LIST);
+    g_free(location);
+  }
 }
 
 
