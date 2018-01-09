@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT(configure.in)
+AC_INIT(configure.ac)
 AM_INIT_AUTOMAKE(searchmonkey, 0.8.2)
 AM_CONFIG_HEADER(config.h)
 AM_MAINTAINER_MODE
