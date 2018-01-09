@@ -19,7 +19,6 @@ Building
 ========
 
 For most systems simply run:
- $ autoconf
  $ ./configure
 
 If there are any errors detected by the configure script, then fix and re-run configure. Once all of the missing dependencies are fixed, continue with:
