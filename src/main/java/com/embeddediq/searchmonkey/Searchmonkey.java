@@ -5,6 +5,7 @@
  */
 package com.embeddediq.searchmonkey;
 
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,9 +19,12 @@ import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.Painter;
 import javax.swing.SwingWorker.StateValue;
+import javax.swing.UIManager;
 //import javax.swing.Timer;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -321,6 +325,17 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener, 
         //</editor-fold>
         setDefaultLookAndFeelDecorated(true); // Speed up the resize time
         
+        // Fix a bug in the Nimbus look and feel
+        UIManager.put("TextPane[Enabled].backgroundPainter", new Painter<JComponent>() { 
+            @Override
+            public void paint(Graphics2D g, JComponent comp, int width, int height) { 
+                if (comp.isOpaque())
+                {
+                    g.setColor(comp.getBackground()); 
+                    g.fillRect(0, 0, width, height); 
+                }
+            } 
+        });         
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override

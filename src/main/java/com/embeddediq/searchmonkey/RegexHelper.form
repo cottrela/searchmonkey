@@ -7,8 +7,44 @@
       <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
         <Property name="useNullLayout" type="boolean" value="true"/>
       </Layout>
+      <SubComponents>
+        <MenuItem class="javax.swing.JMenuItem" name="jMenuItem1">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Cut"/>
+          </Properties>
+        </MenuItem>
+        <MenuItem class="javax.swing.JMenuItem" name="jMenuItem2">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Copy"/>
+          </Properties>
+        </MenuItem>
+        <MenuItem class="javax.swing.JMenuItem" name="jMenuItem3">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Paste"/>
+          </Properties>
+        </MenuItem>
+        <Component class="javax.swing.JPopupMenu$Separator" name="jSeparator1">
+        </Component>
+        <MenuItem class="javax.swing.JMenuItem" name="jMenuItem4">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="jMenuItem4"/>
+          </Properties>
+        </MenuItem>
+      </SubComponents>
     </Container>
   </NonVisualComponents>
+  <Properties>
+    <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+      <Dimension value="[480, 350]"/>
+    </Property>
+    <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+      <Dimension value="[480, 350]"/>
+    </Property>
+    <Property name="name" type="java.lang.String" value="" noResource="true"/>
+    <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+      <Dimension value="[480, 350]"/>
+    </Property>
+  </Properties>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
@@ -19,115 +55,234 @@
     <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
     <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
+    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,1,119,0,0,1,-28"/>
   </AuxValues>
 
-  <Layout>
-    <DimensionLayout dim="0">
-      <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" attributes="0">
-              <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jScrollPane3" alignment="0" pref="0" max="32767" attributes="0"/>
-                  <Component id="jScrollPane1" alignment="0" pref="0" max="32767" attributes="0"/>
-                  <Group type="102" attributes="0">
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace min="0" pref="108" max="32767" attributes="0"/>
-                  </Group>
-                  <Group type="102" alignment="0" attributes="0">
-                      <Component id="jTextField1" max="32767" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jButton1" min="-2" max="-2" attributes="0"/>
-                  </Group>
-              </Group>
-              <EmptySpace max="-2" attributes="0"/>
-          </Group>
-      </Group>
-    </DimensionLayout>
-    <DimensionLayout dim="1">
-      <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="1" attributes="0">
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="jTextField1" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jButton1" alignment="3" min="-2" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-              <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="jScrollPane3" min="-2" pref="111" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="jScrollPane1" pref="150" max="32767" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-          </Group>
-      </Group>
-    </DimensionLayout>
-  </Layout>
+  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
   <SubComponents>
-    <Container class="javax.swing.JScrollPane" name="jScrollPane1">
-      <AuxValues>
-        <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
-      </AuxValues>
+    <Container class="javax.swing.JPanel" name="jPanel2">
+      <Constraints>
+        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+          <BorderConstraints direction="Center"/>
+        </Constraint>
+      </Constraints>
 
-      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+      <Layout>
+        <DimensionLayout dim="0">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="jScrollPane1" pref="0" max="32767" attributes="0"/>
+                      <Group type="102" attributes="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="2" attributes="0">
+                              <Component id="jTextField1" alignment="2" max="32767" attributes="0"/>
+                              <Component id="jScrollPane3" alignment="2" pref="293" max="32767" attributes="0"/>
+                          </Group>
+                      </Group>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+        <DimensionLayout dim="1">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jTextField1" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jScrollPane3" min="-2" pref="111" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <Component id="jScrollPane1" pref="179" max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+      </Layout>
       <SubComponents>
-        <Component class="javax.swing.JTextPane" name="jTextPane1">
+        <Container class="javax.swing.JScrollPane" name="jScrollPane3">
           <Properties>
-            <Property name="editable" type="boolean" value="false"/>
-            <Property name="text" type="java.lang.String" value="Construct&#x9;Matches   Characters x&#x9;The character x \u005c\u005c&#x9;The backslash character \u005c0n&#x9;The character with octal value 0n (0 &lt;= n &lt;= 7) \u005c0nn&#x9;The character with octal value 0nn (0 &lt;= n &lt;= 7) \u005c0mnn&#x9;The character with octal value 0mnn (0 &lt;= m &lt;= 3, 0 &lt;= n &lt;= 7) \u005cxhh&#x9;The character with hexadecimal value 0xhh \u005cuhhhh&#x9;The character with hexadecimal value 0xhhhh \u005cx{h...h}&#x9;The character with hexadecimal value 0xh...h (Character.MIN_CODE_POINT  &lt;= 0xh...h &lt;=  Character.MAX_CODE_POINT) \u005ct&#x9;The tab character (&apos;\u005cu0009&apos;) \u005cn&#x9;The newline (line feed) character (&apos;\u005cu000A&apos;) \u005cr&#x9;The carriage-return character (&apos;\u005cu000D&apos;) \u005cf&#x9;The form-feed character (&apos;\u005cu000C&apos;) \u005ca&#x9;The alert (bell) character (&apos;\u005cu0007&apos;) \u005ce&#x9;The escape character (&apos;\u005cu001B&apos;) \u005ccx&#x9;The control character corresponding to x   Character classes [abc]&#x9;a, b, or c (simple class) [^abc]&#x9;Any character except a, b, or c (negation) [a-zA-Z]&#x9;a through z or A through Z, inclusive (range) [a-d[m-p]]&#x9;a through d, or m through p: [a-dm-p] (union) [a-z&amp;&amp;[def]]&#x9;d, e, or f (intersection) [a-z&amp;&amp;[^bc]]&#x9;a through z, except for b and c: [ad-z] (subtraction) [a-z&amp;&amp;[^m-p]]&#x9;a through z, and not m through p: [a-lq-z](subtraction)   Predefined character classes .&#x9;Any character (may or may not match line terminators) \u005cd&#x9;A digit: [0-9] \u005cD&#x9;A non-digit: [^0-9] \u005cs&#x9;A whitespace character: [ \u005ct\u005cn\u005cx0B\u005cf\u005cr] \u005cS&#x9;A non-whitespace character: [^\u005cs] \u005cw&#x9;A word character: [a-zA-Z_0-9] \u005cW&#x9;A non-word character: [^\u005cw]   POSIX character classes (US-ASCII only) \u005cp{Lower}&#x9;A lower-case alphabetic character: [a-z] \u005cp{Upper}&#x9;An upper-case alphabetic character:[A-Z] \u005cp{ASCII}&#x9;All ASCII:[\u005cx00-\u005cx7F] \u005cp{Alpha}&#x9;An alphabetic character:[\u005cp{Lower}\u005cp{Upper}] \u005cp{Digit}&#x9;A decimal digit: [0-9] \u005cp{Alnum}&#x9;An alphanumeric character:[\u005cp{Alpha}\u005cp{Digit}] \u005cp{Punct}&#x9;Punctuation: One of !&quot;#$%&amp;&apos;()*+,-./:;&lt;=&gt;?@[\u005c]^_`{|}~ \u005cp{Graph}&#x9;A visible character: [\u005cp{Alnum}\u005cp{Punct}] \u005cp{Print}&#x9;A printable character: [\u005cp{Graph}\u005cx20] \u005cp{Blank}&#x9;A space or a tab: [ \u005ct] \u005cp{Cntrl}&#x9;A control character: [\u005cx00-\u005cx1F\u005cx7F] \u005cp{XDigit}&#x9;A hexadecimal digit: [0-9a-fA-F] \u005cp{Space}&#x9;A whitespace character: [ \u005ct\u005cn\u005cx0B\u005cf\u005cr]   java.lang.Character classes (simple java character type) \u005cp{javaLowerCase}&#x9;Equivalent to java.lang.Character.isLowerCase() \u005cp{javaUpperCase}&#x9;Equivalent to java.lang.Character.isUpperCase() \u005cp{javaWhitespace}&#x9;Equivalent to java.lang.Character.isWhitespace() \u005cp{javaMirrored}&#x9;Equivalent to java.lang.Character.isMirrored()   Classes for Unicode scripts, blocks, categories and binary properties \u005cp{IsLatin}&#x9;A Latin script character (script) \u005cp{InGreek}&#x9;A character in the Greek block (block) \u005cp{Lu}&#x9;An uppercase letter (category) \u005cp{IsAlphabetic}&#x9;An alphabetic character (binary property) \u005cp{Sc}&#x9;A currency symbol \u005cP{InGreek}&#x9;Any character except one in the Greek block (negation) [\u005cp{L}&amp;&amp;[^\u005cp{Lu}]] &#x9;Any letter except an uppercase letter (subtraction)   Boundary matchers ^&#x9;The beginning of a line $&#x9;The end of a line \u005cb&#x9;A word boundary \u005cB&#x9;A non-word boundary \u005cA&#x9;The beginning of the input \u005cG&#x9;The end of the previous match \u005cZ&#x9;The end of the input but for the final terminator, if any \u005cz&#x9;The end of the input   Greedy quantifiers X?&#x9;X, once or not at all X*&#x9;X, zero or more times X+&#x9;X, one or more times X{n}&#x9;X, exactly n times X{n,}&#x9;X, at least n times X{n,m}&#x9;X, at least n but not more than m times   Reluctant quantifiers X??&#x9;X, once or not at all X*?&#x9;X, zero or more times X+?&#x9;X, one or more times X{n}?&#x9;X, exactly n times X{n,}?&#x9;X, at least n times X{n,m}?&#x9;X, at least n but not more than m times   Possessive quantifiers X?+&#x9;X, once or not at all X*+&#x9;X, zero or more times X++&#x9;X, one or more times X{n}+&#x9;X, exactly n times X{n,}+&#x9;X, at least n times X{n,m}+&#x9;X, at least n but not more than m times   Logical operators XY&#x9;X followed by Y X|Y&#x9;Either X or Y (X)&#x9;X, as a capturing group   Back references \u005cn&#x9;Whatever the nth capturing group matched \u005ck&lt;name&gt;&#x9;Whatever the named-capturing group &quot;name&quot; matched   Quotation \u005c&#x9;Nothing, but quotes the following character \u005cQ&#x9;Nothing, but quotes all characters until \u005cE \u005cE&#x9;Nothing, but ends quoting started by \u005cQ   Special constructs (named-capturing and non-capturing) (?&lt;name&gt;X)&#x9;X, as a named-capturing group (?:X)&#x9;X, as a non-capturing group (?idmsuxU-idmsuxU) &#x9;Nothing, but turns match flags i d m s u x U on - off (?idmsux-idmsux:X)  &#x9;X, as a non-capturing group with the given flags i d m s u x on - off (?=X)&#x9;X, via zero-width positive lookahead (?!X)&#x9;X, via zero-width negative lookahead (?&lt;=X)&#x9;X, via zero-width positive lookbehind (?&lt;!X)&#x9;X, via zero-width negative lookbehind (?&gt;X)&#x9;X, as an independent, non-capturing group" containsInvalidXMLChars="true"/>
+            <Property name="componentPopupMenu" type="javax.swing.JPopupMenu" editor="org.netbeans.modules.form.ComponentChooserEditor">
+              <ComponentRef name="jPopupMenu1"/>
+            </Property>
+          </Properties>
+          <AuxValues>
+            <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+          </AuxValues>
+
+          <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+          <SubComponents>
+            <Component class="javax.swing.JTextPane" name="jTextPane2">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="&lt;Enter sample text here to test regular expression&gt;"/>
+                <Property name="toolTipText" type="java.lang.String" value="Enter sample text or copy in from a file to test expression"/>
+                <Property name="inheritsPopupMenu" type="boolean" value="true"/>
+              </Properties>
+            </Component>
+          </SubComponents>
+        </Container>
+        <Component class="javax.swing.JLabel" name="jLabel3">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Sample text:"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="jLabel2">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Test expression:"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JTextField" name="jTextField1">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="sample"/>
+            <Property name="toolTipText" type="java.lang.String" value="Enter test regular expresion"/>
+            <Property name="componentPopupMenu" type="javax.swing.JPopupMenu" editor="org.netbeans.modules.form.ComponentChooserEditor">
+              <ComponentRef name="jPopupMenu1"/>
+            </Property>
+          </Properties>
+          <Events>
+            <EventHandler event="inputMethodTextChanged" listener="java.awt.event.InputMethodListener" parameters="java.awt.event.InputMethodEvent" handler="jTextField1InputMethodTextChanged"/>
+          </Events>
+        </Component>
+        <Container class="javax.swing.JScrollPane" name="jScrollPane1">
+          <Properties>
+            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+              <Border info="null"/>
+            </Property>
+            <Property name="componentPopupMenu" type="javax.swing.JPopupMenu" editor="org.netbeans.modules.form.ComponentChooserEditor">
+              <ComponentRef name="jPopupMenu1"/>
+            </Property>
+          </Properties>
+          <AuxValues>
+            <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+          </AuxValues>
+
+          <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+          <SubComponents>
+            <Component class="javax.swing.JTextPane" name="jTextPane1">
+              <Properties>
+                <Property name="editable" type="boolean" value="false"/>
+                <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                  <Border info="null"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Enter a test expression, and then click Apply to see the results. Searchmonkey will highlight all of the matching text and report the number of hits.&#xa;&#xa;The sample test can be edited to reflect the type of data you will be searching. Either copy in, or manually enter sample text to test our your regular expression.&#xa;&#xa;Any changes made to this dialog will be saved automatically."/>
+                <Property name="autoscrolls" type="boolean" value="false"/>
+                <Property name="focusable" type="boolean" value="false"/>
+                <Property name="opaque" type="boolean" value="false"/>
+              </Properties>
+            </Component>
+          </SubComponents>
+        </Container>
+      </SubComponents>
+    </Container>
+    <Container class="javax.swing.JPanel" name="jPanel3">
+      <Constraints>
+        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+          <BorderConstraints direction="East"/>
+        </Constraint>
+      </Constraints>
+
+      <Layout>
+        <DimensionLayout dim="0">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="jButton1" min="-2" max="-2" attributes="0"/>
+                      <Component id="jButton3" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="jButton2" alignment="0" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+        <DimensionLayout dim="1">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="jButton1" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <Component id="jButton3" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <Component id="jButton2" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace pref="245" max="32767" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+      </Layout>
+      <SubComponents>
+        <Component class="javax.swing.JButton" name="jButton1">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Apply"/>
+            <Property name="toolTipText" type="java.lang.String" value="Click apply to test regular expression"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton1ActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="jButton2">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Close"/>
+            <Property name="toolTipText" type="java.lang.String" value="Close the dialog"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JButton" name="jButton3">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Reset"/>
+            <Property name="toolTipText" type="java.lang.String" value="Reset dialog back to the defaults"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton3ActionPerformed"/>
+          </Events>
+        </Component>
+      </SubComponents>
+    </Container>
+    <Container class="javax.swing.JPanel" name="jPanel1">
+      <Constraints>
+        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+          <BorderConstraints direction="South"/>
+        </Constraint>
+      </Constraints>
+
+      <Layout>
+        <DimensionLayout dim="0">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
+                  <Component id="jStatus" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="0" pref="444" max="32767" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+        <DimensionLayout dim="1">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                  <Component id="jStatus" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+      </Layout>
+      <SubComponents>
+        <Component class="javax.swing.JLabel" name="jStatus">
+          <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Tahoma" size="11" style="1"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Status:"/>
           </Properties>
         </Component>
       </SubComponents>
     </Container>
-    <Component class="javax.swing.JLabel" name="jLabel1">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Summary of Regular Expression Constructs:"/>
-      </Properties>
-    </Component>
-    <Component class="javax.swing.JLabel" name="jLabel2">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Regular-expression:"/>
-      </Properties>
-    </Component>
-    <Component class="javax.swing.JTextField" name="jTextField1">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Regex Search"/>
-      </Properties>
-      <Events>
-        <EventHandler event="inputMethodTextChanged" listener="java.awt.event.InputMethodListener" parameters="java.awt.event.InputMethodEvent" handler="jTextField1InputMethodTextChanged"/>
-      </Events>
-    </Component>
-    <Component class="javax.swing.JLabel" name="jLabel3">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Test content:"/>
-      </Properties>
-    </Component>
-    <Container class="javax.swing.JScrollPane" name="jScrollPane3">
-      <AuxValues>
-        <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
-      </AuxValues>
-
-      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
-      <SubComponents>
-        <Component class="javax.swing.JTextPane" name="jTextPane2">
-          <Properties>
-            <Property name="toolTipText" type="java.lang.String" value="Enter text here to test the expression"/>
-            <Property name="inheritsPopupMenu" type="boolean" value="true"/>
-          </Properties>
-        </Component>
-      </SubComponents>
-    </Container>
-    <Component class="javax.swing.JButton" name="jButton1">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="OK"/>
-      </Properties>
-    </Component>
   </SubComponents>
 </Form>

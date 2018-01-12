@@ -1361,17 +1361,18 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
         int flags = 0;
         if (this.jIgnoreCase.isSelected()) flags |= Pattern.CASE_INSENSITIVE;
         if (this.jUseContentSearch.isSelected()) flags |= Pattern.LITERAL;
-        JDialog frame = new JDialog(parent, "Regex builder", true);
+        JDialog frame = new JDialog(parent, "Test Regular Expression", true);
         frame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         RegexHelper panel = new RegexHelper(flags, "Contains");
         panel.setRegex((String)jContainingText.getEditor().getItem());
-        panel.getAcceptButton().addActionListener((ActionEvent ae) -> {
-            jContainingText.getEditor().setItem(panel.getRegex());
-            jContainingText.setSelectedItem(panel.getRegex());
+        panel.getCloseButton().addActionListener((ActionEvent ae) -> {
+            //jContainingText.getEditor().setItem(panel.getRegex());
+            //jContainingText.setSelectedItem(panel.getRegex());
             panel.Save();
             frame.dispose();   
         });
         frame.getContentPane().add(panel);
+        frame.setResizable(false);
         frame.pack();
 
         // Center on parent
