@@ -349,7 +349,7 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener, 
         //if (this.jUseContentSearch.isSelected()) flags |= Pattern.LITERAL;
         JDialog frame = new JDialog(this, "Test Regular Expression", false);
         frame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        RegexHelper panel = new RegexHelper(flags, "Contains");
+        TestExpression panel = new TestExpression(flags, "Contains");
         //panel.setRegex((String)jContainingText.getEditor().getItem());
         panel.getCloseButton().addActionListener((ActionEvent ae) -> {
             //jContainingText.getEditor().setItem(panel.getRegex());

@@ -41,14 +41,14 @@ import javax.swing.text.Style;
  *
  * @author cottr
  */
-public class RegexHelper extends javax.swing.JPanel implements DocumentListener {
+public class TestExpression extends javax.swing.JPanel implements DocumentListener {
 
     /**
      * Creates new form RegexHelper
      * @param flags
      * @param name
      */
-    public RegexHelper(int flags, String name) {
+    public TestExpression(int flags, String name) {
         initComponents();
         prefs = Preferences.userNodeForPackage(SearchEntry.class);
         wizardName = name;
@@ -62,7 +62,7 @@ public class RegexHelper extends javax.swing.JPanel implements DocumentListener 
 //            URL url = getClass().getResource(fn);
 //            jTextPane1.setPage(url);
 //        } catch (IOException ex) {
-//            Logger.getLogger(RegexHelper.class.getName()).log(Level.SEVERE, null, ex);
+//            Logger.getLogger(TestExpression.class.getName()).log(Level.SEVERE, null, ex);
 //        }
 
         // Create some styles
@@ -70,7 +70,7 @@ public class RegexHelper extends javax.swing.JPanel implements DocumentListener 
         try {
             doc.insertString(0, jTextPane2.getText(), doc.nameStyle);
         } catch (BadLocationException ex) {
-            Logger.getLogger(RegexHelper.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(TestExpression.class.getName()).log(Level.SEVERE, null, ex);
         }
         jTextPane2.setStyledDocument(doc);
 

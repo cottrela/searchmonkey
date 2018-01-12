@@ -1334,7 +1334,7 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
         if (this.jUseContentSearch.isSelected()) flags |= Pattern.LITERAL;
         JDialog frame = new JDialog(parent, "Regex builder", true);
         frame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        RegexHelper panel = new RegexHelper(flags, "Filename");
+        TestExpression panel = new TestExpression(flags, "Filename");
         panel.setRegex((String)jFileName.getEditor().getItem());
         panel.getAcceptButton().addActionListener((ActionEvent ae) -> {
             jFileName.getEditor().setItem(panel.getRegex());
@@ -1363,7 +1363,7 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
         if (this.jUseContentSearch.isSelected()) flags |= Pattern.LITERAL;
         JDialog frame = new JDialog(parent, "Test Regular Expression", true);
         frame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        RegexHelper panel = new RegexHelper(flags, "Contains");
+        TestExpression panel = new TestExpression(flags, "Contains");
         panel.setRegex((String)jContainingText.getEditor().getItem());
         panel.getCloseButton().addActionListener((ActionEvent ae) -> {
             //jContainingText.getEditor().setItem(panel.getRegex());
