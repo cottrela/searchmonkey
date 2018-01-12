@@ -9,6 +9,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.nio.file.Path;
@@ -18,13 +19,16 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.Painter;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker.StateValue;
 import javax.swing.UIManager;
+import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
 //import javax.swing.Timer;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -138,6 +142,8 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener, 
         searchMatchView1 = new com.embeddediq.searchmonkey.SearchMatchView();
         searchSummary2 = new com.embeddediq.searchmonkey.SearchSummaryPanel();
         jToolBar1 = new javax.swing.JToolBar();
+        jButton3 = new javax.swing.JButton();
+        jSeparator1 = new javax.swing.JToolBar.Separator();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
@@ -151,6 +157,8 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener, 
         copyMenuItem = new javax.swing.JMenuItem();
         pasteMenuItem = new javax.swing.JMenuItem();
         deleteMenuItem = new javax.swing.JMenuItem();
+        jMenu1 = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
         helpMenu = new javax.swing.JMenu();
         contentMenuItem = new javax.swing.JMenuItem();
         aboutMenuItem = new javax.swing.JMenuItem();
@@ -173,7 +181,21 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener, 
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
 
+        jToolBar1.setFloatable(false);
         jToolBar1.setRollover(true);
+
+        jButton3.setText("Test Expression");
+        jButton3.setToolTipText("Test Regex Expression");
+        jButton3.setFocusable(false);
+        jButton3.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton3.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(jButton3);
+        jToolBar1.add(jSeparator1);
 
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/icons/system-search.png"))); // NOI18N
         jButton1.setToolTipText("Start search");
@@ -194,7 +216,6 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener, 
         jButton2.setFocusable(false);
         jButton2.setHideActionText(true);
         jButton2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButton2.setLabel("");
         jButton2.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -252,6 +273,18 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener, 
 
         menuBar.add(editMenu);
 
+        jMenu1.setText("Tools");
+
+        jMenuItem1.setText("Test Expression");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem1);
+
+        menuBar.add(jMenu1);
+
         helpMenu.setMnemonic('h');
         helpMenu.setText("Help");
 
@@ -300,6 +333,47 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener, 
         Stop();
     }//GEN-LAST:event_jButton2ActionPerformed
 
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        testRegexExpression();
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        testRegexExpression();
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void testRegexExpression()
+    {
+        //JFrame parent = (JFrame)SwingUtilities.getWindowAncestor(this);
+        int flags = 0;
+        //if (this.jIgnoreCase.isSelected()) flags |= Pattern.CASE_INSENSITIVE;
+        //if (this.jUseContentSearch.isSelected()) flags |= Pattern.LITERAL;
+        JDialog frame = new JDialog(this, "Test Regular Expression", false);
+        frame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        RegexHelper panel = new RegexHelper(flags, "Contains");
+        //panel.setRegex((String)jContainingText.getEditor().getItem());
+        panel.getCloseButton().addActionListener((ActionEvent ae) -> {
+            //jContainingText.getEditor().setItem(panel.getRegex());
+            //jContainingText.setSelectedItem(panel.getRegex());
+            panel.Save();
+            frame.setVisible(false);
+            // frame.dispose();   
+        });
+        frame.getContentPane().add(panel);
+        frame.setResizable(false);
+        frame.pack();
+
+        // Center on parent
+        frame.setLocationRelativeTo(this);
+        // frame.setLocationRelativeTo(parent);        
+        frame.addWindowStateListener((WindowEvent we) -> {
+            if (we.equals(WindowEvent.WINDOW_CLOSING))
+            {
+                panel.Save();
+            }
+        });
+        frame.setVisible(true);                
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -359,7 +433,11 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener, 
     private javax.swing.JMenu helpMenu;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JToolBar.Separator jSeparator1;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JMenuBar menuBar;
