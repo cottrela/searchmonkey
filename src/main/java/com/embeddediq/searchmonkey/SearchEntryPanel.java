@@ -1324,35 +1324,35 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         JFrame parent = (JFrame)SwingUtilities.getWindowAncestor(this);
-        int flags = 0;
-        // this.jIgnoreHiddenFiles.isSelected();
-        this.jIgnoreHiddenFolders.isSelected();
-        this.jIgnoreSymbolicLinks.isSelected();
-        this.jSubFolders.isSelected();
-        this.jUseFileGlobs.isSelected();
-        if (this.jIgnoreCase.isSelected()) flags |= Pattern.CASE_INSENSITIVE;
-        if (this.jUseContentSearch.isSelected()) flags |= Pattern.LITERAL;
+//        int flags = 0;
+//        // this.jIgnoreHiddenFiles.isSelected();
+//        this.jIgnoreHiddenFolders.isSelected();
+//        this.jIgnoreSymbolicLinks.isSelected();
+//        this.jSubFolders.isSelected();
+//        this.jUseFileGlobs.isSelected();
+//        if (this.jIgnoreCase.isSelected()) flags |= Pattern.CASE_INSENSITIVE;
+//        if (this.jUseContentSearch.isSelected()) flags |= Pattern.LITERAL;
         JDialog frame = new JDialog(parent, "Regex builder", true);
         frame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        TestExpression panel = new TestExpression(flags, "Filename");
-        panel.setRegex((String)jFileName.getEditor().getItem());
-        panel.getAcceptButton().addActionListener((ActionEvent ae) -> {
-            jFileName.getEditor().setItem(panel.getRegex());
-            jFileName.setSelectedItem(panel.getRegex());
-            panel.Save();
-            frame.dispose();
-        });
+        RegexBuilder panel = new RegexBuilder();
+        //panel.setRegex((String)jFileName.getEditor().getItem());
+//        panel.getAcceptButton().addActionListener((ActionEvent ae) -> {
+//            jFileName.getEditor().setItem(panel.getRegex());
+//            jFileName.setSelectedItem(panel.getRegex());
+//            panel.Save();
+//            frame.dispose();
+//        });
         frame.getContentPane().add(panel);
         frame.pack();
 
         // Center on parent
         frame.setLocationRelativeTo(parent);        
-        frame.addWindowStateListener((WindowEvent we) -> {
-            if (we.equals(WindowEvent.WINDOW_CLOSING))
-            {
-                panel.Save();
-            }
-        });
+//        frame.addWindowStateListener((WindowEvent we) -> {
+//            if (we.equals(WindowEvent.WINDOW_CLOSING))
+//            {
+//                panel.Save();
+//            }
+//        });
         frame.setVisible(true);
     }//GEN-LAST:event_jButton4ActionPerformed
 
