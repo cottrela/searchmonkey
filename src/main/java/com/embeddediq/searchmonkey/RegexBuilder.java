@@ -26,6 +26,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
+import javax.swing.event.CellEditorListener;
+import javax.swing.event.ChangeEvent;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
@@ -52,43 +54,61 @@ public class RegexBuilder extends javax.swing.JPanel {
         RegexTableModel model = new RegexTableModel(data);
         this.jTable1.setModel(model);
         this.jTable1.setDefaultRenderer(RegexExpression.class, new RegexCellRenderer());
-        this.jTable1.setDefaultEditor(RegexExpression.class, new RegexCellEditor());
+        RegexCellEditor cellEdit = new RegexCellEditor();
+        this.jTable1.setDefaultEditor(RegexExpression.class, cellEdit);
         this.jTable1.setRowHeight(60);
+        
+        cellEdit.addCellEditorListener(new CellEditorListener() {
+            @Override
+            public void editingStopped(ChangeEvent ce) {
+                RegexCellEditor cellEdit2 = (RegexCellEditor)ce.getSource();
+                RegexExpression exp = (RegexExpression)cellEdit2.getCellEditorValue();
+                cellEdit2.get
+            }
+
+            @Override
+            public void editingCanceled(ChangeEvent ce) {
+                // do nothing throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+            
+        }); 
     }
 
-    public class RegexCellComponent extends JPanel {
-        RegexExpression regex;
-
-        JButton showButton;
-        JLabel text;
-
-        public RegexCellComponent() {
-          showButton = new JButton("View Articles");
-          showButton.addActionListener((ActionEvent arg0) -> {
-              JOptionPane.showMessageDialog(null, "Reading " + regex.expression);
-          });
-
-          text = new JLabel();
-          add(text);
-          add(showButton);
-        }
-
-        public void updateData(RegexExpression feed, boolean isSelected, JTable table) {
-          this.regex = feed;
-
-          if (!isSelected)
-          {
-              text.setText("" + feed.getPosition() + " " + feed.getExpression() + " repeats " + feed.getRepetition() + "");
-          } else {
-              text.setText("" + feed.getPosition() + " " + feed.getExpression() + " XXX " + feed.getRepetition() + "");          
-          }
-          if (isSelected) {
-            setBackground(table.getSelectionBackground());
-          }else{
-            setBackground(table.getBackground());
-          }
-        }
-    }
+//    public class RegexCellComponent extends JPanel {
+//        RegexExpression regex;
+//
+//        //JButton showButton;
+//        JLabel text;
+//        JComboBox expression;
+//        JComboBox expression;
+//
+//        public RegexCellComponent() {
+////          showButton = new JButton("View Articles");
+////          showButton.addActionListener((ActionEvent arg0) -> {
+////              JOptionPane.showMessageDialog(null, "Reading " + regex.expression);
+////          });
+//
+//          text = new JLabel();
+//          add(text);
+//          //add(showButton);
+//        }
+//
+//        public void updateData(RegexExpression feed, boolean isSelected, JTable table) {
+//          this.regex = feed;
+//
+//          if (!isSelected)
+//          {
+//              text.setText("" + feed.getPosition() + " " + feed.getExpression() + " repeats " + feed.getRepetition() + "");
+//          } else {
+//              text.setText("" + feed.getPosition() + " " + feed.getExpression() + " XXX " + feed.getRepetition() + "");          
+//          }
+//          if (isSelected) {
+//            setBackground(table.getSelectionBackground());
+//          }else{
+//            setBackground(table.getBackground());
+//          }
+//        }
+//    }
     
     public class RegexCellRenderer implements TableCellRenderer {
 
@@ -119,13 +139,14 @@ public class RegexBuilder extends javax.swing.JPanel {
         public Component getTableCellEditorComponent(JTable table, Object value,
         boolean isSelected, int row, int column) {
             RegexExpression feed = (RegexExpression)value;
-            feedComponent.updateData(feed, true, table);
+            feedComponent.updateData(feed, isSelected, table);
             return feedComponent;
         }
 
        @Override
         public Object getCellEditorValue() {
-            return null;
+            // This is value returned
+            return feedComponent.getData();
         }
     }
     
@@ -138,20 +159,22 @@ public class RegexBuilder extends javax.swing.JPanel {
 
         @Override
         public Class getColumnClass(int columnIndex) {
-            return RegexExpression.class;
+            if (columnIndex == 0) return String.class;
+            else if (columnIndex == 1) return RegexExpression.class;
+            else if (columnIndex == 2) return Object.class;
+            return Object.class;
         }
         
         @Override
         public int getColumnCount() {
-            return 4; // Idx, Expression, Repeat, Action
+            return 3; // Idx, Expression, Action
         }
         
         @Override
         public String getColumnName(int columnIndex) {
             if (columnIndex == 0) return "#";
             else if (columnIndex == 1) return "Expression";
-            else if (columnIndex == 2) return "Repeat";
-            else if (columnIndex == 3) return "Action";
+            else if (columnIndex == 2) return "Action";
             return "Unknown";
         }
         
@@ -162,7 +185,17 @@ public class RegexBuilder extends javax.swing.JPanel {
         
         @Override
         public Object getValueAt(int rowIndex, int columnIndex) {
-            return (regex == null) ? null : regex.get(rowIndex);
+            switch (columnIndex) {
+                case 0:
+                    return ((RegexExpression)regex.get(rowIndex)).getPosition();
+                case 1:
+                    return regex.get(rowIndex);
+                case 2:
+                    return "Action";
+                default:
+                    break;
+            }
+            return "Unknown";
         }
         
         @Override
@@ -179,6 +212,16 @@ public class RegexBuilder extends javax.swing.JPanel {
             this.position = position;
             this.flags = 0;                    
         }
+        
+        public RegexExpression(RegexExpression copy)
+        {
+            this.expression = copy.expression;
+            this.position = copy.position;
+            this.flags = copy.flags;
+            this.repetition = copy.repetition;
+            this.content = copy.content;
+        }
+
         // Enumeration for the expression
         public static final int EXP_DONT_KNOW = 0;
         public static final int EXP_EXACT_PHRASE = 1;
@@ -200,7 +243,9 @@ public class RegexBuilder extends javax.swing.JPanel {
                 case EXP_EXACT_PHRASE:
                     return (String)content;
                 case EXP_ONE_OF_THESE:
-                    return String.join(" OR ", (List)content);
+                    if (content.getClass().isInstance(List.class))
+                        return String.join(" OR ", (List)content);
+                    return content.toString();
                 case EXP_WHITE_SPACE:
                     return "White space";
                 case EXP_NUMERIC:
@@ -208,9 +253,13 @@ public class RegexBuilder extends javax.swing.JPanel {
                 case EXP_ALPHA:
                     return "Any letter: a-z or A-Z";
                 case EXP_ANY_CHAR:
-                    return "Any of these characters: " + String.join("", (List)content);
+                    if (content.getClass().isInstance(List.class))
+                        return "Any of these characters: " + String.join("", (List)content);
+                    return "Any of these chars: " + content.toString();
                 case EXP_ANY_EXCEPT:
-                    return "Any character except: " + String.join("", (List)content);
+                    if (content.getClass().isInstance(List.class))
+                        return "Any character except: " + String.join("", (List)content);
+                    return "Any except: " + content.toString();
                 default:
                     break;
             }
