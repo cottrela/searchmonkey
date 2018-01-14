@@ -17,17 +17,10 @@
 package com.embeddediq.searchmonkey;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.AbstractCellEditor;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JTable;
-import javax.swing.event.CellEditorListener;
-import javax.swing.event.ChangeEvent;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
@@ -53,115 +46,57 @@ public class RegexBuilder extends javax.swing.JPanel {
         
         RegexTableModel model = new RegexTableModel(data);
         this.jTable1.setModel(model);
-        this.jTable1.setDefaultRenderer(RegexExpression.class, new RegexCellRenderer());
         RegexCellEditor cellEdit = new RegexCellEditor();
+        this.jTable1.setDefaultRenderer(RegexExpression.class, cellEdit);
         this.jTable1.setDefaultEditor(RegexExpression.class, cellEdit);
         this.jTable1.setRowHeight(60);
         
-        cellEdit.addCellEditorListener(new CellEditorListener() {
-            @Override
-            public void editingStopped(ChangeEvent ce) {
-                RegexCellEditor cellEdit2 = (RegexCellEditor)ce.getSource();
-                RegexExpression exp = (RegexExpression)cellEdit2.getCellEditorValue();
-                cellEdit2.get
-            }
-
-            @Override
-            public void editingCanceled(ChangeEvent ce) {
-                // do nothing throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-            
-        }); 
     }
 
-//    public class RegexCellComponent extends JPanel {
-//        RegexExpression regex;
-//
-//        //JButton showButton;
-//        JLabel text;
-//        JComboBox expression;
-//        JComboBox expression;
-//
-//        public RegexCellComponent() {
-////          showButton = new JButton("View Articles");
-////          showButton.addActionListener((ActionEvent arg0) -> {
-////              JOptionPane.showMessageDialog(null, "Reading " + regex.expression);
-////          });
-//
-//          text = new JLabel();
-//          add(text);
-//          //add(showButton);
-//        }
-//
-//        public void updateData(RegexExpression feed, boolean isSelected, JTable table) {
-//          this.regex = feed;
-//
-//          if (!isSelected)
-//          {
-//              text.setText("" + feed.getPosition() + " " + feed.getExpression() + " repeats " + feed.getRepetition() + "");
-//          } else {
-//              text.setText("" + feed.getPosition() + " " + feed.getExpression() + " XXX " + feed.getRepetition() + "");          
-//          }
-//          if (isSelected) {
-//            setBackground(table.getSelectionBackground());
-//          }else{
-//            setBackground(table.getBackground());
-//          }
-//        }
-//    }
-    
-    public class RegexCellRenderer implements TableCellRenderer {
+    public class RegexCellEditor extends AbstractCellEditor implements TableCellEditor, TableCellRenderer {
+       RegexCellComponent regex;
 
-        RegexCellComponent feedComp;
-
-        public RegexCellRenderer()
-        {
-            feedComp = new RegexCellComponent();
+        public RegexCellEditor() {
+            regex = new RegexCellComponent();
         }
 
+        @Override
+        public Component getTableCellEditorComponent(JTable table, Object value,
+        boolean isSelected, int row, int column) {
+            RegexExpression feed = (RegexExpression)value;
+            RegexCellComponent tmp = new RegexCellComponent();
+            tmp.updateData(feed, true, table);
+            //regex.updateData(feed, true, table);
+            return tmp;
+        }
+ 
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value,
             boolean isSelected, boolean hasFocus, int row, int column) {
             RegexExpression feed = (RegexExpression)value;
-            feedComp.updateData(feed, isSelected, table);
-            return feedComp;
+            regex.updateData(feed, isSelected, table);
+            return regex;
         }
-    }
-
-    public class RegexCellEditor extends AbstractCellEditor implements TableCellEditor {
-       RegexCellComponent feedComponent;
-
-        public RegexCellEditor() {
-            feedComponent = new RegexCellComponent();
-        }
-
-       @Override
-        public Component getTableCellEditorComponent(JTable table, Object value,
-        boolean isSelected, int row, int column) {
-            RegexExpression feed = (RegexExpression)value;
-            feedComponent.updateData(feed, isSelected, table);
-            return feedComponent;
-        }
-
-       @Override
+        
+        @Override
         public Object getCellEditorValue() {
             // This is value returned
-            return feedComponent.getData();
+            return regex.getData();
         }
     }
     
     public class RegexTableModel extends AbstractTableModel {
         List regex;
 
-        public RegexTableModel(List feeds) {
-            this.regex = feeds;
+        public RegexTableModel(List regex) {
+            this.regex = regex;
         }
 
         @Override
         public Class getColumnClass(int columnIndex) {
             if (columnIndex == 0) return String.class;
             else if (columnIndex == 1) return RegexExpression.class;
-            else if (columnIndex == 2) return Object.class;
+            else if (columnIndex == 2) return String.class;
             return Object.class;
         }
         
@@ -199,128 +134,159 @@ public class RegexBuilder extends javax.swing.JPanel {
         }
         
         @Override
-        public boolean isCellEditable(int columnIndex, int rowIndex) {
-            return true;
+        public void setValueAt(Object value, int rowIndex, int columnIndex)
+        {
+            RegexExpression r2 = (RegexExpression)(regex.get(rowIndex));
+            switch (columnIndex) {
+                case 0:
+                    r2.position = (int)value;
+                case 1:
+                    RegexExpression regexIn = (RegexExpression)value;
+                    r2.repetition = regexIn.repetition;
+                    r2.expression = regexIn.expression;
+                    r2.content = regexIn.content;
+                    r2.flags = regexIn.flags;
+                case 2:
+                    // regex.position = value;
+                    // return "Action";
+                    break;
+                default:
+                    break;
+            }
+            // Precaution
+            this.fireTableDataChanged();
+        }
+        
+        @Override
+        public boolean isCellEditable(int rowIndex, int columnIndex) {
+            return (columnIndex == 1);
         }
     }
     
-    public class RegexExpression 
-    {
-        public RegexExpression(int expression, int position)
-        {
-            this.expression = expression;
-            this.position = position;
-            this.flags = 0;                    
-        }
-        
-        public RegexExpression(RegexExpression copy)
-        {
-            this.expression = copy.expression;
-            this.position = copy.position;
-            this.flags = copy.flags;
-            this.repetition = copy.repetition;
-            this.content = copy.content;
-        }
-
-        // Enumeration for the expression
-        public static final int EXP_DONT_KNOW = 0;
-        public static final int EXP_EXACT_PHRASE = 1;
-        public static final int EXP_ONE_OF_THESE = 2;
-        public static final int EXP_WHITE_SPACE = 3;
-        public static final int EXP_NUMERIC = 4;
-        public static final int EXP_ALPHA = 5;
-        public static final int EXP_ANY_EXCEPT = 6;
-        public static final int EXP_ANY_CHAR = 7;
-        public int expression;
-
-        // Expression content
-        public Object content; // Typically this is a string, but it could be a list too
-        public String getExpression()
-        {
-            switch (expression) {
-                case EXP_DONT_KNOW:
-                    return "Don't know";
-                case EXP_EXACT_PHRASE:
-                    return (String)content;
-                case EXP_ONE_OF_THESE:
-                    if (content.getClass().isInstance(List.class))
-                        return String.join(" OR ", (List)content);
-                    return content.toString();
-                case EXP_WHITE_SPACE:
-                    return "White space";
-                case EXP_NUMERIC:
-                    return "Any number: 0-9";
-                case EXP_ALPHA:
-                    return "Any letter: a-z or A-Z";
-                case EXP_ANY_CHAR:
-                    if (content.getClass().isInstance(List.class))
-                        return "Any of these characters: " + String.join("", (List)content);
-                    return "Any of these chars: " + content.toString();
-                case EXP_ANY_EXCEPT:
-                    if (content.getClass().isInstance(List.class))
-                        return "Any character except: " + String.join("", (List)content);
-                    return "Any except: " + content.toString();
-                default:
-                    break;
-            }
-            return "Unknown";
-       }
-
-        // Enumeration for the repeat
-        public static final int REP_ONCE = 0;
-        public static final int REP_PERHAPS_ONCE = 1;
-        public static final int REP_ANY_NUMBER = 2;
-        public static final int REP_ANY_NUMBER_GREEDY = 3;
-        public static final int REP_ONE_OR_MORE = 4;
-        public static final int REP_ONE_OR_MORE_GREEDY = 5;
-        public int repetition;
-        public String getRepetition()
-        {
-            if (expression == EXP_DONT_KNOW) return "";
-            
-            switch (repetition) {
-                case REP_ONCE:
-                    return "Once";
-                case REP_PERHAPS_ONCE:
-                    return "Perhaps once";
-                case REP_ANY_NUMBER:
-                    return "Any number";
-                case REP_ANY_NUMBER_GREEDY:
-                    return "Any number (greedy)";
-                case REP_ONE_OR_MORE:
-                    return "One or more times";
-                case REP_ONE_OR_MORE_GREEDY:
-                    return "One or more times (greedy)";
-                default:
-                    break;
-            }
-            return "Unknown";
-        }
-
-        // public static final int POS_ENDS_WITH = -2;
-        public static final int POS_STARTS_WITH = -1;
-        public static final int POS_NEW_ROW = Integer.MAX_VALUE - 1;
-        public static final int POS_ENDS_WITH = Integer.MAX_VALUE;
-        public int position; // -2 to N
-        public String getPosition()
-        {
-            switch (position) {
-                case POS_STARTS_WITH:
-                    return "START";
-                case POS_NEW_ROW:
-                    return "NEW";
-                case POS_ENDS_WITH:
-                    return "ENDS";
-                default:
-                    break;
-            }
-            return String.valueOf(position);
-        }
-        
-        // Flags
-        public static final int FLAG_ACTIVE = 1; // Set if active
-        public int flags;
-    }
+//    public class RegexExpression 
+//    {
+//        public RegexExpression(
+//        {
+//            this.expression = 0;
+//            this.position = 0;
+//            this.flags = 0;                    
+//        }
+//
+//        public RegexExpression(int expression, int position)
+//        {
+//            this.expression = expression;
+//            this.position = position;
+//            this.flags = 0;                    
+//        }
+//        
+//        public RegexExpression(RegexExpression copy)
+//        {
+//            this.expression = copy.expression;
+//            this.position = copy.position;
+//            this.flags = copy.flags;
+//            this.repetition = copy.repetition;
+//            this.content = copy.content;
+//        }
+//
+//        // Enumeration for the expression
+//        public static final int EXP_DONT_KNOW = 0;
+//        public static final int EXP_EXACT_PHRASE = 1;
+//        public static final int EXP_ONE_OF_THESE = 2;
+//        public static final int EXP_WHITE_SPACE = 3;
+//        public static final int EXP_NUMERIC = 4;
+//        public static final int EXP_ALPHA = 5;
+//        public static final int EXP_ANY_EXCEPT = 6;
+//        public static final int EXP_ANY_CHAR = 7;
+//        public int expression;
+//
+//        // Expression content
+//        public Object content; // Typically this is a string, but it could be a list too
+//        public String getExpression()
+//        {
+//            switch (expression) {
+//                case EXP_DONT_KNOW:
+//                    return "Don't know";
+//                case EXP_EXACT_PHRASE:
+//                    return (String)content;
+//                case EXP_ONE_OF_THESE:
+//                    if (content.getClass().isInstance(List.class))
+//                        return String.join(" OR ", (List)content);
+//                    return content.toString();
+//                case EXP_WHITE_SPACE:
+//                    return "White space";
+//                case EXP_NUMERIC:
+//                    return "Any number: 0-9";
+//                case EXP_ALPHA:
+//                    return "Any letter: a-z or A-Z";
+//                case EXP_ANY_CHAR:
+//                    if (content.getClass().isInstance(List.class))
+//                        return "Any of these characters: " + String.join("", (List)content);
+//                    return "Any of these chars: " + content.toString();
+//                case EXP_ANY_EXCEPT:
+//                    if (content.getClass().isInstance(List.class))
+//                        return "Any character except: " + String.join("", (List)content);
+//                    return "Any except: " + content.toString();
+//                default:
+//                    break;
+//            }
+//            return "Unknown";
+//       }
+//
+//        // Enumeration for the repeat
+//        public static final int REP_ONCE = 0;
+//        public static final int REP_PERHAPS_ONCE = 1;
+//        public static final int REP_ANY_NUMBER = 2;
+//        public static final int REP_ANY_NUMBER_GREEDY = 3;
+//        public static final int REP_ONE_OR_MORE = 4;
+//        public static final int REP_ONE_OR_MORE_GREEDY = 5;
+//        public int repetition;
+//        public String getRepetition()
+//        {
+//            if (expression == EXP_DONT_KNOW) return "";
+//            
+//            switch (repetition) {
+//                case REP_ONCE:
+//                    return "Once";
+//                case REP_PERHAPS_ONCE:
+//                    return "Perhaps once";
+//                case REP_ANY_NUMBER:
+//                    return "Any number";
+//                case REP_ANY_NUMBER_GREEDY:
+//                    return "Any number (greedy)";
+//                case REP_ONE_OR_MORE:
+//                    return "One or more times";
+//                case REP_ONE_OR_MORE_GREEDY:
+//                    return "One or more times (greedy)";
+//                default:
+//                    break;
+//            }
+//            return "Unknown";
+//        }
+//
+//        // public static final int POS_ENDS_WITH = -2;
+//        public static final int POS_STARTS_WITH = -1;
+//        public static final int POS_NEW_ROW = Integer.MAX_VALUE - 1;
+//        public static final int POS_ENDS_WITH = Integer.MAX_VALUE;
+//        public int position; // -2 to N
+//        public String getPosition()
+//        {
+//            switch (position) {
+//                case POS_STARTS_WITH:
+//                    return "START";
+//                case POS_NEW_ROW:
+//                    return "NEW";
+//                case POS_ENDS_WITH:
+//                    return "ENDS";
+//                default:
+//                    break;
+//            }
+//            return String.valueOf(position);
+//        }
+//        
+//        // Flags
+//        public static final int FLAG_ACTIVE = 1; // Set if active
+//        public int flags;
+//    }
     
     /**
      * This method is called from within the constructor to initialize the form.

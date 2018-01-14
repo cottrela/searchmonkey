@@ -32,9 +32,9 @@ public class RegexCellComponent extends javax.swing.JPanel {
         initComponents();
     }
 
-    RegexBuilder.RegexExpression regex;
+    RegexExpression regex;
     
-    public void updateData(RegexBuilder.RegexExpression regex, boolean isSelected, JTable table) {
+    public void updateData(RegexExpression regex, boolean isSelected, JTable table) {
         this.regex = regex;
         
         // Update the panel
@@ -56,13 +56,13 @@ public class RegexCellComponent extends javax.swing.JPanel {
         cards.show(this, isSelected ? "cardEdit" : "cardView");
     }
     
-    public RegexBuilder.RegexExpression getData()
+    public RegexExpression getData()
     {
-        // RegexBuilder.RegexExpression tmp = new RegexBuilder.RegexExpression(this.regex);
-        this.regex.expression = this.jComboBox3.getSelectedIndex();
-        this.regex.content = this.jTextField3.getText();
-        this.regex.repetition = this.jComboBox4.getSelectedIndex();
-        return this.regex;
+        RegexExpression tmp = new RegexExpression(this.regex);
+        tmp.expression = this.jComboBox3.getSelectedIndex();
+        tmp.content = this.jTextField3.getText();
+        tmp.repetition = this.jComboBox4.getSelectedIndex();
+        return tmp;
     }
     
     /**
