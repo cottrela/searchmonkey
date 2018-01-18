@@ -51,6 +51,20 @@ public class RegexBuilder extends javax.swing.JPanel {
         this.jTable1.setDefaultEditor(RegexExpression.class, cellEdit);
         this.jTable1.setRowHeight(60);
         
+        cellEdit.addCellEditorListener(new CellEditorListener() {
+            @Override
+            public void editingStopped(ChangeEvent ce) {
+                RegexCellEditor cellEdit2 = (RegexCellEditor)ce.getSource();
+                RegexExpression exp = (RegexExpression)cellEdit2.getCellEditorValue();
+                // cellEdit2.get
+            }
+
+            @Override
+            public void editingCanceled(ChangeEvent ce) {
+                // do nothing throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+            
+        }); 
     }
 
     public class RegexCellEditor extends AbstractCellEditor implements TableCellEditor, TableCellRenderer {

@@ -15,7 +15,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowStateListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.file.FileSystems;
@@ -44,7 +43,7 @@ import javax.swing.SwingUtilities;
 import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import org.apache.commons.lang.SystemUtils;
+import static org.apache.commons.lang.SystemUtils.IS_OS_WINDOWS;
 
 /**
  *
@@ -76,7 +75,7 @@ public class SearchEntryPanel extends javax.swing.JPanel implements ChangeListen
         Restore();
 
         // Check for OS dependent settings:-
-        if (SystemUtils.IS_OS_WINDOWS)
+        if (IS_OS_WINDOWS)
         {
             jIgnoreHiddenFolders.setVisible(false);
             jIgnoreHiddenFolders.setSelected(false);

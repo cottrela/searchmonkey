@@ -19,17 +19,14 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.Painter;
-import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker.StateValue;
 import javax.swing.UIManager;
 import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
-//import javax.swing.Timer;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 

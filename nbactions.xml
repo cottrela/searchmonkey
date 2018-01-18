@@ -43,4 +43,11 @@
                 <exec.executable>java</exec.executable>
             </properties>
         </action>
+        <action>
+            <actionName>CUSTOM-analyse</actionName>
+            <displayName>analyse</displayName>
+            <goals>
+                <goal>dependency:analyze</goal>
+            </goals>
+        </action>
     </actions>
