@@ -340,20 +340,13 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener, 
 
     private void testRegexExpression()
     {
-        //JFrame parent = (JFrame)SwingUtilities.getWindowAncestor(this);
         int flags = 0;
-        //if (this.jIgnoreCase.isSelected()) flags |= Pattern.CASE_INSENSITIVE;
-        //if (this.jUseContentSearch.isSelected()) flags |= Pattern.LITERAL;
         JDialog frame = new JDialog(this, "Test Regular Expression", false);
         frame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         TestExpression panel = new TestExpression(flags, "Contains");
-        //panel.setRegex((String)jContainingText.getEditor().getItem());
         panel.getCloseButton().addActionListener((ActionEvent ae) -> {
-            //jContainingText.getEditor().setItem(panel.getRegex());
-            //jContainingText.setSelectedItem(panel.getRegex());
             panel.Save();
             frame.setVisible(false);
-            // frame.dispose();   
         });
         frame.getContentPane().add(panel);
         frame.setResizable(false);
@@ -361,7 +354,6 @@ public class Searchmonkey extends javax.swing.JFrame implements ActionListener, 
 
         // Center on parent
         frame.setLocationRelativeTo(this);
-        // frame.setLocationRelativeTo(parent);        
         frame.addWindowStateListener((WindowEvent we) -> {
             if (we.equals(WindowEvent.WINDOW_CLOSING))
             {
