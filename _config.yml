@@ -1,1 +1,4 @@
-theme: jekyll-theme-cayman
+title: Modernist theme
+theme: jekyll-theme-modernist
+show_downloads: true
+google_analytics: UA-10135929-8
