@@ -1,4 +1,5 @@
 title: Modernist theme
 theme: jekyll-theme-modernist
 show_downloads: true
+show_google_analytics: true
 google_analytics: UA-10135929-8
